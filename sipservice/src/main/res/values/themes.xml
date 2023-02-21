@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="Theme.Pjsipandroidmaster.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Pjsipandroidmaster.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Pjsipandroidmaster.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>

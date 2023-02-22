@@ -1,9 +1,11 @@
 package com.example.freeswitchandroid;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -17,27 +19,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+        actionBar.setTitle("");
+        actionBar.show();
 
-
-//        SipAccountData sipAccountData = new SipAccountData();
-//        sipAccountData.setUsername("");
-//        sipAccountData.setRealm("sip.linphone.org");
-//        sipAccountData.setPassword("");
-//        sipAccountData.setHost("sip.linphone.org");
-//
-//        //Toast.makeText(this, SipServiceCommand.setAccount(this, sipAccountData),
-//        //Toast.LENGTH_LONG).show();
-//
-//        Context context = this;
-//
-//        String uri = SipServiceCommand.setAccount(context, sipAccountData);
-//        SipServiceCommand.start(context);
-//
-//
-//        Toast.makeText(this, "Receiving a call !",
-//                Toast.LENGTH_LONG).show();
-//
-//        SipServiceCommand.makeCall(this, uri, "sip:@sip.linphone.org", false, false, false);
     }
 
     public void initialLoginClick(View view) {

@@ -18,7 +18,6 @@
         android:theme="@style/Theme.Pjsipandroidmaster" >
         <activity
             android:name=".OtpActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:label="@string/title_activity_otp"
             android:theme="@style/Theme.Pjsipandroidmaster.Fullscreen" />

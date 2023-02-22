@@ -7,11 +7,11 @@
     android:background="@color/white">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center_vertical"
         android:background="@color/white"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -19,14 +19,14 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             app:srcCompat="@drawable/bubble" />
 
         <ImageView
             android:id="@+id/welcome_msg3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_marginTop="20dp"
             app:srcCompat="@drawable/verification_sent" />
 
@@ -40,8 +40,13 @@
             android:layout_marginTop="20dp"
             android:textStyle="bold"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+2348162928900"
             android:fontFamily="@font/urbanistfont"
@@ -49,25 +54,53 @@
             android:layout_marginTop="8dp"
             android:textStyle="bold"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="below"
+                android:fontFamily="@font/urbanistfont"
+                android:textColor="#616C74"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="4dp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+
+
         <ImageView
             android:id="@+id/verify_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_marginTop="20dp"
             app:srcCompat="@drawable/verify_code" />
+
+        <in.aabhasjindal.otptextview.OtpTextView
+            android:id="@+id/otp_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginTop="15dp"
+            app:width="40dp"
+            app:height="40dp"
+            app:otp_box_background="@drawable/otpbox"
+            app:hide_otp_drawable="@drawable/oval"
+            app:hide_otp="true"
+            app:length="6"
+            app:otp="12345"/>
 
 
         <ImageButton
             android:id="@+id/imageButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="0.1"
-            android:onClick="otpLoginClick"
+            android:onClick="otpVerifyClick"
             android:background="@color/white"
-            app:srcCompat="@drawable/log_in" />
+            app:srcCompat="@drawable/submit_code" />
 
     </LinearLayout>
 </LinearLayout>

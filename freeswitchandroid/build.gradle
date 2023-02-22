@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.hbb20:ccp:2.6.1'
+    implementation 'com.github.aabhasr1:OtpView:v1.1.2'
     implementation project(path: ':sipservice')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Press One Dialer</string>
     <string name="welcome_msg">Welcome to Press One</string>
+    <string name="title_activity_otp">OtpActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

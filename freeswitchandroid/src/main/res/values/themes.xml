@@ -15,4 +15,16 @@
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="buttonStyle">@style/RobotoButtonStyle</item>
     </style>
+    <style name="Theme.Pjsipandroidmaster.Fullscreen" parent="Theme.Pjsipandroidmaster">
+        <item name="android:actionBarStyle">
+            @style/Widget.Theme.Pjsipandroidmaster.ActionBar.Fullscreen
+        </item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="ThemeOverlay.Pjsipandroidmaster.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
+    </style>
 </resources>

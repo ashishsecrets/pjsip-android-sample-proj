@@ -3,7 +3,9 @@ package com.example.freeswitchandroid;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import net.gotev.sipservice.SipAccountData;
@@ -15,8 +17,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
 
 //        SipAccountData sipAccountData = new SipAccountData();
@@ -38,5 +38,10 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.LENGTH_LONG).show();
 //
 //        SipServiceCommand.makeCall(this, uri, "sip:@sip.linphone.org", false, false, false);
+    }
+
+    public void initialLoginClick(View view) {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 }

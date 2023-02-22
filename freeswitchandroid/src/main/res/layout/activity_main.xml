@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal|center_vertical"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
+    <ImageView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_msg"
-        android:paddingTop="40px"
+        android:paddingTop="30dp"
         android:layout_weight="@integer/material_motion_duration_long_1"
-        android:textStyle="bold"/>
+        app:srcCompat="@drawable/welcome_msg"/>
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="@integer/material_motion_duration_long_1"
-        app:srcCompat="@drawable/main_welcome" />
+        app:srcCompat="@drawable/main_welcome_login" />
 
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:onClick="initialLoginClick"
         android:layout_weight="@integer/material_motion_duration_long_1"
         android:background="@color/white"
         app:srcCompat="@drawable/login_button" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+</LinearLayout>

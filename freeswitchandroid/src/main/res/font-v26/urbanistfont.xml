@@ -3,9 +3,9 @@
     <font
         android:fontStyle="normal"
         android:fontWeight="400"
-        android:font="@font/urbanist" />
+        android:font="@font/urbanistnormal" />
     <font
         android:fontStyle="italic"
         android:fontWeight="400"
-        android:font="@font/lobster_italic" />
+        android:font="@font/urbanist" />
 </font-family>

@@ -12,8 +12,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import net.gotev.sipservice.CodecPriority;
 import net.gotev.sipservice.SipAccountData;
+import net.gotev.sipservice.SipAccountTransport;
 import net.gotev.sipservice.SipServiceCommand;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CallsActivity extends AppCompatActivity {
 
@@ -23,14 +28,14 @@ public class CallsActivity extends AppCompatActivity {
     SipAccountData sipAccountData;
     Context context;
 
-    String hostname = "david.fs1.pressone.co";
+    String hostname = "david380.fs1.pressone.co";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
 
-
+        SipServiceCommand.enableSipDebugLogging(true);
 
 
     }
@@ -45,7 +50,6 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setRealm(hostname);
 
-
         EditText editText2 = (EditText) findViewById(R.id.password);
 
         value2 = editText2.getText().toString();
@@ -53,6 +57,15 @@ public class CallsActivity extends AppCompatActivity {
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
 
+        //sipAccountData.setTransport(SipAccountTransport.TCP);
+//        ArrayList<CodecPriority> listOfCodecs = new ArrayList<>();
+//
+//        CodecPriority codecPriority = new CodecPriority("G729/8000", (short) (CodecPriority.PRIORITY_MAX + 1));
+//
+//
+//        listOfCodecs.add(codecPriority);
+//
+//
 
         context = this;
 
@@ -86,13 +99,13 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setRealm(hostname);
 
-
         EditText editText2 = (EditText) findViewById(R.id.password);
 
         value2 = editText2.getText().toString();
 
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
+        //sipAccountData.setTransport(SipAccountTransport.TCP);
 
 
         context = this;

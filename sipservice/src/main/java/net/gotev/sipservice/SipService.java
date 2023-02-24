@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Surface;
 
+import org.pjsip.pjsua2.AccountVideoConfig;
 import org.pjsip.pjsua2.AudDevManager;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.CallVidSetStreamParam;
@@ -876,7 +877,9 @@ public class SipService extends BackgroundService implements SipServiceConstants
             mEndpoint.libStart();
 
             ArrayList<CodecPriority> codecPriorities = getConfiguredCodecPriorities();
-            SipServiceUtils.setAudioCodecPriorities(codecPriorities, mEndpoint);
+            SipServiceUtils.setDefaultAudioCodecPriorites(mEndpoint);
+            //Changing this method as it uses shared preferences which are not set to set codecs
+            //SipServiceUtils.setAudioCodecPriorities(codecPriorities, mEndpoint);
 
             SipServiceUtils.setVideoCodecPriorities(mEndpoint);
 

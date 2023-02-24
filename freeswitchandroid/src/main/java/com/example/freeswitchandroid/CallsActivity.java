@@ -56,16 +56,9 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
-
-        //sipAccountData.setTransport(SipAccountTransport.TCP);
-//        ArrayList<CodecPriority> listOfCodecs = new ArrayList<>();
-//
-//        CodecPriority codecPriority = new CodecPriority("G729/8000", (short) (CodecPriority.PRIORITY_MAX + 1));
-//
-//
-//        listOfCodecs.add(codecPriority);
-//
-//
+        sipAccountData.setSrtpUse(1);
+        sipAccountData.setSrtpSecureSignalling(0);
+        sipAccountData.setTransport(SipAccountTransport.TCP);
 
         context = this;
 
@@ -99,13 +92,16 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setRealm(hostname);
 
+
         EditText editText2 = (EditText) findViewById(R.id.password);
 
         value2 = editText2.getText().toString();
 
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
-        //sipAccountData.setTransport(SipAccountTransport.TCP);
+        sipAccountData.setSrtpUse(1);
+        sipAccountData.setSrtpSecureSignalling(0);
+        sipAccountData.setTransport(SipAccountTransport.TCP);
 
 
         context = this;

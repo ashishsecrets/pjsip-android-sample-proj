@@ -17,6 +17,8 @@ import net.gotev.sipservice.SipAccountData;
 import net.gotev.sipservice.SipAccountTransport;
 import net.gotev.sipservice.SipServiceCommand;
 
+import org.pjsip.pjsua2.pjmedia_srtp_use;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +58,9 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
-        sipAccountData.setSrtpUse(1);
+        sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_OPTIONAL);
         sipAccountData.setSrtpSecureSignalling(0);
-        sipAccountData.setTransport(SipAccountTransport.TCP);
+        //sipAccountData.setTransport(SipAccountTransport.TLS);
 
         context = this;
 
@@ -99,9 +101,9 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
-        sipAccountData.setSrtpUse(1);
+        sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_OPTIONAL);
         sipAccountData.setSrtpSecureSignalling(0);
-        sipAccountData.setTransport(SipAccountTransport.TCP);
+        //sipAccountData.setTransport(SipAccountTransport.TLS);
 
 
         context = this;

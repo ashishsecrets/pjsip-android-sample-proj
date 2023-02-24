@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.Surface;
 
 import org.pjsip.PjCameraInfo2;
+import org.pjsip.pjsua2.AccountConfig;
 
 import java.util.ArrayList;
 

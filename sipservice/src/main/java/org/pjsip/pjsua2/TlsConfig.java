@@ -93,7 +93,7 @@ public class TlsConfig extends PersistentObject {
   }
 
   public void setMethod(int value) {
-    pjsua2JNI.TlsConfig_method_set(swigCPtr, this, pjsip_ssl_method.PJSIP_TLSV1_METHOD);
+    pjsua2JNI.TlsConfig_method_set(swigCPtr, this, value);
   }
 
   public int getMethod() {

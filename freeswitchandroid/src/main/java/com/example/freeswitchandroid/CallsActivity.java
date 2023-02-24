@@ -58,9 +58,9 @@ public class CallsActivity extends AppCompatActivity {
 
         sipAccountData.setPassword(value2);
         sipAccountData.setHost(hostname);
-        sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_OPTIONAL);
+        sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);
         sipAccountData.setSrtpSecureSignalling(0);
-        //sipAccountData.setTransport(SipAccountTransport.TLS);
+        sipAccountData.setTransport(SipAccountTransport.TCP);
 
         context = this;
 
@@ -103,7 +103,7 @@ public class CallsActivity extends AppCompatActivity {
         sipAccountData.setHost(hostname);
         sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_OPTIONAL);
         sipAccountData.setSrtpSecureSignalling(0);
-        //sipAccountData.setTransport(SipAccountTransport.TLS);
+        sipAccountData.setTransport(SipAccountTransport.TCP);
 
 
         context = this;

@@ -17,6 +17,7 @@ import org.pjsip.pjsua2.CodecInfo;
 import org.pjsip.pjsua2.CodecInfoVector2;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.IpChangeParam;
+import org.pjsip.pjsua2.TlsConfig;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.VidDevManager;
 import org.pjsip.pjsua2.pj_qos_type;
@@ -855,10 +856,10 @@ public class SipService extends BackgroundService implements SipServiceConstants
             EpConfig epConfig = new EpConfig();
             epConfig.getUaConfig().setUserAgent(AGENT_NAME);
             epConfig.getMedConfig().setHasIoqueue(true);
-            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setClockRate(8000); //16000
             epConfig.getMedConfig().setQuality(10);
             epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(200);
+            epConfig.getMedConfig().setEcTailLen(120); //200
             epConfig.getMedConfig().setThreadCnt(2);
             SipServiceUtils.setSipLogger(epConfig);
             mEndpoint.libInit(epConfig);
@@ -867,6 +868,7 @@ public class SipService extends BackgroundService implements SipServiceConstants
             udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
             TransportConfig tcpTransport = new TransportConfig();
             tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+            tcpTransport.setTlsConfig(new TlsConfig());
             TransportConfig tlsTransport = new TransportConfig();
             tlsTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
             SipTlsUtils.setTlsConfig(this, mSharedPreferencesHelper.isVerifySipServerCert(), tlsTransport);
@@ -876,12 +878,12 @@ public class SipService extends BackgroundService implements SipServiceConstants
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS, tlsTransport);
             mEndpoint.libStart();
 
-            ArrayList<CodecPriority> codecPriorities = getConfiguredCodecPriorities();
+            //ArrayList<CodecPriority> codecPriorities = getConfiguredCodecPriorities();
             SipServiceUtils.setDefaultAudioCodecPriorites(mEndpoint);
             //Changing this method as it uses shared preferences which are not set to set codecs
             //SipServiceUtils.setAudioCodecPriorities(codecPriorities, mEndpoint);
 
-            SipServiceUtils.setVideoCodecPriorities(mEndpoint);
+            //SipServiceUtils.setVideoCodecPriorities(mEndpoint);
 
             Logger.debug(TAG, "PJSIP started!");
             mStarted = true;

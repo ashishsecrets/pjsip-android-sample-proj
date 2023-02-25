@@ -21,6 +21,7 @@ import org.pjsip.pjsua2.TlsConfig;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.VidDevManager;
 import org.pjsip.pjsua2.pj_qos_type;
+import org.pjsip.pjsua2.pjmedia_echo_flag;
 import org.pjsip.pjsua2.pjmedia_orient;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
@@ -855,27 +856,31 @@ public class SipService extends BackgroundService implements SipServiceConstants
 
             EpConfig epConfig = new EpConfig();
             epConfig.getUaConfig().setUserAgent(AGENT_NAME);
-            epConfig.getMedConfig().setHasIoqueue(true);
-            epConfig.getMedConfig().setClockRate(8000); //16000
-            epConfig.getMedConfig().setQuality(10);
+            epConfig.getMedConfig().setHasIoqueue(false);
+            epConfig.getMedConfig().setEcOptions(pjmedia_echo_flag.PJMEDIA_ECHO_WEBRTC |pjmedia_echo_flag.PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR |pjmedia_echo_flag.PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE);
+            epConfig.getMedConfig().setClockRate(16000); //8000
+            epConfig.getMedConfig().setQuality(4);
             epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(120); //200
+            epConfig.getMedConfig().setEcTailLen(200); //120
             epConfig.getMedConfig().setThreadCnt(2);
             SipServiceUtils.setSipLogger(epConfig);
             mEndpoint.libInit(epConfig);
 
-            TransportConfig udpTransport = new TransportConfig();
-            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+
+            //Commented tls and udp transport as not used by press one server at the moment
+
+            //TransportConfig udpTransport = new TransportConfig();
+            //udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
             TransportConfig tcpTransport = new TransportConfig();
             tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            tcpTransport.setTlsConfig(new TlsConfig());
-            TransportConfig tlsTransport = new TransportConfig();
-            tlsTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            SipTlsUtils.setTlsConfig(this, mSharedPreferencesHelper.isVerifySipServerCert(), tlsTransport);
+            //tcpTransport.setTlsConfig(new TlsConfig()); // Not Needed
+            //TransportConfig tlsTransport = new TransportConfig();
+            //tlsTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+            //SipTlsUtils.setTlsConfig(this, mSharedPreferencesHelper.isVerifySipServerCert(), tlsTransport);
 
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
+            //mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS, tlsTransport);
+            //mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS, tlsTransport);
             mEndpoint.libStart();
 
             //ArrayList<CodecPriority> codecPriorities = getConfiguredCodecPriorities();

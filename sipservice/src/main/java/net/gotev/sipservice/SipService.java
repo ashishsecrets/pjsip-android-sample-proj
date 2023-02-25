@@ -857,7 +857,7 @@ public class SipService extends BackgroundService implements SipServiceConstants
             EpConfig epConfig = new EpConfig();
             epConfig.getUaConfig().setUserAgent(AGENT_NAME);
             epConfig.getMedConfig().setHasIoqueue(false);
-            epConfig.getMedConfig().setEcOptions(pjmedia_echo_flag.PJMEDIA_ECHO_WEBRTC |pjmedia_echo_flag.PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR |pjmedia_echo_flag.PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE);
+            epConfig.getMedConfig().setEcOptions(pjmedia_echo_flag.PJMEDIA_ECHO_USE_SIMPLE_FIFO |pjmedia_echo_flag.PJMEDIA_ECHO_USE_NOISE_SUPPRESSOR |pjmedia_echo_flag.PJMEDIA_ECHO_AGGRESSIVENESS_AGGRESSIVE);
             epConfig.getMedConfig().setClockRate(16000); //8000
             epConfig.getMedConfig().setQuality(4);
             epConfig.getMedConfig().setEcOptions(1);

@@ -5,6 +5,7 @@ import static androidx.core.widget.TextViewKt.addTextChangedListener;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -81,7 +82,12 @@ public class CallsActivity extends AppCompatActivity {
 
 
         SipServiceCommand.makeCall(context, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
-        System.out.println(sipAccountData.getCallId() +  sipAccountData.getRealm() + sipAccountData.getHost() + sipAccountData.getUsername() + sipAccountData.getPassword());
+
+//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+//
+//        audioManager.setSpeakerphoneOn(false);
+
+
     }
 
     public void answer(View view){
@@ -115,6 +121,10 @@ public class CallsActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
 
         SipServiceCommand.acceptIncomingCall(context, uri, sipAccountData.getCallId(), false);
+
+//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+//
+//        audioManager.setSpeakerphoneOn(false);
 
     }
 }

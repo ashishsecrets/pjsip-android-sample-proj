@@ -1,13 +1,5 @@
 package com.example.freeswitchandroid;
 
-import static androidx.core.widget.TextViewKt.addTextChangedListener;
-
-import static com.example.freeswitchandroid.ServiceCommunicator.context;
-import static com.example.freeswitchandroid.ServiceCommunicator.hostname;
-import static com.example.freeswitchandroid.ServiceCommunicator.sipAccountData;
-import static com.example.freeswitchandroid.ServiceCommunicator.uri;
-import static com.example.freeswitchandroid.ServiceCommunicator.username;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
@@ -30,7 +22,9 @@ import org.pjsip.pjsua2.pjmedia_srtp_use;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CallsActivity extends AppCompatActivity {
+public class CallsActivity extends AppCompatActivity{
+
+    ServiceCommunicator serviceCommunicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +33,8 @@ public class CallsActivity extends AppCompatActivity {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Context context = this;
         SipServiceCommand.enableSipDebugLogging(true);
-        new ServiceCommunicator().startService(activityManager, context);
+        serviceCommunicator = new ServiceCommunicator();
+        serviceCommunicator.startService(activityManager, context);
 
     }
 
@@ -47,15 +42,15 @@ public class CallsActivity extends AppCompatActivity {
 
         String numberToCall = null;
 
-        if(username.equals("5294241166")){
+        if(serviceCommunicator.username.equals("5294241166")){
             numberToCall = "1911899877";
         }
-        else if(username.equals("1911899877")){
+        else if(serviceCommunicator.username.equals("1911899877")){
             numberToCall = "09056925668";
         }
 
 
-        SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
+        SipServiceCommand.makeCall(this, serviceCommunicator.uri, "sip:" + numberToCall + "@" + serviceCommunicator.hostname, false, false, false);
 
         Toast.makeText(this, "Making a call !",
                 Toast.LENGTH_LONG).show();
@@ -69,7 +64,7 @@ public class CallsActivity extends AppCompatActivity {
 
     public void answer(View view){
 
-        SipServiceCommand.acceptIncomingCall(this, uri, sipAccountData.getCallId(), false);
+        SipServiceCommand.acceptIncomingCall(this, serviceCommunicator.uri, serviceCommunicator.sipAccountData.getCallId(), false);
 
         Toast.makeText(this, "Receiving a call !",
                 Toast.LENGTH_LONG).show();
@@ -79,4 +74,18 @@ public class CallsActivity extends AppCompatActivity {
 //        audioManager.setSpeakerphoneOn(false);
 
     }
+
+    public void hangUp(View view){
+
+        SipServiceCommand.hangUpCall(this, serviceCommunicator.uri, serviceCommunicator.sipAccountData.getCallId());
+
+        Toast.makeText(this, "Receiving a call !",
+                Toast.LENGTH_LONG).show();
+
+//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+//
+//        audioManager.setSpeakerphoneOn(false);
+
+    }
+
 }

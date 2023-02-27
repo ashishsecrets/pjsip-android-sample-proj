@@ -35,4 +35,11 @@
         android:layout_height="wrap_content"
         android:onClick="answer"
         android:text="Answer" />
+
+    <Button
+        android:id="@+id/hangup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="hangUp"
+        android:text="Hang up" />
 </androidx.appcompat.widget.LinearLayoutCompat>

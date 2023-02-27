@@ -240,7 +240,7 @@ public class SipServiceCommand implements SipServiceConstants {
      * @param accountID account ID
      * @param callID call ID to hang up
      */
-    public static void hangUpCall(Context context, String accountID, int callID) {
+    public static void hangUpCall(Context context, String accountID, String callID) {
         checkAccount(accountID);
 
         Intent intent = new Intent(context, SipService.class);

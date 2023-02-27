@@ -9,18 +9,12 @@
     tools:context=".CallsActivity">
 
 
-    <EditText
-        android:id="@+id/number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword" />
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:scrollbars = "vertical"
+        android:layout_height="400dp"
+        android:paddingBottom="10dp"/>
 
     <Button
         android:id="@+id/call"
@@ -42,4 +36,11 @@
         android:layout_height="wrap_content"
         android:onClick="hangUp"
         android:text="Hang up" />
+
+    <Button
+        android:id="@+id/showLogs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showLogsOnPhone"
+        android:text="Logs" />
 </androidx.appcompat.widget.LinearLayoutCompat>

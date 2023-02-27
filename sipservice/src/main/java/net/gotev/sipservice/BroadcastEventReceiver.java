@@ -44,7 +44,7 @@ public class BroadcastEventReceiver extends BroadcastReceiver implements SipServ
             int callState = intent.getIntExtra(PARAM_CALL_STATE, -1);
             int callStatus = intent.getIntExtra(PARAM_CALL_STATUS, -1);
             onCallState(intent.getStringExtra(PARAM_ACCOUNT_ID),
-                        intent.getStringExtra(PARAM_CALL_ID),
+                        intent.getIntExtra(PARAM_CALL_ID, -1),
                         callState, callStatus,
                         intent.getLongExtra(PARAM_CONNECT_TIMESTAMP, -1));
 
@@ -169,7 +169,7 @@ public class BroadcastEventReceiver extends BroadcastReceiver implements SipServ
                 ", remoteUri: " + remoteUri);
     }
 
-    public void onCallState(String accountID, String callID, int callStateCode, int callStatusCode, long connectTimestamp) {
+    public void onCallState(String accountID, int callID, int callStateCode, int callStatusCode, long connectTimestamp) {
         Logger.debug(LOG_TAG, "onCallState - accountID: " + getValue(getReceiverContext(), accountID) +
                 ", callID: " + callID +
                 ", callStateCode: " + callStateCode +

@@ -37,8 +37,9 @@ public class CallsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        Context context = this;
         SipServiceCommand.enableSipDebugLogging(true);
-        new ServiceCommunicator().startService(activityManager, this);
+        new ServiceCommunicator().startService(activityManager, context);
 
     }
 
@@ -54,7 +55,7 @@ public class CallsActivity extends AppCompatActivity {
         }
 
 
-        SipServiceCommand.makeCall(context, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
+        SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
 
         Toast.makeText(this, "Making a call !",
                 Toast.LENGTH_LONG).show();
@@ -68,7 +69,7 @@ public class CallsActivity extends AppCompatActivity {
 
     public void answer(View view){
 
-        SipServiceCommand.acceptIncomingCall(context, uri, sipAccountData.getCallId(), false);
+        SipServiceCommand.acceptIncomingCall(this, uri, sipAccountData.getCallId(), false);
 
         Toast.makeText(this, "Receiving a call !",
                 Toast.LENGTH_LONG).show();

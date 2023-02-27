@@ -3,8 +3,12 @@ package net.gotev.sipservice;
 import static net.gotev.sipservice.ObfuscationHelper.getValue;
 import static net.gotev.sipservice.SipServiceCommand.AGENT_NAME;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Surface;
@@ -192,6 +196,26 @@ public class SipService extends BackgroundService implements SipServiceConstants
                 stopSelf();
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        final String CHANNELID = "Foreground Service ID";
+        NotificationChannel channel = new NotificationChannel(
+                CHANNELID,
+                CHANNELID,
+                NotificationManager.IMPORTANCE_LOW
+        );
+
+
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+
+            Notification.Builder notification = new Notification.Builder(this, CHANNELID)
+                    .setContentText("Service:PressOne is running")
+                    .setContentTitle("Service:PressOne enabled")
+                    .setSmallIcon(R.drawable.ic_launcher_background);
+
+            startForeground(1001, notification.build());
+        }
+
 
         return START_NOT_STICKY;
     }

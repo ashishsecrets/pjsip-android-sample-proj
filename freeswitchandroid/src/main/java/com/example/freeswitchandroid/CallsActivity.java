@@ -2,8 +2,15 @@ package com.example.freeswitchandroid;
 
 import static androidx.core.widget.TextViewKt.addTextChangedListener;
 
+import static com.example.freeswitchandroid.ServiceCommunicator.context;
+import static com.example.freeswitchandroid.ServiceCommunicator.hostname;
+import static com.example.freeswitchandroid.ServiceCommunicator.sipAccountData;
+import static com.example.freeswitchandroid.ServiceCommunicator.uri;
+import static com.example.freeswitchandroid.ServiceCommunicator.username;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -25,63 +32,32 @@ import java.util.List;
 
 public class CallsActivity extends AppCompatActivity {
 
-    String uri;
-    String value;
-    String value2;
-    SipAccountData sipAccountData;
-    Context context;
-
-    String hostname = "david380.fs1.pressone.co";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
-
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         SipServiceCommand.enableSipDebugLogging(true);
-
+        new ServiceCommunicator().startService(activityManager, this);
 
     }
 
     public void call(View view){
 
-        sipAccountData = new SipAccountData();
-        EditText editText = (EditText) findViewById(R.id.number);
-        value = editText.getText().toString();
-
-        sipAccountData.setUsername(value);
-
-        sipAccountData.setRealm(hostname);
-
-        EditText editText2 = (EditText) findViewById(R.id.password);
-
-        value2 = editText2.getText().toString();
-
-        sipAccountData.setPassword(value2);
-        sipAccountData.setHost(hostname);
-        sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);
-        sipAccountData.setSrtpSecureSignalling(0);
-        sipAccountData.setTransport(SipAccountTransport.TCP);
-
-        context = this;
-
-        uri = SipServiceCommand.setAccount(context, sipAccountData);
-        SipServiceCommand.start(context);
-
-        Toast.makeText(this, "Making a call !",
-                Toast.LENGTH_LONG).show();
-
         String numberToCall = null;
 
-        if(value.equals("5294241166")){
+        if(username.equals("5294241166")){
             numberToCall = "1911899877";
         }
-        else if(value.equals("1911899877")){
+        else if(username.equals("1911899877")){
             numberToCall = "09056925668";
         }
 
 
         SipServiceCommand.makeCall(context, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
+
+        Toast.makeText(this, "Making a call !",
+                Toast.LENGTH_LONG).show();
 
 //        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 //
@@ -92,35 +68,10 @@ public class CallsActivity extends AppCompatActivity {
 
     public void answer(View view){
 
-        sipAccountData = new SipAccountData();
-        EditText editText = (EditText) findViewById(R.id.number);
-        value = editText.getText().toString();
-
-        sipAccountData.setUsername(value);
-
-        sipAccountData.setRealm(hostname);
-
-
-        EditText editText2 = (EditText) findViewById(R.id.password);
-
-        value2 = editText2.getText().toString();
-
-        sipAccountData.setPassword(value2);
-        sipAccountData.setHost(hostname);
-        sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);
-        sipAccountData.setSrtpSecureSignalling(0);
-        sipAccountData.setTransport(SipAccountTransport.TCP);
-
-
-        context = this;
-
-        uri = SipServiceCommand.setAccount(context, sipAccountData);
-        SipServiceCommand.start(context);
+        SipServiceCommand.acceptIncomingCall(context, uri, sipAccountData.getCallId(), false);
 
         Toast.makeText(this, "Receiving a call !",
                 Toast.LENGTH_LONG).show();
-
-        SipServiceCommand.acceptIncomingCall(context, uri, sipAccountData.getCallId(), false);
 
 //        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 //

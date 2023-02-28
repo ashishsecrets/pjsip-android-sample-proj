@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_margin="5dp"
-        android:backgroundTint="@color/red"
+        android:backgroundTint="@color/light_blue_A200"
         android:onClick="hangUp"
         android:text="Hang up" />
 

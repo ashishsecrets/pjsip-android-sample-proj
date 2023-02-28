@@ -33,6 +33,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/cardview_dark_background"
+            android:fontFamily="@font/urbanist"
             android:text="Enter your username below in number without + and without starting 0.(Test App)"
             android:paddingTop="5dp"/>
 

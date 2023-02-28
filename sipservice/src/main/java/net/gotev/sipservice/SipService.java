@@ -336,7 +336,7 @@ public class SipService extends BackgroundService implements SipServiceConstants
         String accountID = intent.getStringExtra(PARAM_ACCOUNT_ID);
         String callID = intent.getStringExtra(PARAM_CALL_ID);
 
-        if(callID.equals("")){
+        if(callID == null || callID.equals("")){
             callID = "0";
         }
 
@@ -498,7 +498,7 @@ public class SipService extends BackgroundService implements SipServiceConstants
         String accountID = intent.getStringExtra(PARAM_ACCOUNT_ID);
         String callIdOrig = intent.getStringExtra(PARAM_CALL_ID);
 
-        if(callIdOrig.equals("")){
+        if(callIdOrig == null || callIdOrig.equals("")){
             callIdOrig = "0";
         }
 

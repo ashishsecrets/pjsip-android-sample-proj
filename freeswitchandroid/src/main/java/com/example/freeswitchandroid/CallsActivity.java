@@ -8,13 +8,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -24,25 +18,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
-import net.gotev.sipservice.CodecPriority;
-import net.gotev.sipservice.SipAccountData;
-import net.gotev.sipservice.SipAccountTransport;
 import net.gotev.sipservice.SipServiceCommand;
 
-import org.pjsip.pjsua2.pjmedia_srtp_use;
 import org.pjsip.pjsua2.pjsip_inv_state;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CallsActivity extends AppCompatActivity{
 
     ServiceCommunicator serviceCommunicator;
     String accountID;
-    int callID;
+    int callID1;
+    int callID2;
     String displayName;
     String remoteUri;
     boolean isVideo;
@@ -144,7 +133,7 @@ public class CallsActivity extends AppCompatActivity{
 
     public void answer(View view){
 
-        SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID), isVideo);
+        SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
 
         answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
         hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.red)));
@@ -201,7 +190,7 @@ public class CallsActivity extends AppCompatActivity{
           else if(isHold) {
 
                 if(serviceCommunicator.sipAccountData.getCallId() == null || serviceCommunicator.sipAccountData.getCallId().length() < 2){
-                    serviceCommunicator.sipAccountData.setCallId(String.valueOf(this.callID));
+                    serviceCommunicator.sipAccountData.setCallId(String.valueOf(this.callID1));
                 }
 
                 SipServiceCommand.setCallHold(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), false);
@@ -219,6 +208,30 @@ public class CallsActivity extends AppCompatActivity{
 //
 //        audioManager.setSpeakerphoneOn(false);
 
+    }
+
+    public void transfer(View view){
+
+            if(!isHold) {
+
+                SipServiceCommand.toggleCallHold(this, serviceCommunicator.uri, callID1);
+
+                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+
+                Toast.makeText(this, "Holding before transfer !",
+                        Toast.LENGTH_LONG).show();
+
+                SipServiceCommand.makeCall(this, serviceCommunicator.uri, number.getText().toString(), true);
+            }
+            else if(isHold){
+
+                SipServiceCommand.attendedTransferCall(this, serviceCommunicator.uri, callID1, callID2);
+
+                Toast.makeText(this, "Making attended transfer !",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            isHold = !isHold;
     }
 
     BroadcastEventReceiver mReceiver = new BroadcastEventReceiver()
@@ -256,7 +269,12 @@ public class CallsActivity extends AppCompatActivity{
             answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
             hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.red)));
             hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
-            Toast.makeText(context, "Call State Disconnected", Toast.LENGTH_SHORT).show();
+
+            CallsActivity.this.accountID = accountID;
+            CallsActivity.this.callID1 = callID;
+            CallsActivity.this.displayName = displayName;
+            CallsActivity.this.remoteUri = remoteUri;
+            CallsActivity.this.isVideo = isVideo;
 
         }
 
@@ -274,7 +292,7 @@ public class CallsActivity extends AppCompatActivity{
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
 
              CallsActivity.this.accountID = accountID;
-             CallsActivity.this.callID = callID;
+             CallsActivity.this.callID1 = callID;
              CallsActivity.this.displayName = displayName;
              CallsActivity.this.remoteUri = remoteUri;
              CallsActivity.this.isVideo = isVideo;
@@ -286,7 +304,13 @@ public class CallsActivity extends AppCompatActivity{
         public void onOutgoingCall (String accountID,int callID, String number,boolean isVideo,
         boolean isVideoConference, boolean isTransfer){
         super.onOutgoingCall(accountID, callID, number, isVideo, isVideoConference, isTransfer);
-        //CallActivity.startActivityOut(getReceiverContext(), accountID, callID, number, isVideo, isVideoConference);
+
+            CallsActivity.this.accountID = accountID;
+            CallsActivity.this.callID2 = callID;
+            CallsActivity.this.displayName = displayName;
+            CallsActivity.this.remoteUri = remoteUri;
+            CallsActivity.this.isVideo = isVideo;
+
         }
     };
 }

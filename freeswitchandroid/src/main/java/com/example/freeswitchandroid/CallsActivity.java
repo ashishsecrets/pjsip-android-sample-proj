@@ -264,7 +264,7 @@ public class CallsActivity extends AppCompatActivity{
 
         }
 
-        if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED){
+        if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
             call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
             answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
             hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.red)));

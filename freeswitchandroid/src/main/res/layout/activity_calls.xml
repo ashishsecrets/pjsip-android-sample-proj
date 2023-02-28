@@ -16,10 +16,25 @@
         android:layout_height="400dp"
         android:paddingBottom="10dp"/>
 
+    <EditText
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:hint="Enter Number"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
     <Button
         android:id="@+id/call"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/light_blue_600"
         android:onClick="call"
         android:text="Call" />
 
@@ -27,20 +42,53 @@
         android:id="@+id/answer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/teal_700"
         android:onClick="answer"
         android:text="Answer" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
 
     <Button
         android:id="@+id/hangup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:backgroundTint="@color/red"
         android:onClick="hangUp"
         android:text="Hang up" />
+
+        <Button
+            android:id="@+id/hold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:backgroundTint="@color/grey"
+            android:onClick="hold"
+            android:text="Hold" />
+
+        <Button
+            android:id="@+id/transfer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="transfer"
+            android:layout_margin="5dp"
+            android:text="transfer" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/showLogs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="showLogsOnPhone"
+        android:backgroundTint="@color/black_overlay"
         android:text="Logs" />
 </androidx.appcompat.widget.LinearLayoutCompat>

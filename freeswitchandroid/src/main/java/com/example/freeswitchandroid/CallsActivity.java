@@ -185,8 +185,8 @@ public class CallsActivity extends AppCompatActivity{
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-            answer.setTextColor(context.getResources().getColor(R.color.black));
-            hangup.setTextColor(context.getResources().getColor(R.color.black));
+            answer.setBackgroundColor(context.getResources().getColor(R.color.black));
+            hangup.setBackgroundColor(context.getResources().getColor(R.color.black));
 
         }
 //        Logger.debug(LOG_TAG, "onCallState - accountID: " + getValue(getReceiverContext(), accountID) +

@@ -27,8 +27,8 @@ import org.pjsip.pjsua2.pjsip_status_code;
 public class ServiceCommunicator {
 
     String uri;
-    String username;
-    String password;
+    String username = "";
+    String password = "";
     SipAccountData sipAccountData;
     String hostname = "david380.fs1.pressone.co";
 
@@ -46,18 +46,22 @@ public class ServiceCommunicator {
     public void startService(ActivityManager activityManager, Context context){
         if(!foregroundServiceRunning(activityManager)) {
             sipAccountData = new SipAccountData();
-            //EditText editText = (EditText) findViewById(R.id.number);
-            //username = "5294241166";
-            username = "1911899877";
+            if(username.equals("5294241166")){
+                password = "3Daet((t";
+            }
+            else if(username.equals("1911899877")){
+                password = "(jZ@52Ca";
+            }
+            else{
+                username = "9037217611";
+                password = "^^3ZAasx";
+            }
+
 
             sipAccountData.setUsername(username);
 
             sipAccountData.setRealm(hostname);
 
-           // EditText editText2 = (EditText) findViewById(R.id.password);
-
-            //password = "3Daet((t";
-            password = "(jZ@52Ca";
             sipAccountData.setPassword(password);
             sipAccountData.setHost(hostname);
             sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);

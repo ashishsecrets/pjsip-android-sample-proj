@@ -16,6 +16,8 @@ import in.aabhasjindal.otptextview.OtpTextView;
 
 public class OtpActivity extends AppCompatActivity {
 
+    String text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,10 @@ public class OtpActivity extends AppCompatActivity {
 
         OtpTextView otpTextView;
         otpTextView = findViewById(R.id.otp_view);
+
+        Intent i = getIntent();
+        text = i.getStringExtra( "username" );
+
         otpTextView.setOtpListener(new OTPListener() {
             @Override
             public void onInteractionListener() {
@@ -49,6 +55,7 @@ public class OtpActivity extends AppCompatActivity {
 
     public void otpVerifyClick(View view) {
         Intent intent = new Intent(OtpActivity.this, CallsActivity.class);
+        intent.putExtra ( "username", text);
         startActivity(intent);
     }
 

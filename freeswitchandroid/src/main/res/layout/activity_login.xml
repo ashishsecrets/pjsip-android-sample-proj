@@ -30,6 +30,12 @@
             android:layout_marginTop="20dp"
             app:srcCompat="@drawable/welcome_msg2" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter your username below in number without + and without starting 0.(Test App)"
+            android:paddingTop="5dp"/>
+
 
 
     <ImageView

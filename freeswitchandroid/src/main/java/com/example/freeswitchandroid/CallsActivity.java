@@ -55,7 +55,7 @@ public class CallsActivity extends AppCompatActivity{
     Button transfer;
 
     TextView tv;
-
+    EditText number;
     Context context;
     boolean isHold = false;
 
@@ -66,11 +66,16 @@ public class CallsActivity extends AppCompatActivity{
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Context context = this;
         SipServiceCommand.enableSipDebugLogging(true);
+
+        Intent i = getIntent();
+        String username = i.getStringExtra ( "username" );
+
         serviceCommunicator = new ServiceCommunicator();
+        serviceCommunicator.username = username;
         serviceCommunicator.startService(activityManager, context);
         tv = (TextView) findViewById(R.id.textView1);
         tv.setMovementMethod(new ScrollingMovementMethod());
-
+        number = findViewById(R.id.number);
         mReceiver.register(this);
 
         this.context = this;
@@ -122,14 +127,7 @@ public class CallsActivity extends AppCompatActivity{
 
     public void call(View view){
 
-        String numberToCall = null;
-
-        if(serviceCommunicator.username.equals("5294241166")){
-            numberToCall = "1911899877";
-        }
-        else if(serviceCommunicator.username.equals("1911899877")){
-            numberToCall = "09056925668";
-        }
+        String numberToCall = number.getText().toString();
 
 
         SipServiceCommand.makeCall(this, serviceCommunicator.uri, "sip:" + numberToCall + "@" + serviceCommunicator.hostname, false, false, false);

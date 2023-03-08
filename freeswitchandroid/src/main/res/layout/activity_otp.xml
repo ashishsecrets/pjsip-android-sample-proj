@@ -89,7 +89,7 @@
             app:hide_otp_drawable="@drawable/oval"
             app:hide_otp="true"
             app:length="6"
-            app:otp="12345"/>
+            app:otp="123456"/>
 
 
         <ImageButton

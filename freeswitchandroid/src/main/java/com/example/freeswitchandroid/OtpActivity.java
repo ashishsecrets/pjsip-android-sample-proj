@@ -54,7 +54,7 @@ public class OtpActivity extends AppCompatActivity {
     }
 
     public void otpVerifyClick(View view) {
-        Intent intent = new Intent(OtpActivity.this, CallsActivity.class);
+        Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
         intent.putExtra ( "username", text);
         startActivity(intent);
     }

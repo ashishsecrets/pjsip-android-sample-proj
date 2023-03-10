@@ -165,7 +165,7 @@ public class CallsActivity extends AppCompatActivity{
 
 
         SipServiceCommand.makeCall(this, serviceCommunicator.uri, "sip:" + numberToCall + "@" + serviceCommunicator.hostname, false, false, false);
-        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_900)));
+//        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_900)));
         Toast.makeText(this, "Making a call !",
                 Toast.LENGTH_LONG).show();
 
@@ -180,8 +180,8 @@ public class CallsActivity extends AppCompatActivity{
 
         SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
 
-        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
-        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.red)));
+//        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
+//        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.red)));
 
         Toast.makeText(this, "Receiving a call !",
                 Toast.LENGTH_LONG).show();
@@ -199,9 +199,9 @@ public class CallsActivity extends AppCompatActivity{
         Toast.makeText(this, "Hanging up !",
                 Toast.LENGTH_LONG).show();
 
-        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
-        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_A200)));
-        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_600)));
+//        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
+//        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_A200)));
+//        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_600)));
 
 //        new CountDownTimer(1000, 1000) {
 //
@@ -301,19 +301,19 @@ public class CallsActivity extends AppCompatActivity{
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-            call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
-            answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
-            hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_A200)));
-            hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
+//            call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
+//            answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
+//            hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_A200)));
+//            hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
             Toast.makeText(context, "Call State Disconnected", Toast.LENGTH_SHORT).show();
 
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
-            call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
-            answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
-            hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.red)));
-            hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
+//            call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
+//            answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
+//            hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.red)));
+//            hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
 
             CallsActivity.this.accountID = accountID;
             CallsActivity.this.callID1 = callID;
@@ -342,7 +342,7 @@ public class CallsActivity extends AppCompatActivity{
              CallsActivity.this.remoteUri = remoteUri;
              CallsActivity.this.isVideo = isVideo;
 
-            answer.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));
+            //answer.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));
     }
 
         @Override

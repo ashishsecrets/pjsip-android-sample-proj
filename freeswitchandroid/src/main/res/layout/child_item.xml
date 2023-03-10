@@ -20,7 +20,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/empty_frame"
+                    android:src="@drawable/frame"
                     android:background="@drawable/plain_bg_caller_blue" />
                 <TextView
                     android:id="@+id/icon_text"
@@ -30,7 +30,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:fontFamily="monospace"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:text="SK"
                     android:textSize="18sp" />
             </RelativeLayout>

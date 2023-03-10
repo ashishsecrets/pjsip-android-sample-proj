@@ -68,7 +68,7 @@ public class CallsActivity extends AppCompatActivity{
         mReceiver.register(this);
 
         this.context = this;
-        call = findViewById(R.id.call);
+        call = findViewById(R.id.make);
         answer = findViewById(R.id.answer);
         hangup = findViewById(R.id.hangup);
         hold = findViewById(R.id.hold);

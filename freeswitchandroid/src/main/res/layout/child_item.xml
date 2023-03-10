@@ -6,51 +6,74 @@
     android:layout_margin="5dp">
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:background="@drawable/rectangle"
-            android:orientation="horizontal"
-            android:padding="2dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/rectangle"
+        android:orientation="horizontal"
+        android:padding="7dp">
+
+        <RelativeLayout
+            android:id="@+id/img_child_item"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:id="@+id/img_child_item"
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/plain_bg_caller_blue"
+                android:src="@drawable/frame" />
+
+            <TextView
+                android:id="@+id/icon_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="monospace"
+                android:text="SK"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toEndOf="@id/img_child_item"
+            android:orientation="vertical">
+
+            <!--Text in the CardView-->
+            <TextView
+                android:id="@+id/child_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:text="+91 888 434 0404"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/frame"
-                    android:background="@drawable/plain_bg_caller_blue" />
-                <TextView
-                    android:id="@+id/icon_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    android:fontFamily="monospace"
-                    android:visibility="gone"
-                    android:text="SK"
-                    android:textSize="18sp" />
-            </RelativeLayout>
+                    android:padding="2dp"
+                    android:src="@drawable/outgoing" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_toEndOf="@id/img_child_item"
-                android:padding="12dp"
-                android:orientation="vertical">
-
-                <!--Text in the CardView-->
                 <TextView
-                    android:id="@+id/child_item_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    />
-            </LinearLayout>
+                    android:gravity="end"
+                    android:padding="2dp"
+                    android:text="10:45 pm" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>
 

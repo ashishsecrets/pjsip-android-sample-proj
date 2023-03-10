@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,17 +37,29 @@ public class CallsActivity extends AppCompatActivity{
     String remoteUri;
     boolean isVideo;
 
-    Button answer;
+    ImageButton answer;
 
-    Button hangup;
-    Button call;
-    Button hold;
-    Button transfer;
-
-    TextView tv;
+    ImageButton hangup;
+    ImageButton hold;
+    ImageButton transfer;
     EditText number;
     Context context;
     boolean isHold = false;
+
+    /////////////// Adding Final UI Items ////////////////
+
+    //dial_pad1 dial pad to dial numbers - linear layout //Visibility Toggle
+    // linearLayout1 for ongoing call time and linearLayout2 for call options //Visibility Toggle
+    // dtmf_keypad linear layout //Visibility Toggle
+    // call_options linear layout //Visibility Toggle
+    // call_horizontal_layout linear layout //Visibility Toggle
+    ImageButton deleteBtn;
+    TextView callTime; //Visibility Toggle
+    TextView tvName; //Caller's name
+    TextView tvNumber; //Caller's number
+    ImageButton muteBtn; //Highlight on press toggle
+    ImageButton speakerBtn; //Highlight on press toggle
+    ImageButton keypadBtn; //Highlight on press toggle
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +75,21 @@ public class CallsActivity extends AppCompatActivity{
         serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.username = username;
         serviceCommunicator.startService(activityManager, context);
-        tv = (TextView) findViewById(R.id.textView1);
-        tv.setMovementMethod(new ScrollingMovementMethod());
         number = findViewById(R.id.number);
         mReceiver.register(this);
 
         this.context = this;
-        call = findViewById(R.id.make);
-        answer = findViewById(R.id.answer);
-        hangup = findViewById(R.id.hangup);
+        answer = findViewById(R.id.call);
+        hangup = findViewById(R.id.hangUp);
         hold = findViewById(R.id.hold);
         transfer = findViewById(R.id.transfer);
+        deleteBtn = findViewById(R.id.delete);
+        callTime = findViewById(R.id.call_time);
+        tvName = findViewById(R.id.tv_name);
+        tvNumber = findViewById(R.id.tv_number);
+        muteBtn = findViewById(R.id.mute);
+        speakerBtn = findViewById(R.id.speaker);
+        keypadBtn = findViewById(R.id.keypad);
 
     }
 
@@ -83,35 +100,63 @@ public class CallsActivity extends AppCompatActivity{
     }
 
 
-    public void showLogsOnPhone(View view){
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+//    public void showLogsOnPhone(View view){
+//        try {
+//            Process process = Runtime.getRuntime().exec("logcat -d");
+//            BufferedReader bufferedReader = new BufferedReader(
+//                    new InputStreamReader(process.getInputStream()));
+//
+//            StringBuilder log = new StringBuilder();
+//            String line = "";
+//            while ((line = bufferedReader.readLine()) != null) {
+//                log.append(line);
+//            }
+//            addMessage(String.valueOf(log));
+//        } catch (IOException e) {
+//            // Handle Exception
+//        }
+//    }
+//
+//    private void addMessage(String msg) {
+//        // append the new string
+//        tv.append(msg + "\n");
+//        // find the amount we need to scroll.  This works by
+//        // asking the TextView's internal layout for the position
+//        // of the final line and then subtracting the TextView's height
+//        final int scrollAmount = tv.getLayout().getLineTop(tv.getLineCount()) - tv.getHeight();
+//        // if there is no need to scroll, scrollAmount will be <=0
+//        if (scrollAmount > 0)
+//            tv.scrollTo(0, scrollAmount);
+//        else
+//            tv.scrollTo(0, 0);
+//    }
 
-            StringBuilder log = new StringBuilder();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                log.append(line);
-            }
-            addMessage(String.valueOf(log));
-        } catch (IOException e) {
-            // Handle Exception
-        }
+    /////////////////////////////////////// UI Functions /////////////////////////////////////////////////
+
+    public void onePressed(View v){
+
     }
 
-    private void addMessage(String msg) {
-        // append the new string
-        tv.append(msg + "\n");
-        // find the amount we need to scroll.  This works by
-        // asking the TextView's internal layout for the position
-        // of the final line and then subtracting the TextView's height
-        final int scrollAmount = tv.getLayout().getLineTop(tv.getLineCount()) - tv.getHeight();
-        // if there is no need to scroll, scrollAmount will be <=0
-        if (scrollAmount > 0)
-            tv.scrollTo(0, scrollAmount);
-        else
-            tv.scrollTo(0, 0);
+    public void deleteBtnPressed(View v){
+
+    }
+
+    //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
+
+    public void terminate(View v){
+
+    }
+
+    public void speaker(View v){
+
+    }
+
+    public void mute(View v){
+
+    }
+
+    public void keypad(View v){
+
     }
 
     public void call(View view){

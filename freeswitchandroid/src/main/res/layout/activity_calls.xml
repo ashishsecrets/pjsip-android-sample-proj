@@ -37,8 +37,10 @@
             android:background="@null"/>
 
         <ImageButton
+            android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:onClick="deleteBtnPressed"
             android:background="@null"
             android:src="@drawable/delete"/>
 
@@ -424,7 +426,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@drawable/active_call_btm_bg"
         android:orientation="vertical">
         
@@ -519,7 +521,7 @@
         android:id="@+id/call_horizontal_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="horizontal">
 
         <ImageButton
@@ -528,7 +530,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="25dp"
             android:layout_weight="1"
-            android:onClick="call"
+            android:onClick="answer"
             android:src="@drawable/make_call"
             android:background="@null" />
 

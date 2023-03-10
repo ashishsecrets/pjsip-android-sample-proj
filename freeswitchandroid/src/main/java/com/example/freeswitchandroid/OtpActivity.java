@@ -25,12 +25,7 @@ public class OtpActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
-        actionBar.setTitle("");
-        actionBar.show();
+        actionBar.hide();
 
         OtpTextView otpTextView;
         otpTextView = findViewById(R.id.otp_view);

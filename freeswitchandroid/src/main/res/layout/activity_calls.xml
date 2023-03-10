@@ -13,7 +13,7 @@
         android:id="@+id/dial_pad1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="vertical">
 
     <LinearLayout
@@ -183,7 +183,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="100dp"
         android:layout_weight="1"
-        android:visibility="visible"
+        android:visibility="gone"
         android:orientation="vertical">
 
 
@@ -540,7 +540,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="25dp"
             android:layout_weight="1"
-            android:visibility="visible"
+            android:visibility="gone"
             android:onClick="hangup"
             android:src="@drawable/hang_up_call"
             android:background="@null" />

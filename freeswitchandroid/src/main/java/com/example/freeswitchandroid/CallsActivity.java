@@ -2,12 +2,14 @@ package com.example.freeswitchandroid;
 
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,14 @@ public class CallsActivity extends AppCompatActivity{
     // dtmf_keypad linear layout //Visibility Toggle
     // call_options linear layout //Visibility Toggle
     // call_horizontal_layout linear layout //Visibility Toggle
+
+    LinearLayout dialPad1Layout;
+    LinearLayout linearLayout1;
+    LinearLayout linearLayout2;
+    LinearLayout dtmfKeyPadLayout;
+    LinearLayout callOptionsLayout;
+    LinearLayout callHorizontalLayout;
+
     ImageButton deleteBtn;
     TextView callTime; //Visibility Toggle
     TextView tvName; //Caller's name
@@ -65,6 +76,13 @@ public class CallsActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
+
+        // Removing action bar
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.hide();
+
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Context context = this;
         SipServiceCommand.enableSipDebugLogging(true);
@@ -79,6 +97,7 @@ public class CallsActivity extends AppCompatActivity{
         mReceiver.register(this);
 
         this.context = this;
+
         answer = findViewById(R.id.call);
         hangup = findViewById(R.id.hangUp);
         hold = findViewById(R.id.hold);
@@ -90,7 +109,22 @@ public class CallsActivity extends AppCompatActivity{
         muteBtn = findViewById(R.id.mute);
         speakerBtn = findViewById(R.id.speaker);
         keypadBtn = findViewById(R.id.keypad);
+        dialPad1Layout = findViewById(R.id.dial_pad1);
+        linearLayout1 = findViewById(R.id.linearLayout1);
+        linearLayout2 = findViewById(R.id.linearLayout2);
+        dtmfKeyPadLayout = findViewById(R.id.dtmf_keypad);
+        callOptionsLayout = findViewById(R.id.call_options);
+        callHorizontalLayout = findViewById(R.id.call_horizontal_layout);
 
+        //Add default visibility at the start of activity.
+
+         dialPad1Layout.setVisibility(View.VISIBLE);
+         linearLayout1.setVisibility(View.GONE);
+         linearLayout2.setVisibility(View.GONE);
+         dtmfKeyPadLayout.setVisibility(View.GONE);
+         callOptionsLayout.setVisibility(View.GONE);
+         callHorizontalLayout.setVisibility(View.VISIBLE);
+         answer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -99,37 +133,6 @@ public class CallsActivity extends AppCompatActivity{
         mReceiver.unregister(this);
     }
 
-
-//    public void showLogsOnPhone(View view){
-//        try {
-//            Process process = Runtime.getRuntime().exec("logcat -d");
-//            BufferedReader bufferedReader = new BufferedReader(
-//                    new InputStreamReader(process.getInputStream()));
-//
-//            StringBuilder log = new StringBuilder();
-//            String line = "";
-//            while ((line = bufferedReader.readLine()) != null) {
-//                log.append(line);
-//            }
-//            addMessage(String.valueOf(log));
-//        } catch (IOException e) {
-//            // Handle Exception
-//        }
-//    }
-//
-//    private void addMessage(String msg) {
-//        // append the new string
-//        tv.append(msg + "\n");
-//        // find the amount we need to scroll.  This works by
-//        // asking the TextView's internal layout for the position
-//        // of the final line and then subtracting the TextView's height
-//        final int scrollAmount = tv.getLayout().getLineTop(tv.getLineCount()) - tv.getHeight();
-//        // if there is no need to scroll, scrollAmount will be <=0
-//        if (scrollAmount > 0)
-//            tv.scrollTo(0, scrollAmount);
-//        else
-//            tv.scrollTo(0, 0);
-//    }
 
     /////////////////////////////////////// UI Functions /////////////////////////////////////////////////
 
@@ -157,17 +160,21 @@ public class CallsActivity extends AppCompatActivity{
 
     public void keypad(View v){
 
+
+
     }
 
-    public void call(View view){
+    public void call(){
 
         String numberToCall = number.getText().toString();
 
+        if(!numberToCall.isEmpty()) {
+            SipServiceCommand.makeCall(this, serviceCommunicator.uri, "sip:" + numberToCall + "@" + serviceCommunicator.hostname, false, false, false);
+            Toast.makeText(this, "Making a call !",
+                    Toast.LENGTH_LONG).show();
+        }
+        //        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_900)));
 
-        SipServiceCommand.makeCall(this, serviceCommunicator.uri, "sip:" + numberToCall + "@" + serviceCommunicator.hostname, false, false, false);
-//        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_900)));
-        Toast.makeText(this, "Making a call !",
-                Toast.LENGTH_LONG).show();
 
 //        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 //
@@ -358,4 +365,37 @@ public class CallsActivity extends AppCompatActivity{
 
         }
     };
+
+
+
+//    public void showLogsOnPhone(View view){
+//        try {
+//            Process process = Runtime.getRuntime().exec("logcat -d");
+//            BufferedReader bufferedReader = new BufferedReader(
+//                    new InputStreamReader(process.getInputStream()));
+//
+//            StringBuilder log = new StringBuilder();
+//            String line = "";
+//            while ((line = bufferedReader.readLine()) != null) {
+//                log.append(line);
+//            }
+//            addMessage(String.valueOf(log));
+//        } catch (IOException e) {
+//            // Handle Exception
+//        }
+//    }
+//
+//    private void addMessage(String msg) {
+//        // append the new string
+//        tv.append(msg + "\n");
+//        // find the amount we need to scroll.  This works by
+//        // asking the TextView's internal layout for the position
+//        // of the final line and then subtracting the TextView's height
+//        final int scrollAmount = tv.getLayout().getLineTop(tv.getLineCount()) - tv.getHeight();
+//        // if there is no need to scroll, scrollAmount will be <=0
+//        if (scrollAmount > 0)
+//            tv.scrollTo(0, scrollAmount);
+//        else
+//            tv.scrollTo(0, 0);
+//    }
 }

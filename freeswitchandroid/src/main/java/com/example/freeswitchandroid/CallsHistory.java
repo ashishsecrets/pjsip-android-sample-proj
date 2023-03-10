@@ -1,24 +1,45 @@
 package com.example.freeswitchandroid;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
+
+import org.pjsip.pjsua2.Call;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CallsHistory extends AppCompatActivity {
 
+    String text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls_history);
+
+        // Setting Screen Title
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setTitle("Calls");
+        actionBar.show();
+
+        Intent i = getIntent();
+        text = i.getStringExtra( "username" );
 
         RecyclerView
                 ParentRecyclerViewItem
@@ -92,6 +113,12 @@ public class CallsHistory extends AppCompatActivity {
         ChildItemList2.add(new ChildItem("+91 941 629 0699"));
 
         return ChildItemList2;
+    }
+
+    public void keypadPress(View v){
+        Intent intent = new Intent(CallsHistory.this, CallsActivity.class);
+        intent.putExtra ( "username", text);
+        startActivity(intent);
     }
 
 }

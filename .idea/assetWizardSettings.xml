@@ -296,8 +296,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="rejected" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/rejected.svg" />
+                            <entry key="outputName" value="make_call" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/make_call.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -1,94 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal|center_vertical"
+    android:background="@drawable/calls_act_bg"
+    android:gravity="bottom"
+    android:layout_centerHorizontal="true"
+    android:padding="20dp"
     tools:context=".CallsActivity">
 
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:scrollbars = "vertical"
-        android:layout_height="400dp"
-        android:paddingBottom="10dp"/>
-
-    <EditText
-        android:id="@+id/number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="Enter Number"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:layout_margin="8dp"
+        android:gravity="right"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/call"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/light_blue_600"
-        android:onClick="call"
-        android:text="Call" />
+        <EditText
+            android:id="@+id/number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:textSize="25sp"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/urbanist"
+            android:text="08906587667777"
+            android:background="@null"/>
 
-    <Button
-        android:id="@+id/answer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/teal_700"
-        android:onClick="answer"
-        android:text="Answer" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:src="@drawable/delete"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/hangup"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_margin="5dp"
-        android:backgroundTint="@color/light_blue_A200"
-        android:onClick="hangUp"
-        android:text="Hang up" />
+        android:src="@drawable/one"
+        android:background="@null"
+        android:onClick="onePressed"/>
 
-        <Button
-            android:id="@+id/hold"
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/two"
+        android:background="@null"
+        android:onClick="twoPressed"/>
+
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:backgroundTint="@color/grey"
-            android:onClick="hold"
-            android:text="Hold" />
+            android:src="@drawable/three"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="threePressed"/>
 
-        <Button
-            android:id="@+id/transfer"
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:orientation="horizontal">
+
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="transfer"
-            android:layout_margin="5dp"
-            android:text="transfer" />
+            android:layout_weight="1"
+            android:src="@drawable/four"
+            android:background="@null"
+            android:onClick="fourPressed"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/five"
+            android:background="@null"
+            android:onClick="fivePressed"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/six"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="sixPressed"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/seven"
+            android:background="@null"
+            android:onClick="sevenPressed"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/eight"
+            android:background="@null"
+            android:onClick="eightPressed"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/nine"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="ninePressed"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/star"
+            android:background="@null"
+            android:onClick="starPressed"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/zero"
+            android:background="@color/white"
+            android:onClick="zeroPressed"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hash"
+            android:layout_weight="1"
+            android:background="@null"
+            android:onClick="hashPressed"/>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/showLogs"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="showLogsOnPhone"
-        android:backgroundTint="@color/black_overlay"
-        android:text="Logs" />
+        android:layout_margin="25dp"
+        android:layout_gravity="center"
+        android:src="@drawable/make_call"
+        android:background="@null" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>

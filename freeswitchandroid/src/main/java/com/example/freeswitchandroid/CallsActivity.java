@@ -159,9 +159,29 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     public void keypad(View v){
+        if(dtmfKeyPadLayout.getVisibility() == View.GONE) {
 
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.VISIBLE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
 
+            keypadBtn.setImageResource(R.drawable.keypad_active);
+        }
+        else{
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
 
+            keypadBtn.setImageResource(R.drawable.keypad);
+        }
     }
 
     public void call(){
@@ -185,13 +205,24 @@ public class CallsActivity extends AppCompatActivity{
 
     public void answer(View view){
 
-        SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
+        if(dialPad1Layout.getVisibility() == View.VISIBLE){
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+
+            //call();
+        }
+
+   ////     SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
 
 //        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
 //        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.red)));
 
-        Toast.makeText(this, "Receiving a call !",
-                Toast.LENGTH_LONG).show();
+   ////     Toast.makeText(this, "Receiving a call !", Toast.LENGTH_LONG).show();
 
 //        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 //

@@ -560,7 +560,7 @@
         android:orientation="vertical"
         android:background="@drawable/overlay_transfer"
         android:layout_marginTop="-400dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="400dp">

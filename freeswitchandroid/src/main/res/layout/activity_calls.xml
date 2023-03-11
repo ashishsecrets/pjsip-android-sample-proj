@@ -555,16 +555,31 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/overlay_transfer_layout"
         android:orientation="vertical"
         android:background="@drawable/overlay_transfer"
         android:layout_marginTop="-400dp"
         android:visibility="visible"
+        android:gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="400dp">
 
-    </FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transfer_recycler"
+            android:layout_width="match_parent"
+            android:padding="25dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/transfer_final_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/final_transfer_btn"
+            android:background="@null"/>
+
+
+    </LinearLayout>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

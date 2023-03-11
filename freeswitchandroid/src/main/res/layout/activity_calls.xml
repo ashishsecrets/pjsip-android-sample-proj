@@ -547,7 +547,7 @@
             android:layout_margin="25dp"
             android:layout_weight="1"
             android:visibility="gone"
-            android:onClick="hangup"
+            android:onClick="hangUp"
             android:src="@drawable/hang_up_call"
             android:background="@null" />
 

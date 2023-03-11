@@ -143,6 +143,98 @@ public class CallsActivity extends AppCompatActivity{
 
     }
 
+    public void twoPressed(View v){
+
+    }
+
+    public void threePressed(View v){
+
+    }
+
+    public void fourPressed(View v){
+
+    }
+
+    public void fivePressed(View v){
+
+    }
+
+    public void sixPressed(View v){
+
+    }
+
+    public void sevenPressed(View v){
+
+    }
+
+    public void eightPressed(View v){
+
+    }
+
+    public void ninePressed(View v){
+
+    }
+
+    public void zeroPressed(View v){
+
+    }
+
+    public void starPressed(View v){
+
+    }
+
+    public void hashPressed(View v){
+
+    }
+
+    public void dtmf1Pressed(View v){
+
+    }
+
+    public void dtmf2Pressed(View v){
+
+    }
+
+    public void dtmf3Pressed(View v){
+
+    }
+
+    public void dtmf4Pressed(View v){
+
+    }
+
+    public void dtmf5Pressed(View v){
+
+    }
+
+    public void dtmf6Pressed(View v){
+
+    }
+
+    public void dtmf7Pressed(View v){
+
+    }
+
+    public void dtmf8Pressed(View v){
+
+    }
+
+    public void dtmf9Pressed(View v){
+
+    }
+
+    public void dtmf0Pressed(View v){
+
+    }
+
+    public void dtmfStarPressed(View v){
+
+    }
+
+    public void dtmfHashPressed(View v){
+
+    }
+
     public void deleteBtnPressed(View v){
 
     }

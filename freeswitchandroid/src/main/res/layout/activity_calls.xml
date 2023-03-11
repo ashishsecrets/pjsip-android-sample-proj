@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="20dp"
-        android:gravity="center"
+        android:gravity="bottom"
         android:orientation="vertical">
 
     <LinearLayout
@@ -573,8 +573,10 @@
 
         <ImageButton
             android:id="@+id/transfer_final_btn"
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
             android:src="@drawable/final_transfer_btn"
             android:background="@null"/>
 

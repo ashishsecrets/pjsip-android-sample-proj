@@ -126,7 +126,8 @@ public class CallsActivity extends AppCompatActivity{
          dtmfKeyPadLayout.setVisibility(View.GONE);
          callOptionsLayout.setVisibility(View.GONE);
          callHorizontalLayout.setVisibility(View.VISIBLE);
-         answer.setVisibility(View.VISIBLE);
+         overlayTransferLayout.setVisibility(View.GONE);
+        answer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -314,7 +315,7 @@ public class CallsActivity extends AppCompatActivity{
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
             dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.VISIBLE);
+            callOptionsLayout.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
 

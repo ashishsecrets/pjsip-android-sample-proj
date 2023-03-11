@@ -64,6 +64,8 @@ public class CallsActivity extends AppCompatActivity{
     LinearLayout callOptionsLayout;
     LinearLayout callHorizontalLayout;
 
+    LinearLayout overlayTransferLayout;
+
     ImageButton deleteBtn;
     TextView callTime; //Visibility Toggle
     TextView tvName; //Caller's name
@@ -115,7 +117,7 @@ public class CallsActivity extends AppCompatActivity{
         dtmfKeyPadLayout = findViewById(R.id.dtmf_keypad);
         callOptionsLayout = findViewById(R.id.call_options);
         callHorizontalLayout = findViewById(R.id.call_horizontal_layout);
-
+        overlayTransferLayout = findViewById(R.id.overlay_transfer_layout);
         //Add default visibility at the start of activity.
 
          dialPad1Layout.setVisibility(View.VISIBLE);
@@ -295,26 +297,50 @@ public class CallsActivity extends AppCompatActivity{
 
     public void transfer(View view){
 
-            if(!isHold) {
+        if(overlayTransferLayout.getVisibility() == View.GONE) {
 
-                SipServiceCommand.toggleCallHold(this, serviceCommunicator.uri, callID1);
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+            overlayTransferLayout.setVisibility(View.VISIBLE);
 
-                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+        }
+        else{
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
 
-                Toast.makeText(this, "Holding before transfer !",
-                        Toast.LENGTH_LONG).show();
+            overlayTransferLayout.setVisibility(View.GONE);
+        }
 
-                SipServiceCommand.makeCall(this, serviceCommunicator.uri, number.getText().toString(), true);
-            }
-            else if(isHold){
-
-                SipServiceCommand.attendedTransferCall(this, serviceCommunicator.uri, callID1, callID2);
-
-                Toast.makeText(this, "Making attended transfer !",
-                        Toast.LENGTH_LONG).show();
-            }
-
-            isHold = !isHold;
+//            if(!isHold) {
+//
+//                SipServiceCommand.toggleCallHold(this, serviceCommunicator.uri, callID1);
+//
+//                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+//
+//                Toast.makeText(this, "Holding before transfer !",
+//                        Toast.LENGTH_LONG).show();
+//
+//                SipServiceCommand.makeCall(this, serviceCommunicator.uri, number.getText().toString(), true);
+//            }
+//            else if(isHold){
+//
+//                SipServiceCommand.attendedTransferCall(this, serviceCommunicator.uri, callID1, callID2);
+//
+//                Toast.makeText(this, "Making attended transfer !",
+//                        Toast.LENGTH_LONG).show();
+//            }
+//
+//            isHold = !isHold;
     }
 
     BroadcastEventReceiver mReceiver = new BroadcastEventReceiver()

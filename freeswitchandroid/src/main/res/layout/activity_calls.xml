@@ -39,7 +39,6 @@
             android:layout_gravity="center_vertical"
             android:fontFamily="@font/urbanist"
             android:inputType="phone"
-            android:text="08906587667777"
             android:background="@null"/>
 
         <ImageButton
@@ -468,7 +467,7 @@
                 android:id="@+id/hold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="transfer"
+                android:onClick="hold"
                 android:layout_weight="1"
                 android:padding="6dp"
                 android:gravity="center"

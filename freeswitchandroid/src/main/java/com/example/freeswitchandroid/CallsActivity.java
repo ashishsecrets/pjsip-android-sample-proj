@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -140,51 +141,51 @@ public class CallsActivity extends AppCompatActivity{
     /////////////////////////////////////// UI Functions /////////////////////////////////////////////////
 
     public void onePressed(View v){
-
+        number.append("1");
     }
 
     public void twoPressed(View v){
-
+        number.append("2");
     }
 
     public void threePressed(View v){
-
+        number.append("3");
     }
 
     public void fourPressed(View v){
-
+        number.append("4");
     }
 
     public void fivePressed(View v){
-
+        number.append("5");
     }
 
     public void sixPressed(View v){
-
+        number.append("6");
     }
 
     public void sevenPressed(View v){
-
+        number.append("7");
     }
 
     public void eightPressed(View v){
-
+        number.append("8");
     }
 
     public void ninePressed(View v){
-
+        number.append("9");
     }
 
     public void zeroPressed(View v){
-
+        number.append("0");
     }
 
     public void starPressed(View v){
-
+        number.append("*");
     }
 
     public void hashPressed(View v){
-
+        number.append("#");
     }
 
     public void dtmf1Pressed(View v){
@@ -236,20 +237,49 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     public void deleteBtnPressed(View v){
-
+        if (number.getText().length() > 0) {
+            number.getText().delete(number.getText().length() - 1, number.getText().length());
+        }
     }
 
     //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
 
     public void terminate(View v){
 
+        SipServiceCommand.hangUpActiveCalls(this, serviceCommunicator.uri);
+
+        Toast.makeText(this, "Hanging up !",
+                Toast.LENGTH_LONG).show();
+
     }
 
-    public void speaker(View v){
+    public void speaker(View v) {
+
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if (!audioManager.isSpeakerphoneOn()) {
+            audioManager.setSpeakerphoneOn(true);
+            speakerBtn.setImageResource(R.drawable.speaker_active);
+        }
+        else{
+            audioManager.setSpeakerphoneOn(false);
+            speakerBtn.setImageResource(R.drawable.speaker);
+        }
 
     }
 
     public void mute(View v){
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if(!audioManager.isMicrophoneMute()) {
+            audioManager.setMicrophoneMute(true);
+            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), true);
+        }
+        else{
+            audioManager.setMicrophoneMute(false);
+            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), false);
+        }
+
 
     }
 
@@ -288,13 +318,6 @@ public class CallsActivity extends AppCompatActivity{
             Toast.makeText(this, "Making a call !",
                     Toast.LENGTH_LONG).show();
         }
-        //        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_900)));
-
-
-//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-//
-//        audioManager.setSpeakerphoneOn(false);
-
 
     }
 
@@ -309,47 +332,30 @@ public class CallsActivity extends AppCompatActivity{
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
 
-            //call();
+            call();
+        }
+        else{
+
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+
+            SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
+            Toast.makeText(this, "Receiving a call !", Toast.LENGTH_LONG).show();
+
         }
 
-   ////     SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
 
-//        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
-//        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.red)));
-
-   ////     Toast.makeText(this, "Receiving a call !", Toast.LENGTH_LONG).show();
-
-//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-//
-//        audioManager.setSpeakerphoneOn(false);
 
     }
 
     public void hangUp(View view){
 
-        SipServiceCommand.hangUpActiveCalls(this, serviceCommunicator.uri);
 
-        Toast.makeText(this, "Hanging up !",
-                Toast.LENGTH_LONG).show();
-
-//        answer.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.teal_700)));
-//        hangup.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_A200)));
-//        call.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.light_blue_600)));
-
-//        new CountDownTimer(1000, 1000) {
-//
-//            public void onTick(long millisUntilFinished) {
-//            }
-//
-//            public void onFinish() {
-//                hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.red)));
-//            }
-//
-//        }.start();
-
-//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-//
-//        audioManager.setSpeakerphoneOn(false);
 
     }
 
@@ -359,7 +365,7 @@ public class CallsActivity extends AppCompatActivity{
 
             SipServiceCommand.holdActiveCalls(this, serviceCommunicator.uri);
 
-            hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+            hold.setImageResource(R.drawable.hold_active);
 
             Toast.makeText(this, "Putting call on hold !",
                     Toast.LENGTH_LONG).show();
@@ -373,18 +379,14 @@ public class CallsActivity extends AppCompatActivity{
 
                 SipServiceCommand.setCallHold(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), false);
 
-                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.grey)));
+                hold.setImageResource(R.drawable.hold);
 
-                Toast.makeText(this, "Unholding call !",
+
+            Toast.makeText(this, "Unholding call !",
                         Toast.LENGTH_LONG).show();
 
             }
           isHold = !isHold;
-
-
-//        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-//
-//        audioManager.setSpeakerphoneOn(false);
 
     }
 
@@ -412,28 +414,30 @@ public class CallsActivity extends AppCompatActivity{
             answer.setVisibility(View.GONE);
 
             overlayTransferLayout.setVisibility(View.GONE);
+
+            if(!isHold) {
+
+                SipServiceCommand.toggleCallHold(this, serviceCommunicator.uri, callID1);
+
+                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+
+                Toast.makeText(this, "Holding before transfer !",
+                        Toast.LENGTH_LONG).show();
+
+                SipServiceCommand.makeCall(this, serviceCommunicator.uri, number.getText().toString(), true);
+            }
+            else if(isHold){
+
+                SipServiceCommand.attendedTransferCall(this, serviceCommunicator.uri, callID1, callID2);
+
+                Toast.makeText(this, "Making attended transfer !",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            isHold = !isHold;
         }
 
-//            if(!isHold) {
-//
-//                SipServiceCommand.toggleCallHold(this, serviceCommunicator.uri, callID1);
-//
-//                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
-//
-//                Toast.makeText(this, "Holding before transfer !",
-//                        Toast.LENGTH_LONG).show();
-//
-//                SipServiceCommand.makeCall(this, serviceCommunicator.uri, number.getText().toString(), true);
-//            }
-//            else if(isHold){
-//
-//                SipServiceCommand.attendedTransferCall(this, serviceCommunicator.uri, callID1, callID2);
-//
-//                Toast.makeText(this, "Making attended transfer !",
-//                        Toast.LENGTH_LONG).show();
-//            }
-//
-//            isHold = !isHold;
+
     }
 
     BroadcastEventReceiver mReceiver = new BroadcastEventReceiver()
@@ -458,19 +462,19 @@ public class CallsActivity extends AppCompatActivity{
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-//            call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
-//            answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
-//            hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_A200)));
-//            hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
             Toast.makeText(context, "Call State Disconnected", Toast.LENGTH_SHORT).show();
-
+            Intent intent = new Intent(CallsActivity.this, CallsHistory.class);
+            startActivity(intent);
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
-//            call.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.light_blue_600)));
-//            answer.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.teal_700)));
-//            hangup.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.red)));
-//            hold.setBackgroundTintList(ColorStateList.valueOf(CallsActivity.this.getResources().getColor(R.color.grey)));
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
 
             CallsActivity.this.accountID = accountID;
             CallsActivity.this.callID1 = callID;
@@ -499,7 +503,14 @@ public class CallsActivity extends AppCompatActivity{
              CallsActivity.this.remoteUri = remoteUri;
              CallsActivity.this.isVideo = isVideo;
 
-            //answer.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.teal_200)));
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.GONE);
+            linearLayout2.setVisibility(View.GONE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.GONE);
+            callHorizontalLayout.setVisibility(View.VISIBLE);
+            hangup.setVisibility(View.VISIBLE);
+            answer.setVisibility(View.VISIBLE);
     }
 
         @Override

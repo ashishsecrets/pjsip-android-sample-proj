@@ -16,7 +16,8 @@ import in.aabhasjindal.otptextview.OtpTextView;
 
 public class OtpActivity extends AppCompatActivity {
 
-    String text;
+    boolean isOTPEntered = false;
+    OtpTextView otpTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +28,7 @@ public class OtpActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.hide();
 
-        OtpTextView otpTextView;
         otpTextView = findViewById(R.id.otp_view);
-
-        Intent i = getIntent();
-        text = i.getStringExtra( "username" );
 
         otpTextView.setOtpListener(new OTPListener() {
             @Override
@@ -41,7 +38,9 @@ public class OtpActivity extends AppCompatActivity {
             @Override
             public void onOTPComplete(String otp) {
                 // fired when user has entered the OTP fully.
-                Toast.makeText(OtpActivity.this, "The OTP is " + otp,  Toast.LENGTH_SHORT).show();
+                isOTPEntered = true;
+                Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
+                startActivity(intent);
             }
         });
 
@@ -49,11 +48,17 @@ public class OtpActivity extends AppCompatActivity {
     }
 
     public void otpVerifyClick(View view) {
-        Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
-        intent.putExtra ( "username", text);
-        startActivity(intent);
+        if(isOTPEntered){
+            Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
+            startActivity(intent);
+        }
     }
 
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        otpTextView.setOTP("");
+        isOTPEntered = false;
+    }
 }

@@ -40,6 +40,7 @@ public class OtpActivity extends AppCompatActivity {
         actionBar.hide();
 
         otpTextView = findViewById(R.id.otp_view);
+        otpTextView.requestFocusOTP();
 
         Retrofit retrofit = RetrofitData.getRetrofit();
 
@@ -102,6 +103,12 @@ public class OtpActivity extends AppCompatActivity {
                     editor.putString("token", responseFromAPI.getToken());
                     editor.apply();
                     Toast.makeText(OtpActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+
+                    if(response.code() == 200){
+                        Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
+                        startActivity(intent);
+                    }
+
                 }
 
                 @Override
@@ -110,9 +117,6 @@ public class OtpActivity extends AppCompatActivity {
 
                 }
             });
-
-            Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
-            startActivity(intent);
         }
     }
 

@@ -30,14 +30,6 @@
             android:layout_marginTop="20dp"
             app:srcCompat="@drawable/welcome_msg2" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/cardview_dark_background"
-            android:fontFamily="@font/urbanist"
-            android:text="Enter your username below in number without + and without starting 0.(Test App)"
-            android:paddingTop="5dp"/>
-
 
 
     <ImageView
@@ -77,7 +69,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:layout_marginTop="10dp"
-            android:hint="+234 816 492 8900"
+            android:hint="816 492 8900"
             android:textColor="@color/black"
             android:textColorHint="@color/cardview_shadow_start_color"
             android:ems="15"

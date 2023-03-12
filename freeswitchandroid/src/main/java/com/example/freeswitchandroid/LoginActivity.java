@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.hbb20.CountryCodePicker;
 
@@ -25,13 +26,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void otpLoginClick(View view) {
-        Intent intent = new Intent ( LoginActivity.this, OtpActivity.class );
         EditText editText = findViewById(R.id.editTextPhone);
-        CountryCodePicker countryCodePicker = findViewById(R.id.countryPicker);
-        SharedPreferences.Editor editor = getSharedPreferences("USER_DATA", MODE_PRIVATE).edit();
-        editor.putString("username", editText.getText().toString());
-        editor.putInt("country", countryCodePicker.getSelectedCountryCodeAsInt());
-        editor.apply();
-        startActivity(intent);
+        if(!editText.getText().toString().isEmpty()) {
+            Intent intent = new Intent(LoginActivity.this, OtpActivity.class);
+            CountryCodePicker countryCodePicker = findViewById(R.id.countryPicker);
+            SharedPreferences.Editor editor = getSharedPreferences("USER_DATA", MODE_PRIVATE).edit();
+            editor.putString("username", editText.getText().toString());
+            editor.putInt("country", countryCodePicker.getSelectedCountryCodeAsInt());
+            editor.apply();
+            startActivity(intent);
+        }
+        else{
+            Toast.makeText(LoginActivity.this, "Please enter your number first without + or 0.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

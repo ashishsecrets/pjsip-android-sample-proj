@@ -470,9 +470,14 @@ public class CallsActivity extends AppCompatActivity{
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-            Toast.makeText(context, "Call State Disconnected", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(CallsActivity.this, CallsHistory.class);
-            startActivity(intent);
+            dialPad1Layout.setVisibility(View.VISIBLE);
+            linearLayout1.setVisibility(View.GONE);
+            linearLayout2.setVisibility(View.GONE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.GONE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.VISIBLE);
+            audioManager.setMode(AudioManager.MODE_NORMAL);
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
@@ -489,6 +494,8 @@ public class CallsActivity extends AppCompatActivity{
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
+
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
 
         }
 

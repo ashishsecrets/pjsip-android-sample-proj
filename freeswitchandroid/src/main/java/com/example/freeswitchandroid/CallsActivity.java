@@ -273,11 +273,11 @@ public class CallsActivity extends AppCompatActivity{
 
         if(!audioManager.isMicrophoneMute()) {
             audioManager.setMicrophoneMute(true);
-            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), true);
+            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, callID1, true);
         }
         else{
             audioManager.setMicrophoneMute(false);
-            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), false);
+            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, callID1, false);
         }
 
 
@@ -334,7 +334,7 @@ public class CallsActivity extends AppCompatActivity{
 
             call();
         }
-        else{
+        else if(callHorizontalLayout.getVisibility() == View.VISIBLE){
 
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
@@ -424,7 +424,7 @@ public class CallsActivity extends AppCompatActivity{
                 Toast.makeText(this, "Holding before transfer !",
                         Toast.LENGTH_LONG).show();
 
-                SipServiceCommand.makeCall(this, serviceCommunicator.uri, number.getText().toString(), true);
+                SipServiceCommand.makeCall(this, serviceCommunicator.uri, "9037217611", true);
             }
             else if(isHold){
 
@@ -504,7 +504,8 @@ public class CallsActivity extends AppCompatActivity{
              CallsActivity.this.isVideo = isVideo;
 
             dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            callTime.setVisibility(View.GONE);
             linearLayout2.setVisibility(View.GONE);
             dtmfKeyPadLayout.setVisibility(View.GONE);
             callOptionsLayout.setVisibility(View.GONE);

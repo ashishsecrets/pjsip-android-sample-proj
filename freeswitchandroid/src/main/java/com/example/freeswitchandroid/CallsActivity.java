@@ -41,6 +41,8 @@ public class CallsActivity extends AppCompatActivity{
     String remoteUri;
     boolean isVideo;
 
+    boolean isMute = false;
+
     ImageButton answer;
 
     ImageButton hangup;
@@ -75,6 +77,10 @@ public class CallsActivity extends AppCompatActivity{
     ImageButton speakerBtn; //Highlight on press toggle
     ImageButton keypadBtn; //Highlight on press toggle
 
+    AudioManager audioManager;
+    ActivityManager activityManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +92,7 @@ public class CallsActivity extends AppCompatActivity{
         assert actionBar != null;
         actionBar.hide();
 
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Context context = this;
         SipServiceCommand.enableSipDebugLogging(true);
 
@@ -129,6 +135,9 @@ public class CallsActivity extends AppCompatActivity{
          callHorizontalLayout.setVisibility(View.VISIBLE);
          overlayTransferLayout.setVisibility(View.GONE);
         answer.setVisibility(View.VISIBLE);
+
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
     }
 
     @Override
@@ -255,8 +264,6 @@ public class CallsActivity extends AppCompatActivity{
 
     public void speaker(View v) {
 
-        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
         if (!audioManager.isSpeakerphoneOn()) {
             audioManager.setSpeakerphoneOn(true);
             speakerBtn.setImageResource(R.drawable.speaker_active);
@@ -269,15 +276,16 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     public void mute(View v){
-        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        if(!audioManager.isMicrophoneMute()) {
-            audioManager.setMicrophoneMute(true);
+        if(!isMute) {
             SipServiceCommand.setCallMute(this, serviceCommunicator.uri, callID1, true);
+            muteBtn.setImageResource(R.drawable.mute_active);
+            isMute = true;
         }
         else{
-            audioManager.setMicrophoneMute(false);
             SipServiceCommand.setCallMute(this, serviceCommunicator.uri, callID1, false);
+            muteBtn.setImageResource(R.drawable.mute);
+            isMute = false;
         }
 
 
@@ -497,6 +505,10 @@ public class CallsActivity extends AppCompatActivity{
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
 
+            callHorizontalLayout.setVisibility(View.VISIBLE);
+            hangup.setVisibility(View.VISIBLE);
+            answer.setVisibility(View.VISIBLE);
+
              CallsActivity.this.accountID = accountID;
              CallsActivity.this.callID1 = callID;
              CallsActivity.this.displayName = displayName;
@@ -509,9 +521,7 @@ public class CallsActivity extends AppCompatActivity{
             linearLayout2.setVisibility(View.GONE);
             dtmfKeyPadLayout.setVisibility(View.GONE);
             callOptionsLayout.setVisibility(View.GONE);
-            callHorizontalLayout.setVisibility(View.VISIBLE);
-            hangup.setVisibility(View.VISIBLE);
-            answer.setVisibility(View.VISIBLE);
+
     }
 
         @Override

@@ -941,18 +941,18 @@ public class SipService extends BackgroundService implements SipServiceConstants
 
             //Commented tls and udp transport as not used by press one server at the moment
 
-            //TransportConfig udpTransport = new TransportConfig();
-            //udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+            TransportConfig udpTransport = new TransportConfig();
+            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
             TransportConfig tcpTransport = new TransportConfig();
             tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            //tcpTransport.setTlsConfig(new TlsConfig()); // Not Needed
-            //TransportConfig tlsTransport = new TransportConfig();
-            //tlsTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            //SipTlsUtils.setTlsConfig(this, mSharedPreferencesHelper.isVerifySipServerCert(), tlsTransport);
+            tcpTransport.setTlsConfig(new TlsConfig()); // Not Needed
+            TransportConfig tlsTransport = new TransportConfig();
+            tlsTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+            SipTlsUtils.setTlsConfig(this, mSharedPreferencesHelper.isVerifySipServerCert(), tlsTransport);
 
-            //mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-            //mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS, tlsTransport);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS, tlsTransport);
             mEndpoint.libStart();
 
             //ArrayList<CodecPriority> codecPriorities = getConfiguredCodecPriorities();

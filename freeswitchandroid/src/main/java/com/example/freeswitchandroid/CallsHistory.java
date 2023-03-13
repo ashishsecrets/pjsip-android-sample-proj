@@ -115,7 +115,6 @@ public class CallsHistory extends AppCompatActivity {
         call.enqueue(new Callback<List<CallsEndDatum>>() {
             @Override
             public void onResponse(Call<List<CallsEndDatum>> call, Response<List<CallsEndDatum>> response) {
-                Toast.makeText(CallsHistory.this, response.toString(), Toast.LENGTH_SHORT).show();
 
                 List<CallsEndDatum> callsEndDatumList = response.body();
 
@@ -151,6 +150,7 @@ public class CallsHistory extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<CallsEndDatum>> call, Throwable t) {
+                Toast.makeText(CallsHistory.this, t.toString(), Toast.LENGTH_SHORT).show();
 
             }
         });

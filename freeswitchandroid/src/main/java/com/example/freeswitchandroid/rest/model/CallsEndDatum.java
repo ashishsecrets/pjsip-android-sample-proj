@@ -41,6 +41,12 @@ public class CallsEndDatum {
     @SerializedName("is_missed_call")
     @Expose
     private Boolean isMissedCall;
+    @SerializedName("is_rejected_call")
+    @Expose
+    private Boolean isRejectedCall;
+    @SerializedName("is_forwarded_call")
+    @Expose
+    private Boolean isForwardedCall;
     @SerializedName("has_voice_mail")
     @Expose
     private Boolean hasVoiceMail;
@@ -93,6 +99,8 @@ public class CallsEndDatum {
      * @param capturedDigits
      * @param dateCreated
      * @param isMissedCall
+     * @param isRejectedCall
+     * @param isForwardedCall
      * @param durationSecs
      * @param carrierName
      * @param provider
@@ -106,7 +114,7 @@ public class CallsEndDatum {
      * @param isDialed
      * @param recipientNumber
      */
-    public CallsEndDatum(Integer id, Object archived, String lastModified, String dateCreated, String callerId, Integer durationSecs, String costCurrency, String cost, String startTime, Object carrierName, Object capturedDigits, Boolean isMissedCall, Boolean hasVoiceMail, Boolean isDialed, String recording, String label, String sipCallId, String recipientNumber, String recipientName, BusinessNumber businessNumber, User user, Object provider, Object receiver) {
+    public CallsEndDatum(Integer id, Object archived, String lastModified, String dateCreated, String callerId, Integer durationSecs, String costCurrency, String cost, String startTime, Object carrierName, Object capturedDigits, Boolean isMissedCall, Boolean isForwardedCall, Boolean isRejectedCall, Boolean hasVoiceMail, Boolean isDialed, String recording, String label, String sipCallId, String recipientNumber, String recipientName, BusinessNumber businessNumber, User user, Object provider, Object receiver) {
         super();
         this.id = id;
         this.archived = archived;
@@ -120,6 +128,8 @@ public class CallsEndDatum {
         this.carrierName = carrierName;
         this.capturedDigits = capturedDigits;
         this.isMissedCall = isMissedCall;
+        this.isRejectedCall = isRejectedCall;
+        this.isForwardedCall = isForwardedCall;
         this.hasVoiceMail = hasVoiceMail;
         this.isDialed = isDialed;
         this.recording = recording;
@@ -224,9 +234,21 @@ public class CallsEndDatum {
     public Boolean getIsMissedCall() {
         return isMissedCall;
     }
+    public Boolean getIsRejectedCall() {
+        return isRejectedCall;
+    }
+    public Boolean getIsForwardedCall() {
+        return isForwardedCall;
+    }
 
     public void setIsMissedCall(Boolean isMissedCall) {
         this.isMissedCall = isMissedCall;
+    }
+    public void setIsRejectedCall(Boolean isRejectedCall) {
+        this.isRejectedCall = isRejectedCall;
+    }
+    public void setIsForwardedCall(Boolean isForwardedCall) {
+        this.isForwardedCall = isForwardedCall;
     }
 
     public Boolean getHasVoiceMail() {

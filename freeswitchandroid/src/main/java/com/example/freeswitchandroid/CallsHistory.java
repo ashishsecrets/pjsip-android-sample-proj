@@ -26,6 +26,7 @@ import com.example.freeswitchandroid.rest.model.CallsEndDatum;
 
 import net.gotev.sipservice.SipServiceCommand;
 
+import java.lang.reflect.Array;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,9 +36,13 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -53,6 +58,8 @@ public class CallsHistory extends AppCompatActivity {
     LinearLayout phone_calls_view;
     ActivityManager activityManager;
     ServiceCommunicator serviceCommunicator;
+
+    List<ParentItem> itemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +97,7 @@ public class CallsHistory extends AppCompatActivity {
         SipServiceCommand.enableSipDebugLogging(true);
 
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String username = shared.getString("token", "");
-
-        System.out.println("token : " + username);
+        String username = shared.getString("username", "");
 
         serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.username = username;
@@ -122,7 +127,7 @@ public class CallsHistory extends AppCompatActivity {
     private List<ParentItem> ParentItemList()
     {
 
-        List<ParentItem> itemList = new ArrayList<>();
+        itemList = new ArrayList<>();
         
         Retrofit retrofit = RetrofitData.getRetrofit();
 
@@ -139,27 +144,50 @@ public class CallsHistory extends AppCompatActivity {
 
                 List<CallsEndDatum> callsEndDatumList = response.body();
 
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     if(callsEndDatumList != null && callsEndDatumList.size() > 0) {
                         phone_calls_view.setVisibility(View.GONE);
                         recycler_list.setVisibility(View.VISIBLE);
+
                         final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
 
                         ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
 
-                        List<ChildItem> dynamicList = new ArrayList<>();
+
+                        List<ChildItem> childList = new ArrayList<>();
 
                         for (CallsEndDatum callsEndDatum : callsEndDatumList) {
-                            dynamicList.add(new ChildItem(callsEndDatum.getBusinessNumber().toString(), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("HH:mm").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))));
+                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                            }
+
+                        Map<LocalDate, List<ChildItem>> result = childList.stream()
+                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                                        .with(ADJUSTERS.get("day"))));
+
+                        List<Map.Entry<LocalDate, List<ChildItem>>> sortedHashMapList = new ArrayList<>(result.entrySet());
+
+                        Collections.sort(sortedHashMapList, Comparator.comparing(Map.Entry<LocalDate, List<ChildItem>>::getKey));
+
+                        for (int i = 0; i < sortedHashMapList.size(); i++) {
+
+                            if(i == 0){
+                                itemList.add(new ParentItem(sortedHashMapList.get(i).getKey().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")), sortedHashMapList.get(i).getValue()));
+                            }
+                            else {
+
+                                String parentListName = sortedHashMapList.get(i).getKey().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
+                                ParentItem parentItem = new ParentItem(sortedHashMapList.get(i).getKey().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")), sortedHashMapList.get(i).getValue());
+
+                                if (itemList.get(i - 1).getParentItemTitle().equals(parentListName)) {
+                                    List<ChildItem> childItemList = sortedHashMapList.get(i - 1).getValue();
+                                    childItemList.addAll(sortedHashMapList.get(i).getValue());
+                                    parentItem.setChildItemList(childItemList);
+                                    itemList.add(i - 1, parentItem);
+                                } else {
+                                    itemList.add(parentItem);
+                                }
+                            }
                         }
-
-                        Map<LocalDate, List<ChildItem>> result = dynamicList.stream()
-                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss"))
-                                        .with(ADJUSTERS.get(ChronoField.DAY_OF_YEAR))));
-
-
-                        dynamicList.stream().map(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(LocalDateTime.parse(x.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))), result.get(LocalDate.parse(x.getChildItemTxt(), DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss"))))));
 
                     }
 
@@ -187,6 +215,8 @@ public class CallsHistory extends AppCompatActivity {
 //        ParentItem item1 = new ParentItem("14 February, 2023", childItemList2);
 //        itemList.add(item1);
 
+        System.out.print("List : " + itemList);
+
         return itemList;
     }
 
@@ -205,9 +235,9 @@ public class CallsHistory extends AppCompatActivity {
             toReturn = 1; // missed
         } else if (!datum.getIsDialed()) {
             toReturn = 2; //incoming
-        } else if (!datum.getIsDialed() && datum.getDurationSecs() == 0) {
+        } else if (!datum.getIsForwardedCall()) {
             toReturn = 3; //forwarded
-        } else if (!datum.getIsDialed() && datum.getIsMissedCall()) {
+        } else if (!datum.getIsRejectedCall()) {
             toReturn = 4; //rejected
         }
 

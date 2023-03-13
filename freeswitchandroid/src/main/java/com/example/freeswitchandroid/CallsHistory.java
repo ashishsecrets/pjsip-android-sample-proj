@@ -75,16 +75,17 @@ public class CallsHistory extends AppCompatActivity {
         List<ParentItem> itemList = new ArrayList<>();
 
         List<ChildItem> childItemList1 = new ArrayList<>();
-        childItemList1.add(new ChildItem("+234 888 434 0404"));
+        childItemList1.add(new ChildItem("+234 888 434 0404", 0, "10:38 am"));
+        childItemList1.add(new ChildItem("+234 888 434 0404", 1, "10:33 am"));
         ParentItem item = new ParentItem("15 February, 2023", childItemList1);
         itemList.add(item);
 
 
         List<ChildItem> childItemList2 = new ArrayList<>();
 
-        childItemList2.add(new ChildItem("+91 888 434 0404"));
-        childItemList2.add(new ChildItem("+91 941 622 7909"));
-        childItemList2.add(new ChildItem("+91 941 629 0699"));
+        childItemList2.add(new ChildItem("+91 888 434 0404", 2, "11:43 am"));
+        childItemList2.add(new ChildItem("+91 941 622 7909", 3, "9:03 pm"));
+        childItemList2.add(new ChildItem("+91 941 629 0699", 4, "4:14 pm"));
         ParentItem item1 = new ParentItem("14 February, 2023", childItemList2);
         itemList.add(item1);
 

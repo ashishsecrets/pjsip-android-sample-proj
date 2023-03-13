@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.freeswitchandroid.Pojo.ChildItem;
@@ -50,17 +51,36 @@ public class ChildItemAdapter
 
         // Create an instance of the ChildItem
         // class for the given position
-        ChildItem childItem
-                = ChildItemList.get(position);
+        ChildItem childItem = ChildItemList.get(position);
 
         // For the created instance, set title.
         // No need to set the image for
         // the ImageViews because we have
         // provided the source for the images
         // in the layout file itself
-        childViewHolder
-                .ChildItemTitle
-                .setText(childItem.getChildItemTitle());
+        childViewHolder.childItemTitle.setText(childItem.getChildItemTitle());
+        childViewHolder.childItemTxt.setText(childItem.getChildItemTxt());
+
+        if(childItem.getChildItemImg() == 0){
+            childViewHolder.childItemImg.setImageResource(R.drawable.outgoing);
+            childViewHolder.childItemDesc.setText(R.string.outgoing);
+        }
+        else if(childItem.getChildItemImg() == 1){
+            childViewHolder.childItemImg.setImageResource(R.drawable.missed);
+            childViewHolder.childItemDesc.setText(R.string.missed);
+        }
+        else if(childItem.getChildItemImg() == 2){
+            childViewHolder.childItemImg.setImageResource(R.drawable.incoming);
+            childViewHolder.childItemDesc.setText(R.string.incoming);
+        }
+        else if(childItem.getChildItemImg() == 3){
+            childViewHolder.childItemImg.setImageResource(R.drawable.forwarded);
+            childViewHolder.childItemDesc.setText(R.string.forwarded);
+        }
+        else if(childItem.getChildItemImg() == 4){
+            childViewHolder.childItemImg.setImageResource(R.drawable.rejected);
+            childViewHolder.childItemDesc.setText(R.string.rejected);
+        }
     }
 
     @Override
@@ -79,17 +99,20 @@ public class ChildItemAdapter
     // This class is to initialize
     // the Views present
     // in the child RecyclerView
-    class ChildViewHolder
-            extends RecyclerView.ViewHolder {
+    class ChildViewHolder extends RecyclerView.ViewHolder {
 
-        TextView ChildItemTitle;
+        TextView childItemTitle;
+        ImageView childItemImg;
+        TextView childItemTxt;
+        TextView childItemDesc;
 
         ChildViewHolder(View itemView)
         {
             super(itemView);
-            ChildItemTitle
-                    = itemView.findViewById(
-                    R.id.child_item_title);
+            childItemTitle = itemView.findViewById(R.id.child_item_title);
+            childItemImg = itemView.findViewById(R.id.child_item_img);
+            childItemTxt = itemView.findViewById(R.id.child_item_txt);
+            childItemDesc = itemView.findViewById(R.id.child_item_description);
         }
     }
 }

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -21,6 +23,8 @@ import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.CallsEndDatum;
+
+import net.gotev.sipservice.SipServiceCommand;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -47,6 +51,8 @@ public class CallsHistory extends AppCompatActivity {
 
     LinearLayout recycler_list;
     LinearLayout phone_calls_view;
+    ActivityManager activityManager;
+    ServiceCommunicator serviceCommunicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +82,21 @@ public class CallsHistory extends AppCompatActivity {
         myNumber.setText(MessageFormat.format("0{0}", mobileNumber));
 
         initRecycler();
+        initSipService();
+    }
+
+    private void initSipService(){
+        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        SipServiceCommand.enableSipDebugLogging(true);
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String username = shared.getString("token", "");
+
+        System.out.println("token : " + username);
+
+        serviceCommunicator = new ServiceCommunicator();
+        serviceCommunicator.username = username;
+        //serviceCommunicator.startService(activityManager, this);
     }
 
     private void initRecycler(){
@@ -130,7 +151,7 @@ public class CallsHistory extends AppCompatActivity {
                         List<ChildItem> dynamicList = new ArrayList<>();
 
                         for (CallsEndDatum callsEndDatum : callsEndDatumList) {
-                            dynamicList.add(new ChildItem(callsEndDatum.getBusinessNumber().toString(), 0, DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))));
+                            dynamicList.add(new ChildItem(callsEndDatum.getBusinessNumber().toString(), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("HH:mm").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))));
                         }
 
                         Map<LocalDate, List<ChildItem>> result = dynamicList.stream()
@@ -174,23 +195,28 @@ public class CallsHistory extends AppCompatActivity {
         startActivity(intent);
     }
     
-    private int getCallType(String string){
+    private int getCallType(CallsEndDatum datum){
         
         int toReturn = 0;
         
-        if(string.equals("isOutgoing")){
-            toReturn = 0;
-        } else if (string.equals("isMissed")) {
-            toReturn = 1;
-        } else if (string.equals("isIncoming")) {
-            toReturn = 2;
-        } else if (string.equals("isForwarded")) {
-            toReturn = 3;
-        } else if (string.equals("isRejected")) {
-            toReturn = 4;
+        if(datum.getIsDialed()){
+            toReturn = 0; // outgoing
+        } else if (datum.getIsMissedCall()) {
+            toReturn = 1; // missed
+        } else if (!datum.getIsDialed()) {
+            toReturn = 2; //incoming
+        } else if (!datum.getIsDialed() && datum.getDurationSecs() == 0) {
+            toReturn = 3; //forwarded
+        } else if (!datum.getIsDialed() && datum.getIsMissedCall()) {
+            toReturn = 4; //rejected
         }
 
         return toReturn;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initRecycler();
+    }
 }

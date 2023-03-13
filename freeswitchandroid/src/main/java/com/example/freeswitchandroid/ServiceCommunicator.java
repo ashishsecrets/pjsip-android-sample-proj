@@ -6,6 +6,7 @@ import static net.gotev.sipservice.SipTlsUtils.TAG;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
@@ -26,10 +27,10 @@ import org.pjsip.pjsua2.pjsip_status_code;
 
 public class ServiceCommunicator {
 
-    String uri;
+    static String uri;
     String username = "";
     String password = "";
-    SipAccountData sipAccountData;
+    static SipAccountData sipAccountData;
     String hostname = "david380.fs1.pressone.co";
 
     Context context;
@@ -46,17 +47,6 @@ public class ServiceCommunicator {
     public void startService(ActivityManager activityManager, Context context){
         if(!foregroundServiceRunning(activityManager)) {
             sipAccountData = new SipAccountData();
-            if(username.equals("5294241166")){
-                password = "3Daet((t";
-            }
-            else if(username.equals("1911899877")){
-                password = "(jZ@52Ca";
-            }
-            else{
-                username = "9037217611";
-                password = "^^3ZAasx";
-            }
-
 
             sipAccountData.setUsername(username);
 

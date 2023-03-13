@@ -78,7 +78,6 @@ public class CallsActivity extends AppCompatActivity{
     ImageButton keypadBtn; //Highlight on press toggle
 
     AudioManager audioManager;
-    ActivityManager activityManager;
 
 
     @Override
@@ -92,21 +91,11 @@ public class CallsActivity extends AppCompatActivity{
         assert actionBar != null;
         actionBar.hide();
 
-        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        Context context = this;
-        SipServiceCommand.enableSipDebugLogging(true);
-
-        Intent i = getIntent();
-        String username = i.getStringExtra ( "username" );
-
-        serviceCommunicator = new ServiceCommunicator();
-        serviceCommunicator.username = username;
-        serviceCommunicator.startService(activityManager, context);
-        number = findViewById(R.id.number);
-        mReceiver.register(this);
-
         this.context = this;
 
+        mReceiver.register(this);
+
+        number = findViewById(R.id.number);
         answer = findViewById(R.id.call);
         hangup = findViewById(R.id.hangUp);
         hold = findViewById(R.id.hold);

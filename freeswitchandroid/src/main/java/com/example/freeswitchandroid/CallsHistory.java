@@ -21,7 +21,6 @@ import java.util.List;
 
 public class CallsHistory extends AppCompatActivity {
 
-    String text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,53 +37,32 @@ public class CallsHistory extends AppCompatActivity {
         actionBar.setTitle("Calls");
         actionBar.show();
 
-        Intent i = getIntent();
-        text = i.getStringExtra( "username" );
-
-        RecyclerView
-                ParentRecyclerViewItem
-                = findViewById(
-                R.id.parent_recyclerview);
+        RecyclerView ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
 
         // Initialise the Linear layout manager
-        LinearLayoutManager
-                layoutManager
-                = new LinearLayoutManager(
-                CallsHistory.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(CallsHistory.this);
 
         // Pass the arguments
         // to the parentItemAdapter.
         // These arguments are passed
         // using a method ParentItemList()
-        ParentItemAdapter
-                parentItemAdapter
-                = new ParentItemAdapter(
-                ParentItemList());
+        ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList());
 
         // Set the layout manager
         // and adapter for items
         // of the parent recyclerview
-        ParentRecyclerViewItem
-                .setAdapter(parentItemAdapter);
-        ParentRecyclerViewItem
-                .setLayoutManager(layoutManager);
+        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+        ParentRecyclerViewItem.setLayoutManager(layoutManager);
 
     }
 
     private List<ParentItem> ParentItemList()
     {
-        List<ParentItem> itemList
-                = new ArrayList<>();
+        List<ParentItem> itemList = new ArrayList<>();
 
-        ParentItem item
-                = new ParentItem(
-                "15 February, 2023",
-                ChildItemList1());
+        ParentItem item = new ParentItem("15 February, 2023", ChildItemList1());
         itemList.add(item);
-        ParentItem item1
-                = new ParentItem(
-                "14 February, 2023",
-                ChildItemList2());
+        ParentItem item1 = new ParentItem("14 February, 2023", ChildItemList2());
         itemList.add(item1);
 
         return itemList;
@@ -95,8 +73,7 @@ public class CallsHistory extends AppCompatActivity {
     // of child RecyclerView
     private List<ChildItem> ChildItemList1()
     {
-        List<ChildItem> ChildItemList1
-                = new ArrayList<>();
+        List<ChildItem> ChildItemList1 = new ArrayList<>();
 
         ChildItemList1.add(new ChildItem("+234 888 434 0404"));
 
@@ -105,8 +82,7 @@ public class CallsHistory extends AppCompatActivity {
 
     private List<ChildItem> ChildItemList2()
     {
-        List<ChildItem> ChildItemList2
-                = new ArrayList<>();
+        List<ChildItem> ChildItemList2 = new ArrayList<>();
 
         ChildItemList2.add(new ChildItem("+91 888 434 0404"));
         ChildItemList2.add(new ChildItem("+91 941 622 7909"));
@@ -117,7 +93,6 @@ public class CallsHistory extends AppCompatActivity {
 
     public void keypadPress(View v){
         Intent intent = new Intent(CallsHistory.this, CallsActivity.class);
-        intent.putExtra ( "username", text);
         startActivity(intent);
     }
 

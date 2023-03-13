@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -49,6 +50,9 @@ public class OtpActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String mobileNumber = shared.getString("username", "");
         String countryCode = String.valueOf(shared.getInt("country", 234));
+
+        TextView mobileText = findViewById(R.id.text_number);
+        mobileText.setText(mobileNumber);
 
         mobile = new Mobile("+" + countryCode + mobileNumber);
         // calling a method to create a post and passing our modal class.

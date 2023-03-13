@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
@@ -30,12 +32,19 @@ public class CallsHistory extends AppCompatActivity {
         // Setting Screen Title
 
         ActionBar actionBar = getSupportActionBar();
+
         assert actionBar != null;
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setTitle("Calls");
+        actionBar.setDisplayOptions(ActionBar. DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.custom_action_bar);
         actionBar.show();
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String mobileNumber = shared.getString("username", "");
+
+        TextView myNumber = findViewById(R.id.my_number);
+
+        myNumber.setText("0"+mobileNumber);
 
         RecyclerView ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
 

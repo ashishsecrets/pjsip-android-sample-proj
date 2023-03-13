@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,9 @@ public class CallsHistory extends AppCompatActivity {
 
     PressOneAPI retrofitAPI;
 
+    LinearLayout recycler_list;
+    LinearLayout phone_calls_view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +67,11 @@ public class CallsHistory extends AppCompatActivity {
         String mobileNumber = shared.getString("username", "");
 
         TextView myNumber = findViewById(R.id.my_number);
+        recycler_list = findViewById(R.id.recycler_list);
+        phone_calls_view = findViewById(R.id.phone_calls_view);
+
+        phone_calls_view.setVisibility(View.VISIBLE);
+        recycler_list.setVisibility(View.GONE);
 
         myNumber.setText(MessageFormat.format("0{0}", mobileNumber));
 
@@ -101,7 +110,7 @@ public class CallsHistory extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        Call<List<CallsEndDatum>> call = retrofitAPI.getCallsData(token);
+        Call<List<CallsEndDatum>> call = retrofitAPI.getCallsData("Bearer " + token);
         
         call.enqueue(new Callback<List<CallsEndDatum>>() {
             @Override
@@ -113,7 +122,8 @@ public class CallsHistory extends AppCompatActivity {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     if(callsEndDatumList != null && callsEndDatumList.size() > 0) {
-
+                        phone_calls_view.setVisibility(View.GONE);
+                        recycler_list.setVisibility(View.VISIBLE);
                         final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
 
                         ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));

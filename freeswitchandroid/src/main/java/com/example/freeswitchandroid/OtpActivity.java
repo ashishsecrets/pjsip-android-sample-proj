@@ -102,11 +102,9 @@ public class OtpActivity extends AppCompatActivity {
                 public void onResponse(Call<Token> call, Response<Token> response) {
                     Token responseFromAPI = response.body();
                     assert responseFromAPI != null;
-                    HelperClass.AuthHelper.setAuthToken(responseFromAPI.getToken());
                     SharedPreferences.Editor editor = getSharedPreferences("USER_DATA", MODE_PRIVATE).edit();
                     editor.putString("token", responseFromAPI.getToken());
                     editor.apply();
-                    Toast.makeText(OtpActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
 
                     if(response.code() == 200){
                         Intent intent = new Intent(OtpActivity.this, CallsHistory.class);

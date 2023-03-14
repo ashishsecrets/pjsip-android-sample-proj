@@ -65,7 +65,7 @@ public class ChildItemAdapter
         // provided the source for the images
         // in the layout file itself
         childViewHolder.childItemTitle.setText(childItem.getChildItemTitle());
-        childViewHolder.childItemTxt.setText(childItem.getChildItemTxt().substring(11));
+        childViewHolder.childItemTxt.setText(childItem.getChildItemTxt().substring(11, 16));
 
         if(childItem.getChildItemImg() == 0){
             childViewHolder.childItemImg.setImageResource(R.drawable.outgoing);
@@ -84,7 +84,7 @@ public class ChildItemAdapter
             childViewHolder.childItemImg.setImageResource(R.drawable.missed);
             childViewHolder.childItemDesc.setText(R.string.missed);
             if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
-                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
             }
             else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));

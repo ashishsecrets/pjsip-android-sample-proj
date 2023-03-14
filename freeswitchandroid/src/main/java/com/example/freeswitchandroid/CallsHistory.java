@@ -58,7 +58,9 @@ public class CallsHistory extends AppCompatActivity {
     LinearLayout phone_calls_view;
     ActivityManager activityManager;
     ServiceCommunicator serviceCommunicator;
-
+    RecyclerView ParentRecyclerViewItem;
+    ParentItemAdapter parentItemAdapter;
+    LinearLayoutManager layoutManager;
     List<ParentItem> itemList;
 
     @Override
@@ -106,16 +108,16 @@ public class CallsHistory extends AppCompatActivity {
 
     private void initRecycler(){
 
-        RecyclerView ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
+        ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
 
         // Initialise the Linear layout manager
-        LinearLayoutManager layoutManager = new LinearLayoutManager(CallsHistory.this);
+        layoutManager = new LinearLayoutManager(CallsHistory.this);
 
         // Pass the arguments
         // to the parentItemAdapter.
         // These arguments are passed
         // using a method ParentItemList()
-        ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList());
+        parentItemAdapter = new ParentItemAdapter(ParentItemList());
 
         // Set the layout manager
         // and adapter for items
@@ -164,30 +166,7 @@ public class CallsHistory extends AppCompatActivity {
                                 .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                                         .with(ADJUSTERS.get("day"))));
 
-                        List<Map.Entry<LocalDate, List<ChildItem>>> sortedHashMapList = new ArrayList<>(result.entrySet());
-
-                        Collections.sort(sortedHashMapList, Comparator.comparing(Map.Entry<LocalDate, List<ChildItem>>::getKey));
-
-                        for (int i = 0; i < sortedHashMapList.size(); i++) {
-
-                            if(i == 0){
-                                itemList.add(new ParentItem(sortedHashMapList.get(i).getKey().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")), sortedHashMapList.get(i).getValue()));
-                            }
-                            else {
-
-                                String parentListName = sortedHashMapList.get(i).getKey().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
-                                ParentItem parentItem = new ParentItem(sortedHashMapList.get(i).getKey().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy")), sortedHashMapList.get(i).getValue());
-
-                                if (itemList.get(i - 1).getParentItemTitle().equals(parentListName)) {
-                                    List<ChildItem> childItemList = sortedHashMapList.get(i - 1).getValue();
-                                    childItemList.addAll(sortedHashMapList.get(i).getValue());
-                                    parentItem.setChildItemList(childItemList);
-                                    itemList.add(i - 1, parentItem);
-                                } else {
-                                    itemList.add(parentItem);
-                                }
-                            }
-                        }
+                        result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
 
                     }
 
@@ -203,17 +182,7 @@ public class CallsHistory extends AppCompatActivity {
 
             }
         });
-
-
-//
-//
-//        List<ChildItem> childItemList2 = new ArrayList<>();
-//
-//        childItemList2.add(new ChildItem("+91 888 434 0404", 2, "11:43 am"));
-//        childItemList2.add(new ChildItem("+91 941 622 7909", 3, "9:03 pm"));
-//        childItemList2.add(new ChildItem("+91 941 629 0699", 4, "4:14 pm"));
-//        ParentItem item1 = new ParentItem("14 February, 2023", childItemList2);
-//        itemList.add(item1);
+        
 
         System.out.print("List : " + itemList);
 
@@ -247,6 +216,8 @@ public class CallsHistory extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initRecycler();
+        parentItemAdapter = new ParentItemAdapter(itemList);
+        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+        ParentRecyclerViewItem.setLayoutManager(layoutManager);
     }
 }

@@ -59,7 +59,7 @@ public class ChildItemAdapter
         // provided the source for the images
         // in the layout file itself
         childViewHolder.childItemTitle.setText(childItem.getChildItemTitle());
-        childViewHolder.childItemTxt.setText(childItem.getChildItemTxt());
+        childViewHolder.childItemTxt.setText(childItem.getChildItemTxt().substring(11));
 
         if(childItem.getChildItemImg() == 0){
             childViewHolder.childItemImg.setImageResource(R.drawable.outgoing);

@@ -96,7 +96,7 @@ public class CallsHistory extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         myNumber.setAdapter(adapter);
 
-        getBusinessNumbers();
+
 
 
         phone_calls_view.setVisibility(View.VISIBLE);
@@ -104,6 +104,7 @@ public class CallsHistory extends AppCompatActivity {
 
         initRecycler();
         initSipService();
+        getBusinessNumbers();
     }
 
     private void getBusinessNumbers(){
@@ -279,5 +280,6 @@ public class CallsHistory extends AppCompatActivity {
         parentItemAdapter = new ParentItemAdapter(itemList, CallsHistory.this);
         ParentRecyclerViewItem.setAdapter(parentItemAdapter);
         ParentRecyclerViewItem.setLayoutManager(layoutManager);
+        getBusinessNumbers();
     }
 }

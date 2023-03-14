@@ -3,6 +3,8 @@ package com.example.freeswitchandroid.adapters;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +27,13 @@ public class ParentItemAdapter
             viewPool
             = new RecyclerView
             .RecycledViewPool();
+    private Context context;
     private List<ParentItem> itemList;
 
-    public ParentItemAdapter(List<ParentItem> itemList)
+    public ParentItemAdapter(List<ParentItem> itemList, Context context)
     {
         this.itemList = itemList;
+        this.context = context;
     }
 
     @NonNull
@@ -100,7 +104,7 @@ public class ParentItemAdapter
         ChildItemAdapter childItemAdapter
                 = new ChildItemAdapter(
                 parentItem
-                        .getChildItemList());
+                        .getChildItemList(), context);
         parentViewHolder
                 .ChildRecyclerView
                 .setLayoutManager(layoutManager);

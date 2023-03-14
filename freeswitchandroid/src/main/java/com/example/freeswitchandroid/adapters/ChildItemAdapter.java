@@ -1,13 +1,17 @@
 package com.example.freeswitchandroid.adapters;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.freeswitchandroid.CallsHistory;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.R;
 
@@ -18,11 +22,13 @@ public class ChildItemAdapter
         .Adapter<ChildItemAdapter.ChildViewHolder> {
 
     private List<ChildItem> ChildItemList;
+    private Context context;
 
     // Constructor
-    ChildItemAdapter(List<ChildItem> childItemList)
+    ChildItemAdapter(List<ChildItem> childItemList, Context context)
     {
         this.ChildItemList = childItemList;
+        this.context = context;
     }
 
     @NonNull
@@ -64,22 +70,67 @@ public class ChildItemAdapter
         if(childItem.getChildItemImg() == 0){
             childViewHolder.childItemImg.setImageResource(R.drawable.outgoing);
             childViewHolder.childItemDesc.setText(R.string.outgoing);
+            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
+            }
+            else {
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
+                childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
+                childViewHolder.iconTxt.setVisibility(View.VISIBLE);
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+            }
         }
         else if(childItem.getChildItemImg() == 1){
             childViewHolder.childItemImg.setImageResource(R.drawable.missed);
             childViewHolder.childItemDesc.setText(R.string.missed);
+            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
+            }
+            else {
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
+                childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
+                childViewHolder.iconTxt.setVisibility(View.VISIBLE);
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+            }
         }
         else if(childItem.getChildItemImg() == 2){
             childViewHolder.childItemImg.setImageResource(R.drawable.incoming);
             childViewHolder.childItemDesc.setText(R.string.incoming);
+            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
+            }
+            else {
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
+                childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
+                childViewHolder.iconTxt.setVisibility(View.VISIBLE);
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+            }
         }
         else if(childItem.getChildItemImg() == 3){
             childViewHolder.childItemImg.setImageResource(R.drawable.forwarded);
             childViewHolder.childItemDesc.setText(R.string.forwarded);
+            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
+            }
+            else {
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
+                childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
+                childViewHolder.iconTxt.setVisibility(View.VISIBLE);
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+            }
         }
         else if(childItem.getChildItemImg() == 4){
             childViewHolder.childItemImg.setImageResource(R.drawable.rejected);
             childViewHolder.childItemDesc.setText(R.string.rejected);
+            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
+            }
+            else {
+                childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
+                childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
+                childViewHolder.iconTxt.setVisibility(View.VISIBLE);
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+            }
         }
     }
 
@@ -105,6 +156,8 @@ public class ChildItemAdapter
         ImageView childItemImg;
         TextView childItemTxt;
         TextView childItemDesc;
+        TextView iconTxt;
+        ImageView iconImg;
 
         ChildViewHolder(View itemView)
         {
@@ -113,6 +166,8 @@ public class ChildItemAdapter
             childItemImg = itemView.findViewById(R.id.child_item_img);
             childItemTxt = itemView.findViewById(R.id.child_item_txt);
             childItemDesc = itemView.findViewById(R.id.child_item_description);
+            iconImg = itemView.findViewById(R.id.icon_img);
+            iconTxt = itemView.findViewById(R.id.icon_text);
         }
     }
 }

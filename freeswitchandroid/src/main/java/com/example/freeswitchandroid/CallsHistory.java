@@ -170,7 +170,7 @@ public class CallsHistory extends AppCompatActivity {
         // to the parentItemAdapter.
         // These arguments are passed
         // using a method ParentItemList()
-        parentItemAdapter = new ParentItemAdapter(ParentItemList());
+        parentItemAdapter = new ParentItemAdapter(ParentItemList(), CallsHistory.this);
 
         // Set the layout manager
         // and adapter for items
@@ -208,7 +208,7 @@ public class CallsHistory extends AppCompatActivity {
                         List<ChildItem> childList = new ArrayList<>();
 
                         for (CallsEndDatum callsEndDatum : callsEndDatumList) {
-                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                                childList.add(new ChildItem(getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
                             }
 
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
@@ -238,6 +238,17 @@ public class CallsHistory extends AppCompatActivity {
         return itemList;
     }
 
+    private String getCallerId(CallsEndDatum callsEndDatum) {
+        String callerId = null;
+
+        callerId = callsEndDatum.getUser().getFirstName();
+
+        if(callerId.isEmpty()){
+            callerId = callsEndDatum.getCallerId();
+        }
+        return callerId;
+    }
+
     public void keypadPress(View v){
         Intent intent = new Intent(CallsHistory.this, CallsActivity.class);
         startActivity(intent);
@@ -265,7 +276,7 @@ public class CallsHistory extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        parentItemAdapter = new ParentItemAdapter(itemList);
+        parentItemAdapter = new ParentItemAdapter(itemList, CallsHistory.this);
         ParentRecyclerViewItem.setAdapter(parentItemAdapter);
         ParentRecyclerViewItem.setLayoutManager(layoutManager);
     }

@@ -1,6 +1,7 @@
 package com.example.freeswitchandroid.rest;
 
 
+import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallsEndDatum;
 import com.example.freeswitchandroid.rest.model.Mobile;
 import com.example.freeswitchandroid.rest.model.MobileData;
@@ -25,4 +26,7 @@ public interface PressOneAPI {
 
     @GET("/api/calls/")
     Call<List<CallsEndDatum>> getCallsData(@Header("Authorization") String token);
+
+    @GET("/api/users/me/")
+    Call<List<BusinessNumber>> getBusinessNumbers(@Header("Authorization") String token);
 }

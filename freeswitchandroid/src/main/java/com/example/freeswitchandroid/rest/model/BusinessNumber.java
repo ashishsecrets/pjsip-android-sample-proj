@@ -94,77 +94,34 @@ public class BusinessNumber {
     @SerializedName("verified_by")
     @Expose
     private Object verifiedBy;
+    @SerializedName("user_id")
+    @Expose
+    private Integer userId;
+    @SerializedName("receivers")
+    @Expose
+    private List<Receiver> receivers;
+    @SerializedName("has_greetings_added")
+    @Expose
+    private Boolean hasGreetingsAdded;
+    @SerializedName("has_office_hours_added")
+    @Expose
+    private Boolean hasOfficeHoursAdded;
+    @SerializedName("business")
+    @Expose
+    private Object business;
+    @SerializedName("flag_icon")
+    @Expose
+    private String flagIcon;
+    @SerializedName("balance")
+    @Expose
+    private Double balance;
+
 
     /**
      * No args constructor for use in serialization
      *
      */
     public BusinessNumber() {
-    }
-
-    /**
-     *
-     * @param country
-     * @param verificationRequestDate
-     * @param expires
-     * @param wazoTenant
-     * @param businessName
-     * @param archived
-     * @param number
-     * @param dateCreated
-     * @param provisioned
-     * @param verifiedDate
-     * @param provider
-     * @param countryCode
-     * @param isPrimary
-     * @param id
-     * @param otherNumber
-     * @param verified
-     * @param ringStrategy
-     * @param label
-     * @param enableBusinessFeatures
-     * @param verifiedBy
-     * @param primaryReceiver
-     * @param phoneNumber
-     * @param parentNumber
-     * @param alwaysOpen
-     * @param lastModified
-     * @param maxReceivers
-     * @param forwardCallsToNumber
-     * @param user
-     * @param callerTunesUrl
-     */
-    public BusinessNumber(Integer id, Object archived, String lastModified, String dateCreated, String label, String phoneNumber, Object forwardCallsToNumber, Object businessName, Object otherNumber, Boolean provisioned, String callerTunesUrl, String country, String countryCode, Boolean enableBusinessFeatures, Boolean isPrimary, String ringStrategy, Object verificationRequestDate, Boolean verified, Object verifiedDate, String expires, Boolean alwaysOpen, Integer maxReceivers, Integer number, Integer parentNumber, Integer primaryReceiver, String provider, Integer user, Object wazoTenant, Object verifiedBy) {
-        super();
-        this.id = id;
-        this.archived = archived;
-        this.lastModified = lastModified;
-        this.dateCreated = dateCreated;
-        this.label = label;
-        this.phoneNumber = phoneNumber;
-        this.forwardCallsToNumber = forwardCallsToNumber;
-        this.businessName = businessName;
-        this.otherNumber = otherNumber;
-        this.provisioned = provisioned;
-        this.callerTunesUrl = callerTunesUrl;
-        this.country = country;
-        this.countryCode = countryCode;
-        this.enableBusinessFeatures = enableBusinessFeatures;
-        this.isPrimary = isPrimary;
-        this.ringStrategy = ringStrategy;
-        this.verificationRequestDate = verificationRequestDate;
-        this.verified = verified;
-        this.verifiedDate = verifiedDate;
-        this.expires = expires;
-        this.alwaysOpen = alwaysOpen;
-        this.maxReceivers = maxReceivers;
-        this.number = number;
-        this.parentNumber = parentNumber;
-        this.primaryReceiver = primaryReceiver;
-        this.provider = provider;
-        this.user = user;
-        this.wazoTenant = wazoTenant;
-        this.verifiedBy = verifiedBy;
     }
 
     public Integer getId() {
@@ -279,12 +236,12 @@ public class BusinessNumber {
         this.enableBusinessFeatures = enableBusinessFeatures;
     }
 
-    public Boolean getIsPrimary() {
+    public Boolean getPrimary() {
         return isPrimary;
     }
 
-    public void setIsPrimary(Boolean isPrimary) {
-        this.isPrimary = isPrimary;
+    public void setPrimary(Boolean primary) {
+        isPrimary = primary;
     }
 
     public String getRingStrategy() {
@@ -397,6 +354,159 @@ public class BusinessNumber {
 
     public void setVerifiedBy(Object verifiedBy) {
         this.verifiedBy = verifiedBy;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public List<Receiver> getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(List<Receiver> receivers) {
+        this.receivers = receivers;
+    }
+
+    public Boolean getHasGreetingsAdded() {
+        return hasGreetingsAdded;
+    }
+
+    public void setHasGreetingsAdded(Boolean hasGreetingsAdded) {
+        this.hasGreetingsAdded = hasGreetingsAdded;
+    }
+
+    public Boolean getHasOfficeHoursAdded() {
+        return hasOfficeHoursAdded;
+    }
+
+    public void setHasOfficeHoursAdded(Boolean hasOfficeHoursAdded) {
+        this.hasOfficeHoursAdded = hasOfficeHoursAdded;
+    }
+
+    public Object getBusiness() {
+        return business;
+    }
+
+    public void setBusiness(Object business) {
+        this.business = business;
+    }
+
+    public String getFlagIcon() {
+        return flagIcon;
+    }
+
+    public void setFlagIcon(String flagIcon) {
+        this.flagIcon = flagIcon;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    /**
+     *
+     * @param country
+     * @param verificationRequestDate
+     * @param expires
+     * @param wazoTenant
+     * @param businessName
+     * @param archived
+     * @param number
+     * @param dateCreated
+     * @param provisioned
+     * @param verifiedDate
+     * @param provider
+     * @param countryCode
+     * @param isPrimary
+     * @param id
+     * @param otherNumber
+     * @param verified
+     * @param ringStrategy
+     * @param label
+     * @param enableBusinessFeatures
+     * @param verifiedBy
+     * @param primaryReceiver
+     * @param phoneNumber
+     * @param parentNumber
+     * @param alwaysOpen
+     * @param lastModified
+     * @param maxReceivers
+     * @param forwardCallsToNumber
+     * @param user
+     * @param callerTunesUrl
+     * @param country
+     * @param expires
+     * @param businessName
+     * @param archived
+     * @param number
+     * @param dateCreated
+     * @param provisioned
+     * @param receivers
+     * @param countryCode
+     * @param isPrimary
+     * @param id
+     * @param otherNumber
+     * @param verified
+     * @param ringStrategy
+     * @param label
+     * @param enableBusinessFeatures
+     * @param primaryReceiver
+     * @param phoneNumber
+     * @param parentNumber
+     * @param alwaysOpen
+     * @param lastModified
+     * @param maxReceivers
+     * @param forwardCallsToNumber
+     * @param user
+     * @param callerTunesUrl
+     */
+    public BusinessNumber(Integer id, Integer userId, List<Receiver> receivers, Object archived, String lastModified, String dateCreated, String label, String phoneNumber, Object forwardCallsToNumber, Object businessName, Object otherNumber, Boolean provisioned, String callerTunesUrl, String country, String countryCode, Boolean enableBusinessFeatures, Boolean isPrimary, Boolean hasGreetingsAdded, Boolean hasOfficeHoursAdded, String ringStrategy, Object verificationRequestDate, Boolean verified, Object verifiedDate, String expires, Boolean alwaysOpen, Integer maxReceivers, Integer number, Integer parentNumber, Integer primaryReceiver, String provider, Integer user, Object wazoTenant, Object verifiedBy, Object business, String flagIcon, Double balance) {
+        super();
+        this.id = id;
+        this.archived = archived;
+        this.forwardCallsToNumber = forwardCallsToNumber;
+        this.businessName = businessName;
+        this.otherNumber = otherNumber;
+        this.provisioned = provisioned;
+        this.enableBusinessFeatures = enableBusinessFeatures;
+        this.isPrimary = isPrimary;
+        this.verificationRequestDate = verificationRequestDate;
+        this.verified = verified;
+        this.verifiedDate = verifiedDate;
+        this.alwaysOpen = alwaysOpen;
+        this.maxReceivers = maxReceivers;
+        this.number = number;
+        this.parentNumber = parentNumber;
+        this.primaryReceiver = primaryReceiver;
+        this.provider = provider;
+        this.user = user;
+        this.wazoTenant = wazoTenant;
+        this.verifiedBy = verifiedBy;
+        this.userId = userId;
+        this.receivers = receivers;
+        this.lastModified = lastModified;
+        this.dateCreated = dateCreated;
+        this.label = label;
+        this.phoneNumber = phoneNumber;
+        this.callerTunesUrl = callerTunesUrl;
+        this.country = country;
+        this.countryCode = countryCode;
+        this.hasGreetingsAdded = hasGreetingsAdded;
+        this.hasOfficeHoursAdded = hasOfficeHoursAdded;
+        this.ringStrategy = ringStrategy;
+        this.expires = expires;
+        this.business = business;
+        this.flagIcon = flagIcon;
+        this.balance = balance;
     }
 
 }

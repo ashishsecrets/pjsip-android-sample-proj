@@ -13,7 +13,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
+import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallsEndDatum;
 
 import net.gotev.sipservice.SipServiceCommand;
@@ -63,13 +66,17 @@ public class CallsHistory extends AppCompatActivity {
     LinearLayoutManager layoutManager;
     List<ParentItem> itemList;
 
+    Spinner myNumber;
+    String[] arraySpinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls_history);
 
-        // Setting Screen Title
+        Retrofit retrofit = RetrofitData.getRetrofit();
 
+        retrofitAPI = retrofit.create(PressOneAPI.class);
         ActionBar actionBar = getSupportActionBar();
 
         assert actionBar != null;
@@ -78,20 +85,57 @@ public class CallsHistory extends AppCompatActivity {
         actionBar.setCustomView(R.layout.custom_action_bar);
         actionBar.show();
 
-        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String mobileNumber = shared.getString("username", "");
+        getBusinessNumbers();
 
-        TextView myNumber = findViewById(R.id.my_number);
+        myNumber = (Spinner) findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
         phone_calls_view = findViewById(R.id.phone_calls_view);
 
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
 
-        myNumber.setText(MessageFormat.format("0{0}", mobileNumber));
-
         initRecycler();
         initSipService();
+    }
+
+    private void getBusinessNumbers(){
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String token = shared.getString("token", "");
+
+        Call<List<BusinessNumber>> call = retrofitAPI.getBusinessNumbers("Bearer " + token);
+
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Toast.makeText(CallsHistory.this, response.message(), Toast.LENGTH_SHORT).show();
+
+                List<BusinessNumber> list = response.body();
+                arraySpinner = new String[0];
+                if(list != null || !(list.size() == 0)) {
+                    arraySpinner = new String[list.size()];
+                    for(int i = 0; i < list.size(); i++){
+                        arraySpinner[i] = list.get(i).getPhoneNumber();
+                    }
+                }
+                else{
+                    arraySpinner = new String[]{"No Business Number Found"};
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsHistory.this,
+                        android.R.layout.simple_spinner_item, arraySpinner);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                myNumber.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Toast.makeText(CallsHistory.this, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     private void initSipService(){
@@ -130,10 +174,6 @@ public class CallsHistory extends AppCompatActivity {
     {
 
         itemList = new ArrayList<>();
-        
-        Retrofit retrofit = RetrofitData.getRetrofit();
-
-        retrofitAPI = retrofit.create(PressOneAPI.class);
 
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");

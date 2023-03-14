@@ -411,64 +411,46 @@ public class BusinessNumber {
     public void setBalance(Double balance) {
         this.balance = balance;
     }
-
     /**
      *
-     * @param country
+     * @param id
+     * @param archived
+     * @param forwardCallsToNumber
+     * @param businessName
+     * @param otherNumber
+     * @param provisioned
+     * @param enableBusinessFeatures
+     * @param isPrimary
      * @param verificationRequestDate
-     * @param expires
-     * @param wazoTenant
-     * @param businessName
-     * @param archived
-     * @param number
-     * @param dateCreated
-     * @param provisioned
-     * @param verifiedDate
-     * @param provider
-     * @param countryCode
-     * @param isPrimary
-     * @param id
-     * @param otherNumber
      * @param verified
-     * @param ringStrategy
-     * @param label
-     * @param enableBusinessFeatures
-     * @param verifiedBy
-     * @param primaryReceiver
-     * @param phoneNumber
-     * @param parentNumber
+     * @param verifiedDate
      * @param alwaysOpen
-     * @param lastModified
      * @param maxReceivers
-     * @param forwardCallsToNumber
+     * @param number
+     * @param parentNumber
+     * @param primaryReceiver
+     * @param provider
      * @param user
+     * @param wazoTenant
+     * @param verifiedBy
+     * @param userId
+     * @param receivers
+     * @param lastModified
+     * @param dateCreated
+     * @param label
+     * @param phoneNumber
      * @param callerTunesUrl
      * @param country
-     * @param expires
-     * @param businessName
-     * @param archived
-     * @param number
-     * @param dateCreated
-     * @param provisioned
-     * @param receivers
      * @param countryCode
-     * @param isPrimary
-     * @param id
-     * @param otherNumber
-     * @param verified
+     * @param hasGreetingsAdded
+     * @param hasOfficeHoursAdded
      * @param ringStrategy
-     * @param label
-     * @param enableBusinessFeatures
-     * @param primaryReceiver
-     * @param phoneNumber
-     * @param parentNumber
-     * @param alwaysOpen
-     * @param lastModified
-     * @param maxReceivers
-     * @param forwardCallsToNumber
-     * @param user
-     * @param callerTunesUrl
+     * @param expires
+     * @param business
+     * @param flagIcon
+     * @param balance
      */
+
     public BusinessNumber(Integer id, Integer userId, List<Receiver> receivers, Object archived, String lastModified, String dateCreated, String label, String phoneNumber, Object forwardCallsToNumber, Object businessName, Object otherNumber, Boolean provisioned, String callerTunesUrl, String country, String countryCode, Boolean enableBusinessFeatures, Boolean isPrimary, Boolean hasGreetingsAdded, Boolean hasOfficeHoursAdded, String ringStrategy, Object verificationRequestDate, Boolean verified, Object verifiedDate, String expires, Boolean alwaysOpen, Integer maxReceivers, Integer number, Integer parentNumber, Integer primaryReceiver, String provider, Integer user, Object wazoTenant, Object verifiedBy, Object business, String flagIcon, Double balance) {
         super();
         this.id = id;

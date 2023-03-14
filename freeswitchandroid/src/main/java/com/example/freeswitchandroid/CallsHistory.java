@@ -26,6 +26,7 @@ import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallsEndDatum;
+import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.SipServiceCommand;
 
@@ -85,11 +86,18 @@ public class CallsHistory extends AppCompatActivity {
         actionBar.setCustomView(R.layout.custom_action_bar);
         actionBar.show();
 
-        getBusinessNumbers();
-
         myNumber = (Spinner) findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
         phone_calls_view = findViewById(R.id.phone_calls_view);
+
+        arraySpinner = new String[]{"No Number Found"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsHistory.this, android.R.layout.simple_spinner_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        myNumber.setAdapter(adapter);
+
+        getBusinessNumbers();
+
 
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
@@ -103,14 +111,15 @@ public class CallsHistory extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        Call<List<BusinessNumber>> call = retrofitAPI.getBusinessNumbers("Bearer " + token);
+        Call<UserDatum> call = retrofitAPI.getBusinessNumbers("Bearer " + token);
 
-        call.enqueue(new Callback<Object>() {
+        call.enqueue(new Callback<UserDatum>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
                 Toast.makeText(CallsHistory.this, response.message(), Toast.LENGTH_SHORT).show();
 
-                List<BusinessNumber> list = response.body();
+                UserDatum userDatum = response.body();
+                List<BusinessNumber> list = userDatum.getBusinessNumbers();
                 arraySpinner = new String[0];
                 if(list != null || !(list.size() == 0)) {
                     arraySpinner = new String[list.size()];
@@ -130,7 +139,7 @@ public class CallsHistory extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<UserDatum> call, Throwable t) {
                 Toast.makeText(CallsHistory.this, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });

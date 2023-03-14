@@ -142,6 +142,24 @@ public class User {
     @SerializedName("user_permissions")
     @Expose
     private List<Object> userPermissions;
+    @SerializedName("promo_balance_currency")
+    @Expose
+    private String promoBalanceCurrency;
+    @SerializedName("promo_balance")
+    @Expose
+    private String promoBalance;
+    @SerializedName("personal_email")
+    @Expose
+    private String personalEmail;
+    @SerializedName("has_completed_number_flow")
+    @Expose
+    private Boolean hasCompletedNumberFlow;
+    @SerializedName("has_topped_up")
+    @Expose
+    private Boolean hasToppedUp;
+    @SerializedName("date_modified")
+    @Expose
+    private String dateModified;
 
     /**
      * No args constructor for use in serialization
@@ -149,100 +167,68 @@ public class User {
     public User() {
     }
 
-    /**
-     * @param lastLogin
-     * @param lastName
-     * @param country
-     * @param verificationRequestDate
-     * @param gender
-     * @param dateJoined
-     * @param jobTitle
-     * @param isSuperuser
-     * @param mobileVerified
-     * @param hasUsablePin
-     * @param userPermissions
-     * @param isActive
-     * @param employmentStatus
-     * @param hasCompletedSignup
-     * @param password
-     * @param balance
-     * @param verifiedDate
-     * @param countryCode
-     * @param mobile2
-     * @param personalIdentificationBack
-     * @param id
-     * @param state
-     * @param governmentIdNumber
-     * @param email
-     * @param invitationCode
-     * @param homeAddress
-     * @param receiveNotifications
-     * @param forBusinessUse
-     * @param isStaff
-     * @param mobile
-     * @param verified
-     * @param personalIdentificationFront
-     * @param groups
-     * @param verifiedBy
-     * @param birthDate
-     * @param nextTwoFactorVerification
-     * @param firstName
-     * @param profilePicture
-     * @param emailVerified
-     * @param forPersonalUse
-     * @param livePicture
-     * @param voipToken
-     * @param lastModified
-     * @param balanceCurrency
-     * @param username
-     */
-    public User(Integer id, String password, Object lastLogin, Boolean isSuperuser, String username, String firstName, String lastName, String email, Boolean isStaff, Boolean isActive, String dateJoined, String balanceCurrency, String balance, String jobTitle, String homeAddress, String mobile, Object mobile2, String personalIdentificationFront, Object personalIdentificationBack, Object governmentIdNumber, Object profilePicture, Object livePicture, Object employmentStatus, String gender, String country, String countryCode, String state, Boolean receiveNotifications, String voipToken, String invitationCode, Object verificationRequestDate, Boolean verified, Object verifiedDate, Object birthDate, String lastModified, Boolean mobileVerified, Boolean emailVerified, Boolean forPersonalUse, Boolean forBusinessUse, Object nextTwoFactorVerification, Boolean hasUsablePin, Boolean hasCompletedSignup, Object verifiedBy, List<Object> groups, List<Object> userPermissions) {
-        super();
-        this.id = id;
-        this.password = password;
-        this.lastLogin = lastLogin;
-        this.isSuperuser = isSuperuser;
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.isStaff = isStaff;
-        this.isActive = isActive;
-        this.dateJoined = dateJoined;
-        this.balanceCurrency = balanceCurrency;
-        this.balance = balance;
-        this.jobTitle = jobTitle;
-        this.homeAddress = homeAddress;
-        this.mobile = mobile;
-        this.mobile2 = mobile2;
-        this.personalIdentificationFront = personalIdentificationFront;
-        this.personalIdentificationBack = personalIdentificationBack;
-        this.governmentIdNumber = governmentIdNumber;
-        this.profilePicture = profilePicture;
-        this.livePicture = livePicture;
-        this.employmentStatus = employmentStatus;
-        this.gender = gender;
-        this.country = country;
-        this.countryCode = countryCode;
-        this.state = state;
-        this.receiveNotifications = receiveNotifications;
-        this.voipToken = voipToken;
-        this.invitationCode = invitationCode;
-        this.verificationRequestDate = verificationRequestDate;
-        this.verified = verified;
-        this.verifiedDate = verifiedDate;
-        this.birthDate = birthDate;
-        this.lastModified = lastModified;
-        this.mobileVerified = mobileVerified;
-        this.emailVerified = emailVerified;
-        this.forPersonalUse = forPersonalUse;
-        this.forBusinessUse = forBusinessUse;
-        this.nextTwoFactorVerification = nextTwoFactorVerification;
-        this.hasUsablePin = hasUsablePin;
-        this.hasCompletedSignup = hasCompletedSignup;
-        this.verifiedBy = verifiedBy;
-        this.groups = groups;
-        this.userPermissions = userPermissions;
+    public Boolean getStaff() {
+        return isStaff;
+    }
+
+    public void setStaff(Boolean staff) {
+        isStaff = staff;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public String getPromoBalanceCurrency() {
+        return promoBalanceCurrency;
+    }
+
+    public void setPromoBalanceCurrency(String promoBalanceCurrency) {
+        this.promoBalanceCurrency = promoBalanceCurrency;
+    }
+
+    public String getPromoBalance() {
+        return promoBalance;
+    }
+
+    public void setPromoBalance(String promoBalance) {
+        this.promoBalance = promoBalance;
+    }
+
+    public String getPersonalEmail() {
+        return personalEmail;
+    }
+
+    public void setPersonalEmail(String personalEmail) {
+        this.personalEmail = personalEmail;
+    }
+
+    public Boolean getHasCompletedNumberFlow() {
+        return hasCompletedNumberFlow;
+    }
+
+    public void setHasCompletedNumberFlow(Boolean hasCompletedNumberFlow) {
+        this.hasCompletedNumberFlow = hasCompletedNumberFlow;
+    }
+
+    public Boolean getHasToppedUp() {
+        return hasToppedUp;
+    }
+
+    public void setHasToppedUp(Boolean hasToppedUp) {
+        this.hasToppedUp = hasToppedUp;
+    }
+
+    public String getDateModified() {
+        return dateModified;
+    }
+
+    public void setDateModified(String dateModified) {
+        this.dateModified = dateModified;
     }
 
     public Integer getId() {
@@ -269,12 +255,12 @@ public class User {
         this.lastLogin = lastLogin;
     }
 
-    public Boolean getIsSuperuser() {
+    public Boolean getSuperuser() {
         return isSuperuser;
     }
 
-    public void setIsSuperuser(Boolean isSuperuser) {
-        this.isSuperuser = isSuperuser;
+    public void setSuperuser(Boolean superuser) {
+        isSuperuser = superuser;
     }
 
     public String getUsername() {
@@ -307,22 +293,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Boolean getIsStaff() {
-        return isStaff;
-    }
-
-    public void setIsStaff(Boolean isStaff) {
-        this.isStaff = isStaff;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
     }
 
     public String getDateJoined() {
@@ -604,5 +574,170 @@ public class User {
     public void setUserPermissions(List<Object> userPermissions) {
         this.userPermissions = userPermissions;
     }
+
+    /**
+     * @param lastLogin
+     * @param lastName
+     * @param country
+     * @param verificationRequestDate
+     * @param gender
+     * @param dateJoined
+     * @param jobTitle
+     * @param isSuperuser
+     * @param mobileVerified
+     * @param hasUsablePin
+     * @param userPermissions
+     * @param isActive
+     * @param employmentStatus
+     * @param hasCompletedSignup
+     * @param password
+     * @param balance
+     * @param verifiedDate
+     * @param countryCode
+     * @param mobile2
+     * @param personalIdentificationBack
+     * @param id
+     * @param state
+     * @param governmentIdNumber
+     * @param email
+     * @param invitationCode
+     * @param homeAddress
+     * @param receiveNotifications
+     * @param forBusinessUse
+     * @param isStaff
+     * @param mobile
+     * @param verified
+     * @param personalIdentificationFront
+     * @param groups
+     * @param verifiedBy
+     * @param birthDate
+     * @param nextTwoFactorVerification
+     * @param firstName
+     * @param profilePicture
+     * @param emailVerified
+     * @param forPersonalUse
+     * @param livePicture
+     * @param voipToken
+     * @param lastModified
+     * @param balanceCurrency
+     * @param username
+     * @param lastName
+     * @param verificationRequestDate
+     * @param country
+     * @param gender
+     * @param dateJoined
+     * @param jobTitle
+     * @param isSuperuser
+     * @param mobileVerified
+     * @param hasCompletedNumberFlow
+     * @param hasUsablePin
+     * @param isActive
+     * @param employmentStatus
+     * @param personalEmail
+     * @param hasCompletedSignup
+     * @param balance
+     * @param verifiedDate
+     * @param countryCode
+     * @param mobile2
+     * @param personalIdentificationBack
+     * @param id
+     * @param state
+     * @param governmentIdNumber
+     * @param email
+     * @param invitationCode
+     * @param homeAddress
+     * @param promoBalance
+     * @param receiveNotifications
+     * @param forBusinessUse
+     * @param isStaff
+     * @param hasToppedUp
+     * @param mobile
+     * @param verified
+     * @param personalIdentificationFront
+     * @param dateModified
+     * @param birthDate
+     * @param nextTwoFactorVerification
+     * @param firstName
+     * @param profilePicture
+     * @param emailVerified
+     * @param forPersonalUse
+     * @param livePicture
+     * @param voipToken
+     * @param lastModified
+     * @param balanceCurrency
+     * @param promoBalanceCurrency
+     * @param username
+     */
+    public User(Integer id, String password, Object lastLogin, Boolean isSuperuser, String username, String firstName, String lastName, String email, Boolean isStaff, Boolean isActive, String dateJoined, String balanceCurrency, String balance, String promoBalanceCurrency, String promoBalance, String jobTitle, String homeAddress, String mobile, Object mobile2, String personalEmail, String personalIdentificationFront, Object personalIdentificationBack, Object governmentIdNumber, Object profilePicture, Object livePicture, Object employmentStatus, String gender, String country, String countryCode, String state, Boolean receiveNotifications, String voipToken, String invitationCode, Object verificationRequestDate, Boolean verified, Object verifiedDate, Object birthDate, String lastModified, Boolean mobileVerified, Boolean emailVerified, Boolean forPersonalUse, Boolean forBusinessUse, Object nextTwoFactorVerification, Boolean hasUsablePin, Boolean hasCompletedSignup, Boolean hasCompletedNumberFlow, Boolean hasToppedUp, String dateModified, Object verifiedBy, List<Object> groups, List<Object> userPermissions) {
+        super();
+        this.id = id;
+        this.password = password;
+        this.lastLogin = lastLogin;
+        this.isSuperuser = isSuperuser;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.isStaff = isStaff;
+        this.isActive = isActive;
+        this.dateJoined = dateJoined;
+        this.balanceCurrency = balanceCurrency;
+        this.balance = balance;
+        this.jobTitle = jobTitle;
+        this.homeAddress = homeAddress;
+        this.mobile = mobile;
+        this.mobile2 = mobile2;
+        this.personalIdentificationFront = personalIdentificationFront;
+        this.personalIdentificationBack = personalIdentificationBack;
+        this.governmentIdNumber = governmentIdNumber;
+        this.profilePicture = profilePicture;
+        this.livePicture = livePicture;
+        this.employmentStatus = employmentStatus;
+        this.gender = gender;
+        this.country = country;
+        this.countryCode = countryCode;
+        this.state = state;
+        this.receiveNotifications = receiveNotifications;
+        this.voipToken = voipToken;
+        this.invitationCode = invitationCode;
+        this.verificationRequestDate = verificationRequestDate;
+        this.verified = verified;
+        this.verifiedDate = verifiedDate;
+        this.birthDate = birthDate;
+        this.lastModified = lastModified;
+        this.mobileVerified = mobileVerified;
+        this.emailVerified = emailVerified;
+        this.forPersonalUse = forPersonalUse;
+        this.forBusinessUse = forBusinessUse;
+        this.nextTwoFactorVerification = nextTwoFactorVerification;
+        this.hasUsablePin = hasUsablePin;
+        this.hasCompletedSignup = hasCompletedSignup;
+        this.verifiedBy = verifiedBy;
+        this.groups = groups;
+        this.userPermissions = userPermissions;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.dateJoined = dateJoined;
+        this.balanceCurrency = balanceCurrency;
+        this.balance = balance;
+        this.promoBalanceCurrency = promoBalanceCurrency;
+        this.promoBalance = promoBalance;
+        this.jobTitle = jobTitle;
+        this.homeAddress = homeAddress;
+        this.mobile = mobile;
+        this.personalEmail = personalEmail;
+        this.personalIdentificationFront = personalIdentificationFront;
+        this.gender = gender;
+        this.countryCode = countryCode;
+        this.state = state;
+        this.voipToken = voipToken;
+        this.invitationCode = invitationCode;
+        this.lastModified = lastModified;
+        this.dateModified = dateModified;
+        this.country = country;
+    }
+
 
 }

@@ -33,7 +33,6 @@ import java.io.InputStreamReader;
 
 public class CallsActivity extends AppCompatActivity{
 
-    ServiceCommunicator serviceCommunicator;
     String accountID;
     int callID1;
     int callID2;
@@ -244,7 +243,7 @@ public class CallsActivity extends AppCompatActivity{
 
     public void terminate(View v){
 
-        SipServiceCommand.hangUpActiveCalls(this, serviceCommunicator.uri);
+        SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
 
         Toast.makeText(this, "Hanging up !",
                 Toast.LENGTH_LONG).show();
@@ -267,12 +266,12 @@ public class CallsActivity extends AppCompatActivity{
     public void mute(View v){
 
         if(!isMute) {
-            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, callID1, true);
+            SipServiceCommand.setCallMute(this, ServiceCommunicator.uri, callID1, true);
             muteBtn.setImageResource(R.drawable.mute_active);
             isMute = true;
         }
         else{
-            SipServiceCommand.setCallMute(this, serviceCommunicator.uri, callID1, false);
+            SipServiceCommand.setCallMute(this, ServiceCommunicator.uri, callID1, false);
             muteBtn.setImageResource(R.drawable.mute);
             isMute = false;
         }
@@ -311,7 +310,7 @@ public class CallsActivity extends AppCompatActivity{
         String numberToCall = number.getText().toString();
 
         if(!numberToCall.isEmpty()) {
-            SipServiceCommand.makeCall(this, serviceCommunicator.uri, "sip:" + numberToCall + "@" + serviceCommunicator.hostname, false, false, false);
+            SipServiceCommand.makeCall(this, ServiceCommunicator.uri, "sip:" + numberToCall + "@" + ServiceCommunicator.hostname, false, false, false);
             Toast.makeText(this, "Making a call !",
                     Toast.LENGTH_LONG).show();
         }
@@ -360,7 +359,7 @@ public class CallsActivity extends AppCompatActivity{
 
         if(!isHold) {
 
-            SipServiceCommand.holdActiveCalls(this, serviceCommunicator.uri);
+            SipServiceCommand.holdActiveCalls(this, ServiceCommunicator.uri);
 
             hold.setImageResource(R.drawable.hold_active);
 
@@ -370,11 +369,11 @@ public class CallsActivity extends AppCompatActivity{
         }
           else if(isHold) {
 
-                if(serviceCommunicator.sipAccountData.getCallId() == null || serviceCommunicator.sipAccountData.getCallId().length() < 2){
-                    serviceCommunicator.sipAccountData.setCallId(String.valueOf(this.callID1));
+                if(ServiceCommunicator.sipAccountData.getCallId() == null || ServiceCommunicator.sipAccountData.getCallId().length() < 2){
+                    ServiceCommunicator.sipAccountData.setCallId(String.valueOf(this.callID1));
                 }
 
-                SipServiceCommand.setCallHold(this, serviceCommunicator.uri, Integer.parseInt(serviceCommunicator.sipAccountData.getCallId()), false);
+                SipServiceCommand.setCallHold(this, ServiceCommunicator.uri, Integer.parseInt(ServiceCommunicator.sipAccountData.getCallId()), false);
 
                 hold.setImageResource(R.drawable.hold);
 
@@ -414,18 +413,18 @@ public class CallsActivity extends AppCompatActivity{
 
             if(!isHold) {
 
-                SipServiceCommand.toggleCallHold(this, serviceCommunicator.uri, callID1);
+                SipServiceCommand.toggleCallHold(this, ServiceCommunicator.uri, callID1);
 
                 hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
 
                 Toast.makeText(this, "Holding before transfer !",
                         Toast.LENGTH_LONG).show();
 
-                SipServiceCommand.makeCall(this, serviceCommunicator.uri, "9037217611", true);
+                SipServiceCommand.makeCall(this, ServiceCommunicator.uri, "9037217611", true);
             }
             else if(isHold){
 
-                SipServiceCommand.attendedTransferCall(this, serviceCommunicator.uri, callID1, callID2);
+                SipServiceCommand.attendedTransferCall(this, ServiceCommunicator.uri, callID1, callID2);
 
                 Toast.makeText(this, "Making attended transfer !",
                         Toast.LENGTH_LONG).show();

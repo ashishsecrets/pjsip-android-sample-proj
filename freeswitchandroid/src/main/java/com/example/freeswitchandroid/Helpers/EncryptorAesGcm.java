@@ -3,6 +3,8 @@ package com.example.freeswitchandroid.Helpers;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class EncryptorAesGcm {
 
-    private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
+    private static final String ENCRYPT_ALGO = "AES/CTR/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
     private static final int AES_KEY_BIT = 256;
@@ -51,7 +53,7 @@ public class EncryptorAesGcm {
     public static String decrypt(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
 
         Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-        cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+        cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(iv));
         byte[] plainText = cipher.doFinal(cText);
         return new String(plainText, UTF_8);
 

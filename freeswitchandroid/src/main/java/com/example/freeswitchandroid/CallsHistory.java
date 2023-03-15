@@ -20,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.freeswitchandroid.Helpers.CryptoUtils;
+import com.example.freeswitchandroid.Helpers.EncryptorAesGcm;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
@@ -32,6 +34,10 @@ import com.example.freeswitchandroid.rest.model.UserDatum;
 import net.gotev.sipservice.SipServiceCommand;
 
 import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,7 +61,10 @@ import java.util.stream.Collectors;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.GCMParameterSpec;
 
+import okio.Utf8;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -77,6 +86,7 @@ public class CallsHistory extends AppCompatActivity {
     String[] arraySpinner;
     List<BusinessNumber> businessNumbers;
     Map<String, BusinessNumber> map;
+    boolean apiHasRetrievedNumbers = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +125,13 @@ public class CallsHistory extends AppCompatActivity {
         myNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               initSipService(parent.getItemAtPosition(position).toString());
+                if(apiHasRetrievedNumbers) {
+                    try {
+                        initSipService(parent.getItemAtPosition(position).toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
 
             @Override
@@ -144,6 +160,7 @@ public class CallsHistory extends AppCompatActivity {
                         arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
                         map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
+                    apiHasRetrievedNumbers = true;
                 }
                 else{
                     arraySpinner = new String[]{"No Business Number Found"};
@@ -165,27 +182,19 @@ public class CallsHistory extends AppCompatActivity {
 
     }
 
-    private void initSipService(String number) throws IllegalBlockSizeException, BadPaddingException {
+    private void initSipService(String number) throws Exception {
         //Remove logging // TODO
 
-        ServiceCommunicator.username = Objects.requireNonNull(map.get(number)).getPhoneNumber();
-        String password = Objects.requireNonNull(map.get(number)).getReceivers().get(0).getLine().getPassword();
-        String nonce = Objects.requireNonNull(map.get(number)).getReceivers().get(0).getLine().getNonce();
-        ServiceCommunicator.hostname = Objects.requireNonNull(map.get(number)).getReceivers().get(0).getLine().getDomain();
+        ServiceCommunicator.username = map.get(number).getPhoneNumber();
+        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
+        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
+        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
 
         String secret = "2F8D89B734DBADE00D31FA21D400143E";
-        final encrypter = Encrypt.Encrypter(Encrypt.AES(
-                Encrypt.Key.fromUtf8(secret),
-                mode: Encrypt.AESMode.ctr,
-                padding: null));
-        return encrypter.decrypt(Encrypt.Encrypted.fromBase64(this.password!), iv: Encrypt.IV.fromBase64(this.nonce!));
 
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.DECRYPT_MODE, key, iv);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            byte[] plainText = cipher.doFinal(Base64.getDecoder()
-                    .decode(password));
-        }
+        ServiceCommunicator.password = EncryptorAesGcm.decrypt(password.getBytes(), CryptoUtils.getAESKeyFromPassword(secret.toCharArray(), nonce.getBytes()), nonce.getBytes());
+
+        //Toast.makeText(CallsHistory.this, ServiceCommunicator.password, Toast.LENGTH_SHORT).show();
 
         SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();

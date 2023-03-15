@@ -36,6 +36,8 @@ import net.gotev.sipservice.SipServiceCommand;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.MessageFormat;
@@ -92,7 +94,7 @@ public class CallsHistory extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calls_history);
+        setContentView(R.layout.activity_calls);
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Retrofit retrofit = RetrofitData.getRetrofit();
 
@@ -123,6 +125,13 @@ public class CallsHistory extends AppCompatActivity {
         map = new HashMap<>();
         getBusinessNumbers();
 
+        //TODO TO be Removed
+        try {
+            initSipService("76890709");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         myNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -137,6 +146,7 @@ public class CallsHistory extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
 
             }
         });
@@ -154,7 +164,9 @@ public class CallsHistory extends AppCompatActivity {
             public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
 
                 UserDatum userDatum = response.body();
-                businessNumbers = userDatum.getBusinessNumbers();
+                if(userDatum != null) {
+                    businessNumbers = userDatum.getBusinessNumbers();
+                }
                 if(businessNumbers != null || !(businessNumbers.size() == 0)) {
                     arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
@@ -186,16 +198,17 @@ public class CallsHistory extends AppCompatActivity {
     private void initSipService(String number) throws Exception {
         //Remove logging // TODO
 
-        ServiceCommunicator.username = map.get(number).getPhoneNumber();
-        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
-        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
-        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
+//        ServiceCommunicator.username = map.get(number).getPhoneNumber();
+//        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
+//        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
+//        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
+//        //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
+//        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
 
-        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
+        ServiceCommunicator.username = "1911899877";
+        ServiceCommunicator.password = "(jZ@52Ca";
+        ServiceCommunicator.hostname = "david380.fs1.pressone.co";
 
-        //ServiceCommunicator.password = new String(ServiceCommunicator.password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        Toast.makeText(CallsHistory.this, ServiceCommunicator.password, Toast.LENGTH_SHORT).show();
-        System.out.println("Password  " + ServiceCommunicator.password);
 
         SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();

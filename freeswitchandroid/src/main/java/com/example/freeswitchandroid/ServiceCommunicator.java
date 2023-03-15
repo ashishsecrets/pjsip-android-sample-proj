@@ -33,6 +33,8 @@ public class ServiceCommunicator {
     static SipAccountData sipAccountData;
     static String hostname = "david380.fs1.pressone.co";
 
+    //static long port = 5060;
+
     Context context;
 
     private boolean foregroundServiceRunning(ActivityManager activityManager){
@@ -47,10 +49,14 @@ public class ServiceCommunicator {
     public void startService(ActivityManager activityManager, Context context){
         if(!foregroundServiceRunning(activityManager)) {
             sipAccountData = new SipAccountData();
-            sipAccountData.setRealm("sunnex58.fs1.pressone.co");
-            sipAccountData.setUsername("017004607");
-            sipAccountData.setPassword("odUX2681Gvl5X0iTrUYL");
-            sipAccountData.setHost("sunnex58.fs1.pressone.co");
+
+            sipAccountData.setUsername(username);
+
+            sipAccountData.setRealm(hostname);
+
+            //sipAccountData.setPort(port);
+            sipAccountData.setPassword(password);
+            sipAccountData.setHost(hostname);
             sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);
             sipAccountData.setSrtpSecureSignalling(0);
             sipAccountData.setTransport(SipAccountTransport.TCP);
@@ -64,8 +70,6 @@ public class ServiceCommunicator {
                     Toast.LENGTH_LONG).show();
         }
     }
-
-
 
 
 }

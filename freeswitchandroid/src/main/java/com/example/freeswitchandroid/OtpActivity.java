@@ -107,7 +107,7 @@ public class OtpActivity extends AppCompatActivity {
                     editor.apply();
 
                     if(response.code() == 200){
-                        Intent intent = new Intent(OtpActivity.this, CallsHistory.class);
+                        Intent intent = new Intent(OtpActivity.this, CallsActivity.class);
                         startActivity(intent);
                     }
 

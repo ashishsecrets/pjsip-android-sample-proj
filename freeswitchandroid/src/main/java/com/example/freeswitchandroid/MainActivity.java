@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         String authToken = shared.getString("token", "");
 
         if(!authToken.isEmpty()){
-            Intent intent = new Intent(MainActivity.this, CallsHistory.class);
+            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
             startActivity(intent);
         }
 

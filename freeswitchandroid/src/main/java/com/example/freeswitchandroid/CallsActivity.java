@@ -4,23 +4,39 @@ import static net.gotev.sipservice.SipTlsUtils.TAG;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.freeswitchandroid.Pojo.ChildItem;
+import com.example.freeswitchandroid.Pojo.ParentItem;
+import com.example.freeswitchandroid.adapters.ParentItemAdapter;
+import com.example.freeswitchandroid.rest.PressOneAPI;
+import com.example.freeswitchandroid.rest.RetrofitData;
+import com.example.freeswitchandroid.rest.model.BusinessNumber;
+import com.example.freeswitchandroid.rest.model.CallsEndDatum;
+import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
 import net.gotev.sipservice.SipServiceCommand;
@@ -30,8 +46,41 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class CallsActivity extends AppCompatActivity{
+
+    /////Combining Calls History Activity////
+
+    PressOneAPI retrofitAPI;
+
+    LinearLayout recycler_list;
+    LinearLayout phone_calls_view;
+    ActivityManager activityManager;
+    ServiceCommunicator serviceCommunicator;
+    RecyclerView ParentRecyclerViewItem;
+    ParentItemAdapter parentItemAdapter;
+    LinearLayoutManager layoutManager;
+    List<ParentItem> itemList;
+    Spinner myNumber;
+    String[] arraySpinner;
+    List<BusinessNumber> businessNumbers;
+    Map<String, BusinessNumber> map;
+    boolean apiHasRetrievedNumbers = false;
 
     String accountID;
     int callID1;
@@ -68,6 +117,10 @@ public class CallsActivity extends AppCompatActivity{
 
     LinearLayout overlayTransferLayout;
 
+    LinearLayout callsActivity;
+
+    LinearLayout callsHistoryActivity;
+
     ImageButton deleteBtn;
     TextView callTime; //Visibility Toggle
     TextView tvName; //Caller's name
@@ -84,15 +137,72 @@ public class CallsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
 
+        ///From Calls History
+
+        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        Retrofit retrofit = RetrofitData.getRetrofit();
+
+        retrofitAPI = retrofit.create(PressOneAPI.class);
+        ActionBar actionBar = getSupportActionBar();
+
+        assert actionBar != null;
+        actionBar.setDisplayOptions(ActionBar. DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.custom_action_bar);
+        actionBar.show();
+
+        myNumber = (Spinner) findViewById(R.id.my_number);
+        recycler_list = findViewById(R.id.recycler_list);
+        phone_calls_view = findViewById(R.id.phone_calls_view);
+
+        arraySpinner = new String[]{"No Number Found"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        myNumber.setAdapter(adapter);
+
+        phone_calls_view.setVisibility(View.VISIBLE);
+        recycler_list.setVisibility(View.GONE);
+
+        initRecycler();
+        businessNumbers = new ArrayList<>();
+        map = new HashMap<>();
+        getBusinessNumbers();
+
+        //TODO TO be Removed
+        try {
+            initSipService("76890709");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        myNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(apiHasRetrievedNumbers) {
+                    try {
+                        initSipService(parent.getItemAtPosition(position).toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+
+            }
+        });
+
         // Removing action bar
 
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
+//        actionBar = getSupportActionBar();
+//        assert actionBar != null;
+//        actionBar.hide();
 
         this.context = this;
 
-        String toCall = getIntent().getStringExtra("callNumber");
 
         mReceiver.register(this);
 
@@ -115,6 +225,8 @@ public class CallsActivity extends AppCompatActivity{
         callOptionsLayout = findViewById(R.id.call_options);
         callHorizontalLayout = findViewById(R.id.call_horizontal_layout);
         overlayTransferLayout = findViewById(R.id.overlay_transfer_layout);
+        callsActivity = findViewById(R.id.calls_activity);
+        callsActivity = findViewById(R.id.calls_history_activity);
         //Add default visibility at the start of activity.
 
          dialPad1Layout.setVisibility(View.VISIBLE);
@@ -128,14 +240,211 @@ public class CallsActivity extends AppCompatActivity{
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        if(toCall != null && !toCall.isEmpty())number.setText(toCall);
+    }
 
+    private void getBusinessNumbers(){
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String token = shared.getString("token", "");
+
+        Call<UserDatum> call = retrofitAPI.getBusinessNumbers("Bearer " + token);
+
+        call.enqueue(new Callback<UserDatum>() {
+            @Override
+            public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
+
+                UserDatum userDatum = response.body();
+                if(userDatum != null) {
+                    businessNumbers = userDatum.getBusinessNumbers();
+                }
+                if(businessNumbers != null || !(businessNumbers.size() == 0)) {
+                    arraySpinner = new String[businessNumbers.size()];
+                    for(int i = 0; i < businessNumbers.size(); i++){
+                        arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
+                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
+                    }
+                    apiHasRetrievedNumbers = true;
+                }
+                else{
+                    arraySpinner = new String[]{"No Business Number Found"};
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
+                        android.R.layout.simple_spinner_item, arraySpinner);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                myNumber.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onFailure(Call<UserDatum> call, Throwable t) {
+                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+    private void initSipService(String number) throws Exception {
+        //Remove logging // TODO
+
+//        ServiceCommunicator.username = map.get(number).getPhoneNumber();
+//        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
+//        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
+//        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
+//        //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
+//        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
+
+        ServiceCommunicator.username = "1911899877";
+        ServiceCommunicator.password = "(jZ@52Ca";
+        ServiceCommunicator.hostname = "david380.fs1.pressone.co";
+
+
+        SipServiceCommand.enableSipDebugLogging(true);
+        serviceCommunicator = new ServiceCommunicator();
+        serviceCommunicator.startService(activityManager, this);
+    }
+
+    private void initRecycler(){
+
+        ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
+
+        // Initialise the Linear layout manager
+        layoutManager = new LinearLayoutManager(CallsActivity.this);
+
+        // Pass the arguments
+        // to the parentItemAdapter.
+        // These arguments are passed
+        // using a method ParentItemList()
+        parentItemAdapter = new ParentItemAdapter(ParentItemList(), CallsActivity.this);
+
+        // Set the layout manager
+        // and adapter for items
+        // of the parent recyclerview
+        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+        ParentRecyclerViewItem.setLayoutManager(layoutManager);
+    }
+
+    private List<ParentItem> ParentItemList()
+    {
+
+        itemList = new ArrayList<>();
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String token = shared.getString("token", "");
+
+        Call<List<CallsEndDatum>> call = retrofitAPI.getCallsData("Bearer " + token);
+
+        call.enqueue(new Callback<List<CallsEndDatum>>() {
+            @Override
+            public void onResponse(Call<List<CallsEndDatum>> call, Response<List<CallsEndDatum>> response) {
+
+                List<CallsEndDatum> callsEndDatumList = response.body();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if(callsEndDatumList != null && callsEndDatumList.size() > 0) {
+                        phone_calls_view.setVisibility(View.GONE);
+                        recycler_list.setVisibility(View.VISIBLE);
+
+                        final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
+
+                        ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
+
+
+                        List<ChildItem> childList = new ArrayList<>();
+
+                        for (CallsEndDatum callsEndDatum : callsEndDatumList) {
+                            childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                        }
+
+                        Map<LocalDate, List<ChildItem>> result = childList.stream()
+                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                                        .with(ADJUSTERS.get("day"))));
+
+                        result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+
+                    }
+
+                }
+                else{
+                    Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CallsEndDatum>> call, Throwable t) {
+                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+        System.out.print("List : " + itemList);
+
+        return itemList;
+    }
+
+    private String getCallerId(CallsEndDatum callsEndDatum) {
+        String callerId = null;
+
+        callerId = callsEndDatum.getUser().getFirstName();
+
+        if(callerId.isEmpty()){
+            callerId = callsEndDatum.getCallerId();
+        }
+        return callerId;
+    }
+
+    public void keypadPress(View v){
+        callsActivity.setVisibility(View.VISIBLE);
+        callsHistoryActivity.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        callsActivity.setVisibility(View.GONE);
+        callsHistoryActivity.setVisibility(View.VISIBLE);
+    }
+
+    private int getCallType(CallsEndDatum datum){
+
+        int toReturn = 0;
+
+        if(datum.getIsDialed()){
+            toReturn = 0; // outgoing
+        } else if (datum.getIsMissedCall()) {
+            toReturn = 1; // missed
+        } else if (!datum.getIsDialed()) {
+            toReturn = 2; //incoming
+        } else if (!datum.getIsForwardedCall()) {
+            toReturn = 3; //forwarded
+        } else if (!datum.getIsRejectedCall()) {
+            toReturn = 4; //rejected
+        }
+
+        return toReturn;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        parentItemAdapter = new ParentItemAdapter(itemList, CallsActivity.this);
+        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+        ParentRecyclerViewItem.setLayoutManager(layoutManager);
+        getBusinessNumbers();
+    }
+
+    public static void callLogItemPressed(ChildItem item, Context context){
+        Intent intent = new Intent(context, CallsActivity.class);
+        intent.putExtra("callNumber", item.getNumber());
+        context.startActivity(intent);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mReceiver.unregister(this);
+        //mReceiver.unregister(this); ?????
     }
 
 
@@ -323,7 +632,9 @@ public class CallsActivity extends AppCompatActivity{
 
     public void answer(View view){
 
-        if(dialPad1Layout.getVisibility() == View.VISIBLE){
+        if(!number.getText().toString().isEmpty()){
+
+        if(dialPad1Layout.getVisibility() == View.VISIBLE) {
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
@@ -333,6 +644,7 @@ public class CallsActivity extends AppCompatActivity{
             answer.setVisibility(View.GONE);
 
             call();
+            }
         }
         else if(callHorizontalLayout.getVisibility() == View.VISIBLE){
 
@@ -467,7 +779,7 @@ public class CallsActivity extends AppCompatActivity{
             linearLayout2.setVisibility(View.GONE);
             dtmfKeyPadLayout.setVisibility(View.GONE);
             callOptionsLayout.setVisibility(View.GONE);
-            callHorizontalLayout.setVisibility(View.GONE);
+            hangup.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
             audioManager.setMode(AudioManager.MODE_NORMAL);
         }

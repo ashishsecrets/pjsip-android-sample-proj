@@ -92,6 +92,8 @@ public class CallsActivity extends AppCompatActivity{
 
         this.context = this;
 
+        String toCall = getIntent().getStringExtra("callNumber");
+
         mReceiver.register(this);
 
         number = findViewById(R.id.number);
@@ -125,6 +127,8 @@ public class CallsActivity extends AppCompatActivity{
         answer.setVisibility(View.VISIBLE);
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if(toCall != null && !toCall.isEmpty())number.setText(toCall);
 
     }
 

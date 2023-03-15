@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.freeswitchandroid.CallsHistory;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.R;
 
@@ -21,12 +20,17 @@ public class ChildItemAdapter
         extends RecyclerView
         .Adapter<ChildItemAdapter.ChildViewHolder> {
 
+    public interface OnItemClickListener {
+        void onItemClick(ChildItem item);
+    }
+
+    private final OnItemClickListener listener;
     private List<ChildItem> ChildItemList;
     private Context context;
 
     // Constructor
-    ChildItemAdapter(List<ChildItem> childItemList, Context context)
-    {
+    ChildItemAdapter(OnItemClickListener listener, List<ChildItem> childItemList, Context context) {
+        this.listener = listener;
         this.ChildItemList = childItemList;
         this.context = context;
     }
@@ -35,8 +39,7 @@ public class ChildItemAdapter
     @Override
     public ChildViewHolder onCreateViewHolder(
             @NonNull ViewGroup viewGroup,
-            int i)
-    {
+            int i) {
 
         // Here we inflate the corresponding
         // layout of the child item
@@ -52,9 +55,8 @@ public class ChildItemAdapter
     @Override
     public void onBindViewHolder(
             @NonNull ChildViewHolder childViewHolder,
-            int position)
-    {
-
+            int position) {
+        childViewHolder.bind(ChildItemList.get(position), listener);
         // Create an instance of the ChildItem
         // class for the given position
         ChildItem childItem = ChildItemList.get(position);
@@ -67,76 +69,66 @@ public class ChildItemAdapter
         childViewHolder.childItemTitle.setText(childItem.getChildItemTitle());
         childViewHolder.childItemTxt.setText(childItem.getChildItemTxt().substring(11, 16));
 
-        if(childItem.getChildItemImg() == 0){
+        if (childItem.getChildItemImg() == 0) {
             childViewHolder.childItemImg.setImageResource(R.drawable.outgoing);
             childViewHolder.childItemDesc.setText(R.string.outgoing);
-            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
-            }
-            else {
+            } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
                 childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
                 childViewHolder.iconTxt.setVisibility(View.VISIBLE);
-                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0, 1));
             }
-        }
-        else if(childItem.getChildItemImg() == 1){
+        } else if (childItem.getChildItemImg() == 1) {
             childViewHolder.childItemImg.setImageResource(R.drawable.missed);
             childViewHolder.childItemDesc.setText(R.string.missed);
-            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
-            }
-            else {
+            } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
                 childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
                 childViewHolder.iconTxt.setVisibility(View.VISIBLE);
-                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0, 1));
             }
-        }
-        else if(childItem.getChildItemImg() == 2){
+        } else if (childItem.getChildItemImg() == 2) {
             childViewHolder.childItemImg.setImageResource(R.drawable.incoming);
             childViewHolder.childItemDesc.setText(R.string.incoming);
-            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
-            }
-            else {
+            } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
                 childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
                 childViewHolder.iconTxt.setVisibility(View.VISIBLE);
-                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0, 1));
             }
-        }
-        else if(childItem.getChildItemImg() == 3){
+        } else if (childItem.getChildItemImg() == 3) {
             childViewHolder.childItemImg.setImageResource(R.drawable.forwarded);
             childViewHolder.childItemDesc.setText(R.string.forwarded);
-            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
-            }
-            else {
+            } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
                 childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
                 childViewHolder.iconTxt.setVisibility(View.VISIBLE);
-                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0, 1));
             }
-        }
-        else if(childItem.getChildItemImg() == 4){
+        } else if (childItem.getChildItemImg() == 4) {
             childViewHolder.childItemImg.setImageResource(R.drawable.rejected);
             childViewHolder.childItemDesc.setText(R.string.rejected);
-            if(childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2){
+            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
-            }
-            else {
+            } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
                 childViewHolder.iconImg.setImageResource(R.drawable.empty_frame);
                 childViewHolder.iconTxt.setVisibility(View.VISIBLE);
-                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0,1));
+                childViewHolder.iconTxt.setText(childItem.getChildItemTitle().substring(0, 1));
             }
         }
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
 
         // This method returns the number
         // of items we have added
@@ -159,8 +151,7 @@ public class ChildItemAdapter
         TextView iconTxt;
         ImageView iconImg;
 
-        ChildViewHolder(View itemView)
-        {
+        ChildViewHolder(View itemView) {
             super(itemView);
             childItemTitle = itemView.findViewById(R.id.child_item_title);
             childItemImg = itemView.findViewById(R.id.child_item_img);
@@ -169,7 +160,17 @@ public class ChildItemAdapter
             iconImg = itemView.findViewById(R.id.icon_img);
             iconTxt = itemView.findViewById(R.id.icon_text);
         }
+
+        public void bind(final ChildItem item, final OnItemClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(item);
+                }
+            });
+        }
     }
+
 }
 
 

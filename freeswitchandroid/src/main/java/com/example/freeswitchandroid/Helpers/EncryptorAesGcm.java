@@ -1,5 +1,7 @@
 package com.example.freeswitchandroid.Helpers;
 
+import android.os.Build;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
@@ -8,6 +10,7 @@ import javax.crypto.spec.IvParameterSpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * AES-GCM inputs - 12 bytes IV, need the same IV and secret keys for encryption and decryption.
@@ -19,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  * c = content bytes (encrypted content, auth tag)
  */
 public class EncryptorAesGcm {
-
+    //Modified for AESCTR
     private static final String ENCRYPT_ALGO = "AES/CTR/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
@@ -51,12 +54,16 @@ public class EncryptorAesGcm {
     }
 
     public static String decrypt(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
-
+        Base64.Decoder decoder = null;
+        String decryptedText = "";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            decoder = Base64.getDecoder();
         Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
         cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(iv));
-        byte[] plainText = cipher.doFinal(cText);
-        return new String(plainText, UTF_8);
-
+        byte[] plainText = cipher.doFinal(decoder.decode(cText));
+            decryptedText =  new String(plainText, UTF_8);
+        }
+        return decryptedText;
     }
 
     public static String decryptWithPrefixIV(byte[] cText, SecretKey secret) throws Exception {
@@ -72,40 +79,6 @@ public class EncryptorAesGcm {
 
         String plainText = decrypt(cipherText, secret, iv);
         return plainText;
-
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        String OUTPUT_FORMAT = "%-30s:%s";
-
-        String pText = "Hello World AES-GCM, Welcome to Cryptography!";
-
-        // encrypt and decrypt need the same key.
-        // get AES 256 bits (32 bytes) key
-        SecretKey secretKey = CryptoUtils.getAESKey(AES_KEY_BIT);
-
-        // encrypt and decrypt need the same IV.
-        // AES-GCM needs IV 96-bit (12 bytes)
-        byte[] iv = CryptoUtils.getRandomNonce(IV_LENGTH_BYTE);
-
-        byte[] encryptedText = EncryptorAesGcm.encryptWithPrefixIV(pText.getBytes(UTF_8), secretKey, iv);
-
-        System.out.println("\n------ AES GCM Encryption ------");
-        System.out.println(String.format(OUTPUT_FORMAT, "Input (plain text)", pText));
-        System.out.println(String.format(OUTPUT_FORMAT, "Key (hex)", CryptoUtils.hex(secretKey.getEncoded())));
-        System.out.println(String.format(OUTPUT_FORMAT, "IV  (hex)", CryptoUtils.hex(iv)));
-        System.out.println(String.format(OUTPUT_FORMAT, "Encrypted (hex) ", CryptoUtils.hex(encryptedText)));
-        System.out.println(String.format(OUTPUT_FORMAT, "Encrypted (hex) (block = 16)", CryptoUtils.hexWithBlockSize(encryptedText, 16)));
-
-        System.out.println("\n------ AES GCM Decryption ------");
-        System.out.println(String.format(OUTPUT_FORMAT, "Input (hex)", CryptoUtils.hex(encryptedText)));
-        System.out.println(String.format(OUTPUT_FORMAT, "Input (hex) (block = 16)", CryptoUtils.hexWithBlockSize(encryptedText, 16)));
-        System.out.println(String.format(OUTPUT_FORMAT, "Key (hex)", CryptoUtils.hex(secretKey.getEncoded())));
-
-        String decryptedText = EncryptorAesGcm.decryptWithPrefixIV(encryptedText, secretKey);
-
-        System.out.println(String.format(OUTPUT_FORMAT, "Decrypted (plain text)", decryptedText));
 
     }
 

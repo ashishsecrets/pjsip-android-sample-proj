@@ -62,6 +62,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 
 import okio.Utf8;
@@ -190,11 +191,11 @@ public class CallsHistory extends AppCompatActivity {
         String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
         ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
 
-        String secret = "2F8D89B734DBADE00D31FA21D400143E";
+        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
 
-        ServiceCommunicator.password = EncryptorAesGcm.decrypt(password.getBytes(), CryptoUtils.getAESKeyFromPassword(secret.toCharArray(), nonce.getBytes()), nonce.getBytes());
-
-        //Toast.makeText(CallsHistory.this, ServiceCommunicator.password, Toast.LENGTH_SHORT).show();
+        //ServiceCommunicator.password = new String(ServiceCommunicator.password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        Toast.makeText(CallsHistory.this, ServiceCommunicator.password, Toast.LENGTH_SHORT).show();
+        System.out.println("Password  " + ServiceCommunicator.password);
 
         SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();
@@ -250,7 +251,7 @@ public class CallsHistory extends AppCompatActivity {
                         List<ChildItem> childList = new ArrayList<>();
 
                         for (CallsEndDatum callsEndDatum : callsEndDatumList) {
-                                childList.add(new ChildItem(getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
                             }
 
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
@@ -323,4 +324,11 @@ public class CallsHistory extends AppCompatActivity {
         ParentRecyclerViewItem.setLayoutManager(layoutManager);
         getBusinessNumbers();
     }
+
+    public static void callLogItemPressed(ChildItem item, Context context){
+        Intent intent = new Intent(context, CallsActivity.class);
+        intent.putExtra("callNumber", item.getNumber());
+        context.startActivity(intent);
+    }
+
 }

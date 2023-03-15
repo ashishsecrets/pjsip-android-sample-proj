@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.freeswitchandroid.CallsHistory;
+import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.R;
 
@@ -103,8 +105,14 @@ public class ParentItemAdapter
         // adapter, layout manager and RecyclerViewPool
         ChildItemAdapter childItemAdapter
                 = new ChildItemAdapter(
-                parentItem
-                        .getChildItemList(), context);
+                new ChildItemAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(ChildItem item) {
+                        CallsHistory.callLogItemPressed(item, context);
+                    }
+                }, parentItem
+                .getChildItemList(), context);
+
         parentViewHolder
                 .ChildRecyclerView
                 .setLayoutManager(layoutManager);

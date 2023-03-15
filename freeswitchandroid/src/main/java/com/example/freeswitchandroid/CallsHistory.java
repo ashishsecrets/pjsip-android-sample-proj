@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -40,14 +41,20 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,15 +73,16 @@ public class CallsHistory extends AppCompatActivity {
     ParentItemAdapter parentItemAdapter;
     LinearLayoutManager layoutManager;
     List<ParentItem> itemList;
-
     Spinner myNumber;
     String[] arraySpinner;
+    List<BusinessNumber> businessNumbers;
+    Map<String, BusinessNumber> map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls_history);
-
+        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         Retrofit retrofit = RetrofitData.getRetrofit();
 
         retrofitAPI = retrofit.create(PressOneAPI.class);
@@ -96,15 +104,25 @@ public class CallsHistory extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         myNumber.setAdapter(adapter);
 
-
-
-
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
 
         initRecycler();
-        initSipService();
+        businessNumbers = new ArrayList<>();
+        map = new HashMap<>();
         getBusinessNumbers();
+
+        myNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+               initSipService(parent.getItemAtPosition(position).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void getBusinessNumbers(){
@@ -117,15 +135,14 @@ public class CallsHistory extends AppCompatActivity {
         call.enqueue(new Callback<UserDatum>() {
             @Override
             public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
-                Toast.makeText(CallsHistory.this, response.message(), Toast.LENGTH_SHORT).show();
 
                 UserDatum userDatum = response.body();
-                List<BusinessNumber> list = userDatum.getBusinessNumbers();
-                arraySpinner = new String[0];
-                if(list != null || !(list.size() == 0)) {
-                    arraySpinner = new String[list.size()];
-                    for(int i = 0; i < list.size(); i++){
-                        arraySpinner[i] = list.get(i).getPhoneNumber();
+                businessNumbers = userDatum.getBusinessNumbers();
+                if(businessNumbers != null || !(businessNumbers.size() == 0)) {
+                    arraySpinner = new String[businessNumbers.size()];
+                    for(int i = 0; i < businessNumbers.size(); i++){
+                        arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
+                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                 }
                 else{
@@ -148,16 +165,31 @@ public class CallsHistory extends AppCompatActivity {
 
     }
 
-    private void initSipService(){
-        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+    private void initSipService(String number) throws IllegalBlockSizeException, BadPaddingException {
+        //Remove logging // TODO
+
+        ServiceCommunicator.username = Objects.requireNonNull(map.get(number)).getPhoneNumber();
+        String password = Objects.requireNonNull(map.get(number)).getReceivers().get(0).getLine().getPassword();
+        String nonce = Objects.requireNonNull(map.get(number)).getReceivers().get(0).getLine().getNonce();
+        ServiceCommunicator.hostname = Objects.requireNonNull(map.get(number)).getReceivers().get(0).getLine().getDomain();
+
+        String secret = "2F8D89B734DBADE00D31FA21D400143E";
+        final encrypter = Encrypt.Encrypter(Encrypt.AES(
+                Encrypt.Key.fromUtf8(secret),
+                mode: Encrypt.AESMode.ctr,
+                padding: null));
+        return encrypter.decrypt(Encrypt.Encrypted.fromBase64(this.password!), iv: Encrypt.IV.fromBase64(this.nonce!));
+
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            byte[] plainText = cipher.doFinal(Base64.getDecoder()
+                    .decode(password));
+        }
+
         SipServiceCommand.enableSipDebugLogging(true);
-
-        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String username = shared.getString("username", "");
-
         serviceCommunicator = new ServiceCommunicator();
-        serviceCommunicator.username = username;
-        //serviceCommunicator.startService(activityManager, this);
+        serviceCommunicator.startService(activityManager, this);
     }
 
     private void initRecycler(){

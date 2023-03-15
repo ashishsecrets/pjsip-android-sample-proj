@@ -28,10 +28,10 @@ import org.pjsip.pjsua2.pjsip_status_code;
 public class ServiceCommunicator {
 
     static String uri;
-    String username = "";
-    String password = "";
+    static String username = "";
+    static String password = "";
     static SipAccountData sipAccountData;
-    String hostname = "david380.fs1.pressone.co";
+    static String hostname = "david380.fs1.pressone.co";
 
     Context context;
 

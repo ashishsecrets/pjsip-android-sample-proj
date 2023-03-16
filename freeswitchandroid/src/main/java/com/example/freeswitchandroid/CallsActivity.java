@@ -160,7 +160,7 @@ public class CallsActivity extends AppCompatActivity{
 
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
-
+        itemList = new ArrayList<>();
         businessNumbers = new ArrayList<>();
         map = new HashMap<>();
         getBusinessNumbers();
@@ -178,6 +178,8 @@ public class CallsActivity extends AppCompatActivity{
                 if(apiHasRetrievedNumbers) {
                     try {
                         initSipService(parent.getItemAtPosition(position).toString());
+                        initRecycler();
+                        ParentItemList();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -251,7 +253,6 @@ public class CallsActivity extends AppCompatActivity{
                         map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
-                    initRecycler();
                 }
                 else{
                     arraySpinner = new String[]{"No Business Number Found"};
@@ -261,6 +262,9 @@ public class CallsActivity extends AppCompatActivity{
                         android.R.layout.simple_spinner_item, arraySpinner);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
+
+                initRecycler();
+                ParentItemList();
 
             }
 
@@ -295,7 +299,6 @@ public class CallsActivity extends AppCompatActivity{
 
     private void initRecycler(){
 
-        ParentItemList();
 
         ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
 
@@ -311,21 +314,17 @@ public class CallsActivity extends AppCompatActivity{
         // Set the layout manager
         // and adapter for items
         // of the parent recyclerview
-        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
-        ParentRecyclerViewItem.setLayoutManager(layoutManager);
+
     }
 
     private void ParentItemList()
     {
-
-        itemList = new ArrayList<>();
-
+        itemList.clear();
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        for(Receiver receiver: userDatum.getReceivers()) {
 
-            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, String.valueOf(receiver.getBusinessNumber().getId()));
+            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
 
             call.enqueue(new Callback<List<CallDetail>>() {
                 @Override
@@ -360,6 +359,8 @@ public class CallsActivity extends AppCompatActivity{
                     } else {
                         Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
                     }
+                    ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+                    ParentRecyclerViewItem.setLayoutManager(layoutManager);
                 }
 
                 @Override
@@ -368,9 +369,6 @@ public class CallsActivity extends AppCompatActivity{
 
                 }
             });
-
-
-        }
 
     }
 
@@ -420,6 +418,7 @@ public class CallsActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         getBusinessNumbers();
+
     }
 
     public static void callLogItemPressed(ChildItem item, int position){

@@ -282,7 +282,7 @@
             android:text="11:43"
             android:inputType="time"
             android:gravity="center"
-            android:visibility="visible"
+            android:visibility="gone"
             android:fontFamily="@font/urbanistnormal"/>
 
         <LinearLayout
@@ -326,7 +326,7 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <LinearLayout
@@ -514,7 +514,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:background="@drawable/active_call_btm_bg"
         android:orientation="vertical">
         

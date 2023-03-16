@@ -27,9 +27,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pjsipandroidmaster">
         <activity
-            android:name=".CallsHistory"
-            android:exported="false" />
-        <activity
             android:name=".CallsActivity"
             android:exported="false" />
         <activity

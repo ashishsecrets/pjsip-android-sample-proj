@@ -226,17 +226,8 @@ public class CallsActivity extends AppCompatActivity{
         callHorizontalLayout = findViewById(R.id.call_horizontal_layout);
         overlayTransferLayout = findViewById(R.id.overlay_transfer_layout);
         callsActivity = findViewById(R.id.calls_activity);
-        callsActivity = findViewById(R.id.calls_history_activity);
+        callsHistoryActivity = findViewById(R.id.calls_history_activity);
         //Add default visibility at the start of activity.
-
-         dialPad1Layout.setVisibility(View.VISIBLE);
-         linearLayout1.setVisibility(View.GONE);
-         linearLayout2.setVisibility(View.GONE);
-         dtmfKeyPadLayout.setVisibility(View.GONE);
-         callOptionsLayout.setVisibility(View.GONE);
-         callHorizontalLayout.setVisibility(View.VISIBLE);
-         overlayTransferLayout.setVisibility(View.GONE);
-        answer.setVisibility(View.VISIBLE);
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
@@ -402,7 +393,7 @@ public class CallsActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
         callsActivity.setVisibility(View.GONE);
         callsHistoryActivity.setVisibility(View.VISIBLE);
     }
@@ -436,9 +427,7 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     public static void callLogItemPressed(ChildItem item, Context context){
-        Intent intent = new Intent(context, CallsActivity.class);
-        intent.putExtra("callNumber", item.getNumber());
-        context.startActivity(intent);
+        //TODO
     }
 
     @Override
@@ -499,7 +488,7 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     public void dtmf1Pressed(View v){
-
+    //SipServiceCommand.sendDTMF();
     }
 
     public void dtmf2Pressed(View v){
@@ -556,10 +545,21 @@ public class CallsActivity extends AppCompatActivity{
 
     public void terminate(View v){
 
+        callsHistoryActivity.setVisibility(View.VISIBLE);
+        callsActivity.setVisibility(View.GONE);
+
         SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
 
         Toast.makeText(this, "Hanging up !",
                 Toast.LENGTH_LONG).show();
+
+        dialPad1Layout.setVisibility(View.VISIBLE);
+        linearLayout1.setVisibility(View.GONE);
+        linearLayout2.setVisibility(View.GONE);
+        dtmfKeyPadLayout.setVisibility(View.GONE);
+        callOptionsLayout.setVisibility(View.GONE);
+        callHorizontalLayout.setVisibility(View.VISIBLE);
+        answer.setVisibility(View.VISIBLE);
 
     }
 
@@ -632,26 +632,13 @@ public class CallsActivity extends AppCompatActivity{
 
     public void answer(View view){
 
-        if(!number.getText().toString().isEmpty()){
-
-        if(dialPad1Layout.getVisibility() == View.VISIBLE) {
+         if(hangup.getVisibility() == View.GONE) {
+                call();
+         }
+         else {
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.VISIBLE);
-            callHorizontalLayout.setVisibility(View.GONE);
-            answer.setVisibility(View.GONE);
-
-            call();
-            }
-        }
-        else if(callHorizontalLayout.getVisibility() == View.VISIBLE){
-
-            dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.VISIBLE);
-            linearLayout2.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
             callOptionsLayout.setVisibility(View.VISIBLE);
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
@@ -774,23 +761,27 @@ public class CallsActivity extends AppCompatActivity{
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
+            callsHistoryActivity.setVisibility(View.VISIBLE);
+            callsActivity.setVisibility(View.GONE);
             dialPad1Layout.setVisibility(View.VISIBLE);
             linearLayout1.setVisibility(View.GONE);
             linearLayout2.setVisibility(View.GONE);
+            callHorizontalLayout.setVisibility(View.VISIBLE);
             dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.GONE);
+            callTime.setVisibility(View.GONE);
             hangup.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
             audioManager.setMode(AudioManager.MODE_NORMAL);
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
+            callsActivity.setVisibility(View.VISIBLE);
+            callsHistoryActivity.setVisibility(View.GONE);
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.VISIBLE);
             callHorizontalLayout.setVisibility(View.GONE);
+            callTime.setVisibility(View.VISIBLE);
             answer.setVisibility(View.GONE);
 
             CallsActivity.this.accountID = accountID;
@@ -828,10 +819,7 @@ public class CallsActivity extends AppCompatActivity{
 
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
-            callTime.setVisibility(View.GONE);
             linearLayout2.setVisibility(View.GONE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.GONE);
 
     }
 

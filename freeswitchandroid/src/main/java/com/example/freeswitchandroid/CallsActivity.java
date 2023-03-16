@@ -28,7 +28,9 @@ import android.widget.Toast;
 import com.example.freeswitchandroid.Helpers.CryptoUtils;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
+import com.example.freeswitchandroid.Pojo.TransferData;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
+import com.example.freeswitchandroid.adapters.TransferRecyclerViewAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.BusinessNumber;
@@ -48,8 +50,10 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -69,8 +73,10 @@ public class CallsActivity extends AppCompatActivity{
     ServiceCommunicator serviceCommunicator;
     RecyclerView ParentRecyclerViewItem;
     ParentItemAdapter parentItemAdapter;
+    TransferRecyclerViewAdapter transferRecyclerViewAdapter;
     LinearLayoutManager layoutManager;
     List<ParentItem> itemList;
+    List<TransferData> transferList;
     Spinner myNumber;
     String[] arraySpinner;
     List<BusinessNumber> businessNumbers;
@@ -96,6 +102,8 @@ public class CallsActivity extends AppCompatActivity{
     boolean isHold = false;
 
     UserDatum userDatum;
+
+    RecyclerView transferRecycler;
 
     /////////////// Adding Final UI Items ////////////////
 
@@ -151,6 +159,7 @@ public class CallsActivity extends AppCompatActivity{
         myNumber = (Spinner) findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
         phone_calls_view = findViewById(R.id.phone_calls_view);
+        transferRecycler = findViewById(R.id.transfer_recycler);
 
         arraySpinner = new String[]{"No Number Found"};
 
@@ -161,6 +170,7 @@ public class CallsActivity extends AppCompatActivity{
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
         itemList = new ArrayList<>();
+        transferList = new ArrayList<>();
         businessNumbers = new ArrayList<>();
         map = new HashMap<>();
         getBusinessNumbers();
@@ -314,12 +324,14 @@ public class CallsActivity extends AppCompatActivity{
         // Set the layout manager
         // and adapter for items
         // of the parent recyclerview
+        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, transferList);
 
     }
 
     private void ParentItemList()
     {
         itemList.clear();
+        transferList.clear();
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
@@ -346,7 +358,12 @@ public class CallsActivity extends AppCompatActivity{
 
                             for (CallDetail callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                                transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
                             }
+
+                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(transferList);
+                            transferList.clear();
+                            transferList.addAll(uniqueContacts);
 
                             Map<LocalDate, List<ChildItem>> result = childList.stream()
                                     .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
@@ -361,6 +378,7 @@ public class CallsActivity extends AppCompatActivity{
                     }
                     ParentRecyclerViewItem.setAdapter(parentItemAdapter);
                     ParentRecyclerViewItem.setLayoutManager(layoutManager);
+                    transferRecycler.setAdapter(transferRecyclerViewAdapter);
                 }
 
                 @Override
@@ -417,6 +435,9 @@ public class CallsActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        if(!apiHasRetrievedNumbers){
+            getBusinessNumbers();
+        }
     }
 
     public static void callLogItemPressed(ChildItem item, int position){
@@ -626,7 +647,7 @@ public class CallsActivity extends AppCompatActivity{
 
 
             SipServiceCommand.makeCall(this, ServiceCommunicator.uri, "sip:" + numberToCall + "@" + ServiceCommunicator.hostname, false, false, false);
-            Toast.makeText(this, "Making a call !",
+            Toast.makeText(this, "Calling... !",
                     Toast.LENGTH_LONG).show();
         }
 
@@ -646,7 +667,7 @@ public class CallsActivity extends AppCompatActivity{
             answer.setVisibility(View.GONE);
 
             SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
-            Toast.makeText(this, "Receiving a call !", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Answering Call !", Toast.LENGTH_LONG).show();
 
         }
 
@@ -763,7 +784,7 @@ public class CallsActivity extends AppCompatActivity{
             Toast.makeText(context, "New Registration successful", Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(context, "Registration code：" + registrationStateCode, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Registration Failed, Switch Number or contact IT", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -403,17 +403,14 @@ public class SipService extends BackgroundService implements SipServiceConstants
 
     private void handleHangUpCall(Intent intent) {
         String accountID = intent.getStringExtra(PARAM_ACCOUNT_ID);
-        String callID = intent.getStringExtra(PARAM_CALL_ID);
+        int callID = intent.getIntExtra(PARAM_CALL_ID, 0);
 
-        if(callID.equals("")){
-            callID = "0";
-        }
 
         try {
-            hangupCall(accountID, Integer.parseInt(callID));
+            hangupCall(accountID, callID);
         } catch (Exception exc) {
             Logger.error(TAG, "Error while hanging up call", exc);
-            notifyCallDisconnected(accountID, Integer.parseInt(callID));
+            notifyCallDisconnected(accountID, callID);
         }
     }
 

@@ -14,6 +14,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.freeswitchandroid.Pojo.ParentItem;
+import com.example.freeswitchandroid.Pojo.TransferData;
+import com.example.freeswitchandroid.rest.model.BusinessNumber;
+import com.example.freeswitchandroid.rest.model.UserDatum;
+
 import net.gotev.sipservice.BroadcastEventReceiver;
 import net.gotev.sipservice.Logger;
 import net.gotev.sipservice.SipAccountData;
@@ -25,6 +30,9 @@ import org.pjsip.pjsua2.pjmedia_srtp_use;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 
+import java.util.List;
+import java.util.Map;
+
 public class ServiceCommunicator {
 
     static String uri;
@@ -32,6 +40,18 @@ public class ServiceCommunicator {
     static String password = "";
     static SipAccountData sipAccountData;
     static String hostname = "david380.fs1.pressone.co";
+
+    static String[] arraySpinner;
+
+    static List<ParentItem> itemList;
+
+    static  List<TransferData> transferList;
+
+    static UserDatum userDatum;
+
+    static List<BusinessNumber> businessNumbers;
+    static Map<String, BusinessNumber> map;
+    static boolean apiHasRetrievedNumbers = false;
 
     //static long port = 5060;
 

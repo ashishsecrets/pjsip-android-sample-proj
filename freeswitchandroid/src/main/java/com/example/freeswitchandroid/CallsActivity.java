@@ -1,5 +1,9 @@
 package com.example.freeswitchandroid;
 
+import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
+import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
+import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
+import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
 import androidx.appcompat.app.ActionBar;
@@ -54,6 +58,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,13 +81,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     ParentItemAdapter parentItemAdapter;
     TransferRecyclerViewAdapter transferRecyclerViewAdapter;
     LinearLayoutManager layoutManager;
-    List<ParentItem> itemList;
-    List<TransferData> transferList;
     Spinner myNumber;
-    String[] arraySpinner;
-    List<BusinessNumber> businessNumbers;
-    Map<String, BusinessNumber> map;
-    boolean apiHasRetrievedNumbers = false;
 
     String numberToTransfer = "";
     String accountID;
@@ -102,8 +101,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     static EditText number;
     Context context;
     boolean isHold = false;
-
-    UserDatum userDatum;
 
     RecyclerView transferRecycler;
 
@@ -163,19 +160,26 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         phone_calls_view = findViewById(R.id.phone_calls_view);
         transferRecycler = findViewById(R.id.transfer_recycler);
 
-        arraySpinner = new String[]{"No Number Found"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, arraySpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         myNumber.setAdapter(adapter);
 
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
-        itemList = new ArrayList<>();
-        transferList = new ArrayList<>();
-        businessNumbers = new ArrayList<>();
-        map = new HashMap<>();
-        getBusinessNumbers();
+
+        initRecycler();
+
+        if(arraySpinner.length <= 1) {
+            getBusinessNumbers();
+            Toast.makeText(CallsActivity.this, "Bad", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(CallsActivity.this, "Good", Toast.LENGTH_SHORT).show();
+            initRecycler();
+            ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+            ParentRecyclerViewItem.setLayoutManager(layoutManager);
+            transferRecycler.setAdapter(transferRecyclerViewAdapter);
+        }
 
         //TODO TO be Removed
 //        try {
@@ -189,9 +193,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(apiHasRetrievedNumbers) {
                     try {
-                        initSipService(parent.getItemAtPosition(position).toString());
-                        initRecycler();
                         ParentItemList();
+                        initSipService(parent.getItemAtPosition(position).toString());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -259,19 +262,19 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     businessNumbers = userDatum.getBusinessNumbers();
                 }
                 if(businessNumbers != null || !(businessNumbers.size() == 0)) {
-                    arraySpinner = new String[businessNumbers.size()];
+                    ServiceCommunicator.arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
-                        arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
-                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
+                        ServiceCommunicator.arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
+                        ServiceCommunicator.map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
                 }
                 else{
-                    arraySpinner = new String[]{"No Business Number Found"};
+                    ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
                 }
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
-                        android.R.layout.simple_spinner_item, arraySpinner);
+                        android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
 
@@ -288,14 +291,74 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
     }
+    private void ParentItemList()
+    {
+        ServiceCommunicator.itemList.clear();
+        ServiceCommunicator.transferList.clear();
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String token = shared.getString("token", "");
 
+
+        Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.get(myNumber.getSelectedItem().toString()).getId().toString());
+
+        call.enqueue(new Callback<List<CallDetail>>() {
+            @Override
+            public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
+
+                List<CallDetail> callsEndDatumList = response.body();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
+                        phone_calls_view.setVisibility(View.GONE);
+                        recycler_list.setVisibility(View.VISIBLE);
+
+                        final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
+
+                        ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
+
+
+                        List<ChildItem> childList = new ArrayList<>();
+
+                        for (CallDetail callsEndDatum : callsEndDatumList) {
+                            childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                            ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
+                        }
+
+                        Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
+                        ServiceCommunicator.transferList.clear();
+                        ServiceCommunicator.transferList.addAll(uniqueContacts);
+
+                        Map<LocalDate, List<ChildItem>> result = childList.stream()
+                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                                        .with(ADJUSTERS.get("day"))));
+
+                        result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+
+                    }
+
+                } else {
+                    Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
+                }
+                ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+                ParentRecyclerViewItem.setLayoutManager(layoutManager);
+                transferRecycler.setAdapter(transferRecyclerViewAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<CallDetail>> call, Throwable t) {
+                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
     private void initSipService(String number) throws Exception {
         //Remove logging // TODO
         SipServiceCommand.stop(this);
-        ServiceCommunicator.username = map.get(number).getReceivers().get(0).getLine().getUsername();
-        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
-        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
-        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
+        ServiceCommunicator.username = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getUsername();
+        String password = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getPassword();
+        String nonce = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getNonce();
+        ServiceCommunicator.hostname = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getDomain();
         //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
 
@@ -321,12 +384,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         // to the parentItemAdapter.
         // These arguments are passed
         // using a method ParentItemList()
-        parentItemAdapter = new ParentItemAdapter(itemList, CallsActivity.this);
+        parentItemAdapter = new ParentItemAdapter(ServiceCommunicator.itemList, CallsActivity.this);
 
         // Set the layout manager
         // and adapter for items
         // of the parent recyclerview
-        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, transferList);
+        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, ServiceCommunicator.transferList);
 
     }
 
@@ -338,67 +401,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         numberToTransfer = textView.getText().toString();
     }
 
-    private void ParentItemList()
-    {
-        itemList.clear();
-        transferList.clear();
-        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String token = shared.getString("token", "");
 
-
-            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
-
-            call.enqueue(new Callback<List<CallDetail>>() {
-                @Override
-                public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
-
-                    List<CallDetail> callsEndDatumList = response.body();
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
-                            phone_calls_view.setVisibility(View.GONE);
-                            recycler_list.setVisibility(View.VISIBLE);
-
-                            final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
-
-                            ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
-
-
-                            List<ChildItem> childList = new ArrayList<>();
-
-                            for (CallDetail callsEndDatum : callsEndDatumList) {
-                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                                transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
-                            }
-
-                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(transferList);
-                            transferList.clear();
-                            transferList.addAll(uniqueContacts);
-
-                            Map<LocalDate, List<ChildItem>> result = childList.stream()
-                                    .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                                            .with(ADJUSTERS.get("day"))));
-
-                            result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
-
-                        }
-
-                    } else {
-                        Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
-                    }
-                    ParentRecyclerViewItem.setAdapter(parentItemAdapter);
-                    ParentRecyclerViewItem.setLayoutManager(layoutManager);
-                    transferRecycler.setAdapter(transferRecyclerViewAdapter);
-                }
-
-                @Override
-                public void onFailure(Call<List<CallDetail>> call, Throwable t) {
-                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            });
-
-    }
 
     private String getCallerId(CallDetail callsEndDatum) {
         String callerId = null;
@@ -410,19 +413,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
         return callerId;
     }
-
-    public void keypadPress(View v){
-        callsActivity.setVisibility(View.VISIBLE);
-        callsHistoryActivity.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        callsActivity.setVisibility(View.GONE);
-        callsHistoryActivity.setVisibility(View.VISIBLE);
-    }
-
     private int getCallType(CallDetail datum){
 
         int toReturn = 0;
@@ -441,6 +431,20 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         return toReturn;
     }
+
+    public void keypadPress(View v){
+        callsActivity.setVisibility(View.VISIBLE);
+        callsHistoryActivity.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        callsActivity.setVisibility(View.GONE);
+        callsHistoryActivity.setVisibility(View.VISIBLE);
+    }
+
+
 
     @Override
     protected void onResume() {

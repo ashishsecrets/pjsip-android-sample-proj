@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +62,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class CallsActivity extends AppCompatActivity{
+public class CallsActivity extends AppCompatActivity implements TransferRecyclerViewAdapter.ItemClickListener{
 
     /////Combining Calls History Activity////
 
@@ -83,6 +84,7 @@ public class CallsActivity extends AppCompatActivity{
     Map<String, BusinessNumber> map;
     boolean apiHasRetrievedNumbers = false;
 
+    String numberToTransfer = "";
     String accountID;
     int callID1;
     int callID2;
@@ -328,6 +330,14 @@ public class CallsActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    public void onItemClick(View view, int position) {
+        RadioButton radioButton = view.findViewById(R.id.radio_btn);
+        radioButton.setChecked(true);
+        TextView textView = view.findViewById(R.id.transfer_number);
+        numberToTransfer = textView.getText().toString();
+    }
+
     private void ParentItemList()
     {
         itemList.clear();
@@ -504,51 +514,51 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     public void dtmf1Pressed(View v){
-    //SipServiceCommand.sendDTMF();
+    SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "1");
     }
 
     public void dtmf2Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "2");
     }
 
     public void dtmf3Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "3");
     }
 
     public void dtmf4Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "4");
     }
 
     public void dtmf5Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "5");
     }
 
     public void dtmf6Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "6");
     }
 
     public void dtmf7Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "7");
     }
 
     public void dtmf8Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "8");
     }
 
     public void dtmf9Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "9");
     }
 
     public void dtmf0Pressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "0");
     }
 
     public void dtmfStarPressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "*");
     }
 
     public void dtmfHashPressed(View v){
-
+        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "#");
     }
 
     public void deleteBtnPressed(View v){
@@ -755,7 +765,7 @@ public class CallsActivity extends AppCompatActivity{
                 Toast.makeText(this, "Holding before transfer !",
                         Toast.LENGTH_LONG).show();
 
-                SipServiceCommand.makeCall(this, ServiceCommunicator.uri, "9037217611", true);
+                SipServiceCommand.makeCall(this, ServiceCommunicator.uri, numberToTransfer, true);
             }
             else if(isHold){
 

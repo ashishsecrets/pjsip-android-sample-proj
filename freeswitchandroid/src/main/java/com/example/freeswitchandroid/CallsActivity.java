@@ -618,6 +618,15 @@ public class CallsActivity extends AppCompatActivity{
         String numberToCall = number.getText().toString();
 
         if(!numberToCall.isEmpty()) {
+
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            callTime.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+
+
             SipServiceCommand.makeCall(this, ServiceCommunicator.uri, "sip:" + numberToCall + "@" + ServiceCommunicator.hostname, false, false, false);
             Toast.makeText(this, "Making a call !",
                     Toast.LENGTH_LONG).show();
@@ -766,6 +775,13 @@ public class CallsActivity extends AppCompatActivity{
             hangup.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
             audioManager.setMode(AudioManager.MODE_NORMAL);
+            hold.setImageResource(R.drawable.hold);
+            transfer.setImageResource(R.drawable.transfer);
+            muteBtn.setImageResource(R.drawable.mute);
+            speakerBtn.setImageResource(R.drawable.speaker);
+            keypadBtn.setImageResource(R.drawable.keypad);
+            //TODO
+            //Call Time Re-set Counter
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
@@ -777,7 +793,8 @@ public class CallsActivity extends AppCompatActivity{
             callHorizontalLayout.setVisibility(View.GONE);
             callTime.setVisibility(View.VISIBLE);
             answer.setVisibility(View.GONE);
-
+            //TODO
+            //Call Time set Counter
             CallsActivity.this.accountID = accountID;
             CallsActivity.this.callID1 = callID;
             CallsActivity.this.displayName = displayName;

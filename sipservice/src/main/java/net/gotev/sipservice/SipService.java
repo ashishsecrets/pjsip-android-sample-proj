@@ -388,13 +388,9 @@ public class SipService extends BackgroundService implements SipServiceConstants
 
     private void handleDeclineIncomingCall(Intent intent) {
         String accountID = intent.getStringExtra(PARAM_ACCOUNT_ID);
-        String callID = intent.getStringExtra(PARAM_CALL_ID);
+        int callID = intent.getIntExtra(PARAM_CALL_ID, 0);
 
-        if(callID.equals("")){
-            callID = "0";
-        }
-
-        SipCall sipCall = getCall(accountID, Integer.parseInt(callID));
+        SipCall sipCall = getCall(accountID, callID);
         if (sipCall != null) {
             try {
                 sipCall.declineIncomingCall();

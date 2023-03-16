@@ -279,7 +279,7 @@ public class CallsActivity extends AppCompatActivity{
 
     private void initSipService(String number) throws Exception {
         //Remove logging // TODO
-
+        SipServiceCommand.stop(this);
         ServiceCommunicator.username = map.get(number).getReceivers().get(0).getLine().getUsername();
         String password = map.get(number).getReceivers().get(0).getLine().getPassword();
         String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
@@ -417,8 +417,6 @@ public class CallsActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        getBusinessNumbers();
-
     }
 
     public static void callLogItemPressed(ChildItem item, int position){
@@ -544,8 +542,8 @@ public class CallsActivity extends AppCompatActivity{
 
         callsHistoryActivity.setVisibility(View.VISIBLE);
         callsActivity.setVisibility(View.GONE);
-
         SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
+
 
         Toast.makeText(this, "Hanging up !",
                 Toast.LENGTH_LONG).show();
@@ -658,7 +656,16 @@ public class CallsActivity extends AppCompatActivity{
 
     public void hangUp(View view){
 
+    SipServiceCommand.declineIncomingCall(this, ServiceCommunicator.uri, callID1);
 
+        dialPad1Layout.setVisibility(View.VISIBLE);
+        linearLayout1.setVisibility(View.GONE);
+        linearLayout2.setVisibility(View.GONE);
+        callHorizontalLayout.setVisibility(View.VISIBLE);
+        dtmfKeyPadLayout.setVisibility(View.GONE);
+        callTime.setVisibility(View.GONE);
+        hangup.setVisibility(View.GONE);
+        answer.setVisibility(View.VISIBLE);
 
     }
 

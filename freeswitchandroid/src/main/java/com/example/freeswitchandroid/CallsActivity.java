@@ -9,19 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -29,13 +25,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.freeswitchandroid.Helpers.CryptoUtils;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.BusinessNumber;
-import com.example.freeswitchandroid.rest.model.CallsEndDatum;
+import com.example.freeswitchandroid.rest.model.CallDetail;
+import com.example.freeswitchandroid.rest.model.Receiver;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
@@ -43,9 +41,6 @@ import net.gotev.sipservice.SipServiceCommand;
 
 import org.pjsip.pjsua2.pjsip_inv_state;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -99,6 +94,8 @@ public class CallsActivity extends AppCompatActivity{
     EditText number;
     Context context;
     boolean isHold = false;
+
+    UserDatum userDatum;
 
     /////////////// Adding Final UI Items ////////////////
 
@@ -164,17 +161,16 @@ public class CallsActivity extends AppCompatActivity{
         phone_calls_view.setVisibility(View.VISIBLE);
         recycler_list.setVisibility(View.GONE);
 
-        initRecycler();
         businessNumbers = new ArrayList<>();
         map = new HashMap<>();
         getBusinessNumbers();
 
         //TODO TO be Removed
-        try {
-            initSipService("76890709");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            initSipService("76890709");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
         myNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -244,7 +240,7 @@ public class CallsActivity extends AppCompatActivity{
             @Override
             public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
 
-                UserDatum userDatum = response.body();
+                userDatum = response.body();
                 if(userDatum != null) {
                     businessNumbers = userDatum.getBusinessNumbers();
                 }
@@ -255,6 +251,7 @@ public class CallsActivity extends AppCompatActivity{
                         map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
+                    initRecycler();
                 }
                 else{
                     arraySpinner = new String[]{"No Business Number Found"};
@@ -279,16 +276,16 @@ public class CallsActivity extends AppCompatActivity{
     private void initSipService(String number) throws Exception {
         //Remove logging // TODO
 
-//        ServiceCommunicator.username = map.get(number).getPhoneNumber();
-//        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
-//        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
-//        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
-//        //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
-//        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
+        ServiceCommunicator.username = map.get(number).getReceivers().get(0).getLine().getUsername();
+        String password = map.get(number).getReceivers().get(0).getLine().getPassword();
+        String nonce = map.get(number).getReceivers().get(0).getLine().getNonce();
+        ServiceCommunicator.hostname = map.get(number).getReceivers().get(0).getLine().getDomain();
+        //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
+        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
 
-        ServiceCommunicator.username = "1911899877";
-        ServiceCommunicator.password = "(jZ@52Ca";
-        ServiceCommunicator.hostname = "david380.fs1.pressone.co";
+//        ServiceCommunicator.username = "5294241166";
+//        ServiceCommunicator.password = "3Daet((t";
+//        ServiceCommunicator.hostname = "david380.fs1.pressone.co";
 
 
         SipServiceCommand.enableSipDebugLogging(true);
@@ -297,6 +294,8 @@ public class CallsActivity extends AppCompatActivity{
     }
 
     private void initRecycler(){
+
+        ParentItemList();
 
         ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
 
@@ -307,7 +306,7 @@ public class CallsActivity extends AppCompatActivity{
         // to the parentItemAdapter.
         // These arguments are passed
         // using a method ParentItemList()
-        parentItemAdapter = new ParentItemAdapter(ParentItemList(), CallsActivity.this);
+        parentItemAdapter = new ParentItemAdapter(itemList, CallsActivity.this);
 
         // Set the layout manager
         // and adapter for items
@@ -316,7 +315,7 @@ public class CallsActivity extends AppCompatActivity{
         ParentRecyclerViewItem.setLayoutManager(layoutManager);
     }
 
-    private List<ParentItem> ParentItemList()
+    private void ParentItemList()
     {
 
         itemList = new ArrayList<>();
@@ -324,61 +323,61 @@ public class CallsActivity extends AppCompatActivity{
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        Call<List<CallsEndDatum>> call = retrofitAPI.getCallsData("Bearer " + token);
+        for(Receiver receiver: userDatum.getReceivers()) {
 
-        call.enqueue(new Callback<List<CallsEndDatum>>() {
-            @Override
-            public void onResponse(Call<List<CallsEndDatum>> call, Response<List<CallsEndDatum>> response) {
+            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, String.valueOf(receiver.getBusinessNumber().getId()));
 
-                List<CallsEndDatum> callsEndDatumList = response.body();
+            call.enqueue(new Callback<List<CallDetail>>() {
+                @Override
+                public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if(callsEndDatumList != null && callsEndDatumList.size() > 0) {
-                        phone_calls_view.setVisibility(View.GONE);
-                        recycler_list.setVisibility(View.VISIBLE);
+                    List<CallDetail> callsEndDatumList = response.body();
 
-                        final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
+                            phone_calls_view.setVisibility(View.GONE);
+                            recycler_list.setVisibility(View.VISIBLE);
 
-                        ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
+                            final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
+
+                            ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
 
 
-                        List<ChildItem> childList = new ArrayList<>();
+                            List<ChildItem> childList = new ArrayList<>();
 
-                        for (CallsEndDatum callsEndDatum : callsEndDatumList) {
-                            childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                            for (CallDetail callsEndDatum : callsEndDatumList) {
+                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                            }
+
+                            Map<LocalDate, List<ChildItem>> result = childList.stream()
+                                    .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                                            .with(ADJUSTERS.get("day"))));
+
+                            result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+
                         }
 
-                        Map<LocalDate, List<ChildItem>> result = childList.stream()
-                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                                        .with(ADJUSTERS.get("day"))));
-
-                        result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
-
+                    } else {
+                        Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
                     }
+                }
+
+                @Override
+                public void onFailure(Call<List<CallDetail>> call, Throwable t) {
+                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
 
                 }
-                else{
-                    Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<CallsEndDatum>> call, Throwable t) {
-                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
+            });
 
 
-        System.out.print("List : " + itemList);
+        }
 
-        return itemList;
     }
 
-    private String getCallerId(CallsEndDatum callsEndDatum) {
+    private String getCallerId(CallDetail callsEndDatum) {
         String callerId = null;
 
-        callerId = callsEndDatum.getUser().getFirstName();
+        callerId = callsEndDatum.getUser();
 
         if(callerId.isEmpty()){
             callerId = callsEndDatum.getCallerId();
@@ -398,7 +397,7 @@ public class CallsActivity extends AppCompatActivity{
         callsHistoryActivity.setVisibility(View.VISIBLE);
     }
 
-    private int getCallType(CallsEndDatum datum){
+    private int getCallType(CallDetail datum){
 
         int toReturn = 0;
 
@@ -410,7 +409,7 @@ public class CallsActivity extends AppCompatActivity{
             toReturn = 2; //incoming
         } else if (!datum.getIsForwardedCall()) {
             toReturn = 3; //forwarded
-        } else if (!datum.getIsRejectedCall()) {
+        } else if (!datum.getCallType().equals("REJECTED")) {
             toReturn = 4; //rejected
         }
 
@@ -420,9 +419,6 @@ public class CallsActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        parentItemAdapter = new ParentItemAdapter(itemList, CallsActivity.this);
-        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
-        ParentRecyclerViewItem.setLayoutManager(layoutManager);
         getBusinessNumbers();
     }
 
@@ -556,8 +552,6 @@ public class CallsActivity extends AppCompatActivity{
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
         linearLayout2.setVisibility(View.GONE);
-        dtmfKeyPadLayout.setVisibility(View.GONE);
-        callOptionsLayout.setVisibility(View.GONE);
         callHorizontalLayout.setVisibility(View.VISIBLE);
         answer.setVisibility(View.VISIBLE);
 
@@ -761,8 +755,7 @@ public class CallsActivity extends AppCompatActivity{
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-            callsHistoryActivity.setVisibility(View.VISIBLE);
-            callsActivity.setVisibility(View.GONE);
+
             dialPad1Layout.setVisibility(View.VISIBLE);
             linearLayout1.setVisibility(View.GONE);
             linearLayout2.setVisibility(View.GONE);
@@ -806,7 +799,8 @@ public class CallsActivity extends AppCompatActivity{
         public void onIncomingCall (String accountID,int callID, String displayName, String
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
-
+            callsActivity.setVisibility(View.VISIBLE);
+            callsHistoryActivity.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.VISIBLE);
             hangup.setVisibility(View.VISIBLE);
             answer.setVisibility(View.VISIBLE);

@@ -91,7 +91,7 @@ public class CallsActivity extends AppCompatActivity{
     ImageButton hangup;
     ImageButton hold;
     ImageButton transfer;
-    EditText number;
+    static EditText number;
     Context context;
     boolean isHold = false;
 
@@ -114,9 +114,9 @@ public class CallsActivity extends AppCompatActivity{
 
     LinearLayout overlayTransferLayout;
 
-    LinearLayout callsActivity;
+    static LinearLayout callsActivity;
 
-    LinearLayout callsHistoryActivity;
+    static LinearLayout callsHistoryActivity;
 
     ImageButton deleteBtn;
     TextView callTime; //Visibility Toggle
@@ -422,8 +422,10 @@ public class CallsActivity extends AppCompatActivity{
         getBusinessNumbers();
     }
 
-    public static void callLogItemPressed(ChildItem item, Context context){
-        //TODO
+    public static void callLogItemPressed(ChildItem item, int position){
+        number.setText(item.getNumber());
+        callsHistoryActivity.setVisibility(View.GONE);
+        callsActivity.setVisibility(View.VISIBLE);
     }
 
     @Override

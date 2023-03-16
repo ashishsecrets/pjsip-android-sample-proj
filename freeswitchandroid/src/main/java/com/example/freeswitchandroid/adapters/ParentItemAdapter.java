@@ -108,7 +108,7 @@ public class ParentItemAdapter
                 new ChildItemAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(ChildItem item) {
-                        CallsActivity.callLogItemPressed(item, context);
+                        CallsActivity.callLogItemPressed(item, position);
                     }
                 }, parentItem
                 .getChildItemList(), context);

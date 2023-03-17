@@ -283,7 +283,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
 
-                initRecycler();
                 ParentItemList();
 
             }
@@ -344,9 +343,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 } else {
                     Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
                 }
-                ParentRecyclerViewItem.setAdapter(parentItemAdapter);
-                ParentRecyclerViewItem.setLayoutManager(layoutManager);
-                transferRecycler.setAdapter(transferRecyclerViewAdapter);
+
             }
 
             @Override
@@ -458,6 +455,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             getBusinessNumbers();
         }
         ParentItemList();
+        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+        ParentRecyclerViewItem.setLayoutManager(layoutManager);
+        transferRecycler.setAdapter(transferRecyclerViewAdapter);
     }
 
     public static void callLogItemPressed(ChildItem item, int position){

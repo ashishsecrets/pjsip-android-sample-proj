@@ -112,12 +112,11 @@ public class MainActivity extends AppCompatActivity {
                         ServiceCommunicator.map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     ServiceCommunicator.apiHasRetrievedNumbers = true;
+                    ParentItemList();
                 }
                 else{
                     ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
                 }
-
-                ParentItemList();
 
             }
 
@@ -160,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Set<TransferData> uniqueContacts = new HashSet<>(ServiceCommunicator.transferList);
-                        ServiceCommunicator.transferList.addAll(uniqueContacts);
 
-                        System.out.print("TransferList" + ServiceCommunicator.transferList);
+                        //Toast.makeText(MainActivity.this, "Transfer : " + uniqueContacts.size(), Toast.LENGTH_LONG).show();
+
 
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
                                 .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))

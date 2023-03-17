@@ -158,10 +158,9 @@ public class MainActivity extends AppCompatActivity {
                             ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
                         }
 
-                        Set<TransferData> uniqueContacts = new HashSet<>(ServiceCommunicator.transferList);
-
-                        //Toast.makeText(MainActivity.this, "Transfer : " + uniqueContacts.size(), Toast.LENGTH_LONG).show();
-
+                        Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
+                        ServiceCommunicator.transferList.clear();
+                        ServiceCommunicator.transferList.addAll(uniqueContacts);
 
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
                                 .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))

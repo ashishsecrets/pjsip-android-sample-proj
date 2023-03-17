@@ -76,7 +76,7 @@ public class TransferRecyclerViewAdapter extends RecyclerView.Adapter<TransferRe
     }
 
     // allows clicks events to be caught
-    void setClickListener(ItemClickListener itemClickListener) {
+    public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 

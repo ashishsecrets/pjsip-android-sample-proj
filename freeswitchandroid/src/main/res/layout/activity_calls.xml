@@ -642,15 +642,21 @@
         android:orientation="vertical"
         android:background="@drawable/overlay_transfer"
         android:layout_marginTop="-400dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="400dp">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/overlay_text"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transfer_recycler"
             android:layout_width="match_parent"
-            android:padding="25dp"
             android:layout_height="wrap_content"/>
 
         <ImageButton
@@ -661,7 +667,7 @@
             android:padding="10dp"
             android:onClick="finalTransfer"
             android:src="@drawable/final_transfer_btn"
-            android:background="@null"/>
+            android:background="@color/white"/>
 
 
     </LinearLayout>

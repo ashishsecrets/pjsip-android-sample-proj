@@ -4,6 +4,7 @@ import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedN
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
+import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
@@ -182,7 +183,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             }
             ParentRecyclerViewItem.setAdapter(parentItemAdapter);
             ParentRecyclerViewItem.setLayoutManager(layoutManager);
-            transferRecycler.setAdapter(transferRecyclerViewAdapter);
+            transferRecycler.setLayoutManager(new LinearLayoutManager(this));
+            transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, ServiceCommunicator.transferList);
+            transferRecyclerViewAdapter.setClickListener(this);
         }
 
         //TODO TO be Removed
@@ -332,6 +335,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         ServiceCommunicator.transferList.clear();
                         ServiceCommunicator.transferList.addAll(uniqueContacts);
 
+                        transferRecyclerViewAdapter.notifyDataSetChanged();
+
+                        Toast.makeText(CallsActivity.this, "Transfer : " + transferList.size(), Toast.LENGTH_LONG).show();
+
+
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
                                 .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                                         .with(ADJUSTERS.get("day"))));
@@ -391,8 +399,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         // Set the layout manager
         // and adapter for items
         // of the parent recyclerview
-        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, ServiceCommunicator.transferList);
-
     }
 
     @Override
@@ -457,6 +463,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         ParentItemList();
         ParentRecyclerViewItem.setAdapter(parentItemAdapter);
         ParentRecyclerViewItem.setLayoutManager(layoutManager);
+        transferRecycler.setLayoutManager(new LinearLayoutManager(this));
         transferRecycler.setAdapter(transferRecyclerViewAdapter);
     }
 

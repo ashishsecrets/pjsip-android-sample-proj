@@ -83,6 +83,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     ParentItemAdapter parentItemAdapter;
     TransferRecyclerViewAdapter transferRecyclerViewAdapter;
     LinearLayoutManager layoutManager;
+    LinearLayoutManager layoutManager2;
     Spinner myNumber;
 
     String numberToTransfer = "";
@@ -160,7 +161,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         myNumber = (Spinner) findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
         phone_calls_view = findViewById(R.id.phone_calls_view);
-        transferRecycler = findViewById(R.id.transfer_recycler);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -181,11 +181,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            ParentRecyclerViewItem.setAdapter(parentItemAdapter);
             ParentRecyclerViewItem.setLayoutManager(layoutManager);
-            transferRecycler.setLayoutManager(new LinearLayoutManager(this));
-            transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, ServiceCommunicator.transferList);
-            transferRecyclerViewAdapter.setClickListener(this);
+            transferRecycler.setLayoutManager(layoutManager2);
+            ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+            transferRecycler.setAdapter(transferRecyclerViewAdapter);
         }
 
         //TODO TO be Removed
@@ -337,8 +336,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                         transferRecyclerViewAdapter.notifyDataSetChanged();
 
-                        Toast.makeText(CallsActivity.this, "Transfer : " + transferList.size(), Toast.LENGTH_LONG).show();
-
 
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
                                 .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
@@ -346,6 +343,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                         result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
 
+                        parentItemAdapter.notifyDataSetChanged();
                     }
 
                 } else {
@@ -386,25 +384,26 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
         ParentRecyclerViewItem = findViewById(R.id.parent_recyclerview);
+        transferRecycler = findViewById(R.id.transfer_recycler);
 
         // Initialise the Linear layout manager
         layoutManager = new LinearLayoutManager(CallsActivity.this);
+        layoutManager2 = new LinearLayoutManager(CallsActivity.this);
 
-        // Pass the arguments
-        // to the parentItemAdapter.
-        // These arguments are passed
-        // using a method ParentItemList()
         parentItemAdapter = new ParentItemAdapter(ServiceCommunicator.itemList, CallsActivity.this);
+        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, ServiceCommunicator.transferList);
+        transferRecyclerViewAdapter.setClickListener(this);
 
-        // Set the layout manager
-        // and adapter for items
-        // of the parent recyclerview
     }
 
     @Override
     public void onItemClick(View view, int position) {
         RadioButton radioButton = view.findViewById(R.id.radio_btn);
-        radioButton.setChecked(true);
+        for(TransferData transferData: transferList){
+            transferData.setChecked(false);
+        }
+        transferList.get(position).setChecked(true);
+        transferRecyclerViewAdapter.notifyDataSetChanged();
         TextView textView = view.findViewById(R.id.transfer_number);
         numberToTransfer = textView.getText().toString();
     }
@@ -461,10 +460,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             getBusinessNumbers();
         }
         ParentItemList();
-        ParentRecyclerViewItem.setAdapter(parentItemAdapter);
-        ParentRecyclerViewItem.setLayoutManager(layoutManager);
-        transferRecycler.setLayoutManager(new LinearLayoutManager(this));
-        transferRecycler.setAdapter(transferRecyclerViewAdapter);
     }
 
     public static void callLogItemPressed(ChildItem item, int position){
@@ -953,38 +948,4 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         }
     };
-
-
-
-
-//    public void showLogsOnPhone(View view){
-//        try {
-//            Process process = Runtime.getRuntime().exec("logcat -d");
-//            BufferedReader bufferedReader = new BufferedReader(
-//                    new InputStreamReader(process.getInputStream()));
-//
-//            StringBuilder log = new StringBuilder();
-//            String line = "";
-//            while ((line = bufferedReader.readLine()) != null) {
-//                log.append(line);
-//            }
-//            addMessage(String.valueOf(log));
-//        } catch (IOException e) {
-//            // Handle Exception
-//        }
-//    }
-//
-//    private void addMessage(String msg) {
-//        // append the new string
-//        tv.append(msg + "\n");
-//        // find the amount we need to scroll.  This works by
-//        // asking the TextView's internal layout for the position
-//        // of the final line and then subtracting the TextView's height
-//        final int scrollAmount = tv.getLayout().getLineTop(tv.getLineCount()) - tv.getHeight();
-//        // if there is no need to scroll, scrollAmount will be <=0
-//        if (scrollAmount > 0)
-//            tv.scrollTo(0, scrollAmount);
-//        else
-//            tv.scrollTo(0, 0);
-//    }
 }

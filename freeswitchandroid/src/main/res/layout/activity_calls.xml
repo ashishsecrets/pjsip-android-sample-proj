@@ -652,7 +652,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/overlay_text"
             android:layout_marginTop="5dp"
-            android:padding="5dp"/>
+            android:padding="10dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transfer_recycler"

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class TransferRecyclerViewAdapter extends RecyclerView.Adapter<TransferRe
         holder.transferName.setText(transferData.getTransferName());
         holder.transferNumber.setText(transferData.getTransferNumber());
         holder.transferText.setText(transferData.getTransferText());
+        holder.radioButton.setChecked(transferData.isChecked());
 
     }
 
@@ -54,13 +56,14 @@ public class TransferRecyclerViewAdapter extends RecyclerView.Adapter<TransferRe
         TextView transferText;
         TextView transferName;
         TextView transferNumber;
+        RadioButton radioButton;
 
         ViewHolder(View itemView) {
             super(itemView);
             transferText = itemView.findViewById(R.id.transfer_text);
             transferName = itemView.findViewById(R.id.transfer_name);
             transferNumber = itemView.findViewById(R.id.transfer_number);
-
+            radioButton = itemView.findViewById(R.id.radio_btn);
             itemView.setOnClickListener(this);
         }
 

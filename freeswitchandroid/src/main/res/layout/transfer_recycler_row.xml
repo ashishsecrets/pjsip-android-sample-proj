@@ -22,7 +22,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/plain_bg_caller_no_fill" />
+                android:background="@drawable/plain_bg_caller_pink" />
 
             <TextView
                 android:id="@+id/transfer_text"

@@ -5,6 +5,7 @@ public class TransferData {
     private String transferNumber;
     private String transferName;
     private String transferText;
+    boolean checked = false;
 
 
     public TransferData(String transferNumber, String transferName, String transferText) {
@@ -13,6 +14,13 @@ public class TransferData {
         this.transferText = transferText;
     }
 
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
     public String getTransferNumber() {
         return transferNumber;
     }

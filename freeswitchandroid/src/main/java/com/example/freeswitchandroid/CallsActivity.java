@@ -868,18 +868,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         public void onIncomingCall (String accountID,int callID, String displayName, String
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
-//            if(!active) {
-//                Intent startIntent = context
-//                        .getPackageManager()
-//                        .getLaunchIntentForPackage(context.getPackageName());
-//
-//                startIntent.setFlags(
-//                        Intent.FLAG_ACTIVITY_REORDER_TO_FRONT |
-//                                Intent.FLAG_ACTIVITY_NEW_TASK |
-//                                Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-//                );
-//                context.startActivity(startIntent);
-//            }
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.VISIBLE);

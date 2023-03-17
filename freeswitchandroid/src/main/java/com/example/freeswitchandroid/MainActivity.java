@@ -159,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
                             ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
                         }
 
-                        Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
-                        ServiceCommunicator.transferList.clear();
+                        Set<TransferData> uniqueContacts = new HashSet<>(ServiceCommunicator.transferList);
                         ServiceCommunicator.transferList.addAll(uniqueContacts);
 
                         System.out.print("TransferList" + ServiceCommunicator.transferList);

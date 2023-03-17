@@ -136,8 +136,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     AudioManager audioManager;
 
-    boolean initialSpinnerCall = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -459,6 +457,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(!apiHasRetrievedNumbers){
             getBusinessNumbers();
         }
+        ParentItemList();
     }
 
     public static void callLogItemPressed(ChildItem item, int position){
@@ -878,6 +877,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             muteBtn.setImageResource(R.drawable.mute);
             speakerBtn.setImageResource(R.drawable.speaker);
             keypadBtn.setImageResource(R.drawable.keypad);
+            ParentItemList();
             //TODO
             //Call Time Re-set Counter
         }

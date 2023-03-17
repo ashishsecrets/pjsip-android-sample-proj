@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                         ServiceCommunicator.transferList.clear();
                         ServiceCommunicator.transferList.addAll(uniqueContacts);
 
+                        System.out.print("TransferList" + ServiceCommunicator.transferList);
+
                         Map<LocalDate, List<ChildItem>> result = childList.stream()
                                 .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                                         .with(ADJUSTERS.get("day"))));

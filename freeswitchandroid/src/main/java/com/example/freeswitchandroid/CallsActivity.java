@@ -3,6 +3,7 @@ package com.example.freeswitchandroid;
 import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
+import static com.example.freeswitchandroid.ServiceCommunicator.map;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
@@ -67,7 +68,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class CallsActivity extends AppCompatActivity implements TransferRecyclerViewAdapter.ItemClickListener{
+public class CallsActivity extends AppCompatActivity implements TransferRecyclerViewAdapter.ItemClickListener, AdapterView.OnItemSelectedListener{
 
     /////Combining Calls History Activity////
 
@@ -135,6 +136,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     AudioManager audioManager;
 
+    boolean initialSpinnerCall = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,11 +174,14 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         if(arraySpinner.length <= 1) {
             getBusinessNumbers();
-            Toast.makeText(CallsActivity.this, "Bad", Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(CallsActivity.this, "Good", Toast.LENGTH_SHORT).show();
-            initRecycler();
+            ParentItemList();
+            try {
+                initSipService(map.values().iterator().next().getPhoneNumber());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             ParentRecyclerViewItem.setAdapter(parentItemAdapter);
             ParentRecyclerViewItem.setLayoutManager(layoutManager);
             transferRecycler.setAdapter(transferRecyclerViewAdapter);
@@ -187,26 +193,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 //        } catch (Exception e) {
 //            throw new RuntimeException(e);
 //        }
+        myNumber.setSelection(0, false);
+        myNumber.setOnItemSelectedListener(CallsActivity.this);
 
-        myNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(apiHasRetrievedNumbers) {
-                    try {
-                        ParentItemList();
-                        initSipService(parent.getItemAtPosition(position).toString());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-
-            }
-        });
 
         // Removing action bar
 
@@ -243,6 +232,24 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         //Add default visibility at the start of activity.
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(apiHasRetrievedNumbers) {
+            try {
+                ParentItemList();
+                initSipService(parent.getItemAtPosition(position).toString());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
 
     }
 
@@ -785,6 +792,55 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     }
 
+    public void finalTransfer(View v){
+
+        if(overlayTransferLayout.getVisibility() == View.GONE) {
+
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+            overlayTransferLayout.setVisibility(View.VISIBLE);
+
+        }
+        else{
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.GONE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+
+            overlayTransferLayout.setVisibility(View.GONE);
+
+            if(!isHold) {
+
+                SipServiceCommand.toggleCallHold(this, ServiceCommunicator.uri, callID1);
+
+                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+
+                Toast.makeText(this, "Holding before transfer !",
+                        Toast.LENGTH_LONG).show();
+
+                SipServiceCommand.makeCall(this, ServiceCommunicator.uri, numberToTransfer, true);
+            }
+            else if(isHold){
+
+                SipServiceCommand.attendedTransferCall(this, ServiceCommunicator.uri, callID1, callID2);
+
+                Toast.makeText(this, "Making attended transfer !",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            isHold = !isHold;
+        }
+
+    }
+
     BroadcastEventReceiver mReceiver = new BroadcastEventReceiver()
 
     {
@@ -890,6 +946,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         }
     };
+
 
 
 

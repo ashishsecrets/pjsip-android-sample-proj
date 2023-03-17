@@ -659,6 +659,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="10dp"
+            android:onClick="finalTransfer"
             android:src="@drawable/final_transfer_btn"
             android:background="@null"/>
 

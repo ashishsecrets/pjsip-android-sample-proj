@@ -828,7 +828,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             muteBtn.setImageResource(R.drawable.mute);
             speakerBtn.setImageResource(R.drawable.speaker);
             keypadBtn.setImageResource(R.drawable.keypad);
-            ParentItemList();
             //TODO
             //Call Time Re-set Counter
         }

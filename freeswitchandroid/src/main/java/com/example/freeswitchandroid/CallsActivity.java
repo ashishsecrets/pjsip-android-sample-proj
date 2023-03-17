@@ -744,9 +744,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void transfer(View view){
-
-        if(overlayTransferLayout.getVisibility() == View.GONE) {
-
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
@@ -755,68 +752,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
             overlayTransferLayout.setVisibility(View.VISIBLE);
-
-        }
-        else{
-            dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.VISIBLE);
-            linearLayout2.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.GONE);
-            callHorizontalLayout.setVisibility(View.GONE);
-            answer.setVisibility(View.GONE);
-
-            overlayTransferLayout.setVisibility(View.GONE);
-
-            if(!isHold) {
-
-                SipServiceCommand.toggleCallHold(this, ServiceCommunicator.uri, callID1);
-
-                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
-
-                Toast.makeText(this, "Holding before transfer !",
-                        Toast.LENGTH_LONG).show();
-
-                SipServiceCommand.makeCall(this, ServiceCommunicator.uri, numberToTransfer, true);
-            }
-            else if(isHold){
-
-                SipServiceCommand.attendedTransferCall(this, ServiceCommunicator.uri, callID1, callID2);
-
-                Toast.makeText(this, "Making attended transfer !",
-                        Toast.LENGTH_LONG).show();
-            }
-
-            isHold = !isHold;
-        }
-
-
     }
 
     public void finalTransfer(View v){
 
-        if(overlayTransferLayout.getVisibility() == View.GONE) {
-
-            dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.VISIBLE);
-            linearLayout2.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.VISIBLE);
-            callHorizontalLayout.setVisibility(View.GONE);
-            answer.setVisibility(View.GONE);
-            overlayTransferLayout.setVisibility(View.VISIBLE);
-
-        }
-        else{
-            dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.VISIBLE);
-            linearLayout2.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callOptionsLayout.setVisibility(View.GONE);
-            callHorizontalLayout.setVisibility(View.GONE);
-            answer.setVisibility(View.GONE);
-
-            overlayTransferLayout.setVisibility(View.GONE);
 
             if(!isHold) {
 
@@ -835,10 +774,19 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                 Toast.makeText(this, "Making attended transfer !",
                         Toast.LENGTH_LONG).show();
+
+                dialPad1Layout.setVisibility(View.GONE);
+                linearLayout1.setVisibility(View.VISIBLE);
+                linearLayout2.setVisibility(View.VISIBLE);
+                dtmfKeyPadLayout.setVisibility(View.GONE);
+                callOptionsLayout.setVisibility(View.VISIBLE);
+                callHorizontalLayout.setVisibility(View.GONE);
+                answer.setVisibility(View.GONE);
+
+                overlayTransferLayout.setVisibility(View.GONE);
             }
 
             isHold = !isHold;
-        }
 
     }
 
@@ -873,6 +821,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callTime.setVisibility(View.GONE);
             hangup.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
+            overlayTransferLayout.setVisibility(View.GONE);
             audioManager.setMode(AudioManager.MODE_NORMAL);
             hold.setImageResource(R.drawable.hold);
             transfer.setImageResource(R.drawable.transfer);

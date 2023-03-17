@@ -85,9 +85,6 @@ public class ServiceCommunicator {
 
             uri = SipServiceCommand.setAccount(context, sipAccountData);
             SipServiceCommand.start(context);
-
-            Toast.makeText(context, "Service started !",
-                    Toast.LENGTH_LONG).show();
         }
     }
 

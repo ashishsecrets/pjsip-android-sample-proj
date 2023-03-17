@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.media.AudioManager;
 import android.os.Build;
@@ -456,6 +458,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     @Override
     protected void onResume() {
         super.onResume();
+        //active = true;
         if(!apiHasRetrievedNumbers){
             getBusinessNumbers();
         }
@@ -865,6 +868,18 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         public void onIncomingCall (String accountID,int callID, String displayName, String
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
+//            if(!active) {
+//                Intent startIntent = context
+//                        .getPackageManager()
+//                        .getLaunchIntentForPackage(context.getPackageName());
+//
+//                startIntent.setFlags(
+//                        Intent.FLAG_ACTIVITY_REORDER_TO_FRONT |
+//                                Intent.FLAG_ACTIVITY_NEW_TASK |
+//                                Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+//                );
+//                context.startActivity(startIntent);
+//            }
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.VISIBLE);
@@ -896,4 +911,24 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         }
     };
+
+//    static boolean active = false;
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        active = true;
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        active = false;
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        active = false;
+//    }
 }

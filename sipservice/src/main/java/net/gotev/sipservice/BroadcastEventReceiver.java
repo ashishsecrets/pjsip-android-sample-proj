@@ -163,6 +163,10 @@ public class BroadcastEventReceiver extends BroadcastReceiver implements SipServ
     }
 
     public void onIncomingCall(String accountID, int callID, String displayName, String remoteUri, boolean isVideo) {
+        Intent i = new Intent();
+        i.setClassName("com.example.freeswitchandroid", "com.example.freeswitchandroid.CallsActivity");
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getReceiverContext().startActivity(i);
         Logger.debug(LOG_TAG, "onIncomingCall - accountID: " + getValue(getReceiverContext(), accountID) +
                 ", callID: " + callID +
                 ", displayName: " + displayName +

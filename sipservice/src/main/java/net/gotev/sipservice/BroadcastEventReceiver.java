@@ -166,6 +166,7 @@ public class BroadcastEventReceiver extends BroadcastReceiver implements SipServ
         Intent i = new Intent();
         i.setClassName("com.example.freeswitchandroid", "com.example.freeswitchandroid.CallsActivity");
         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        i.putExtra("call", "incoming");
         getReceiverContext().startActivity(i);
         Logger.debug(LOG_TAG, "onIncomingCall - accountID: " + getValue(getReceiverContext(), accountID) +
                 ", callID: " + callID +

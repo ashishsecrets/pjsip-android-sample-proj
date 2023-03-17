@@ -3,6 +3,8 @@ package com.example.freeswitchandroid;
 import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
+import static com.example.freeswitchandroid.ServiceCommunicator.callID1;
+import static com.example.freeswitchandroid.ServiceCommunicator.callID2;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
 import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
@@ -58,6 +60,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -90,8 +93,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     String numberToTransfer = "";
     String accountID;
-    int callID1;
-    int callID2;
     String displayName;
     String remoteUri;
     boolean isVideo;
@@ -163,53 +164,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         myNumber = (Spinner) findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
         phone_calls_view = findViewById(R.id.phone_calls_view);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        myNumber.setAdapter(adapter);
-
-        phone_calls_view.setVisibility(View.VISIBLE);
-        recycler_list.setVisibility(View.GONE);
-
-        initRecycler();
-
-        if(arraySpinner.length <= 1) {
-            getBusinessNumbers();
-        }
-        else{
-            ParentItemList();
-            try {
-                initSipService(map.values().iterator().next().getPhoneNumber());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            ParentRecyclerViewItem.setLayoutManager(layoutManager);
-            transferRecycler.setLayoutManager(layoutManager2);
-            ParentRecyclerViewItem.setAdapter(parentItemAdapter);
-            transferRecycler.setAdapter(transferRecyclerViewAdapter);
-        }
-
-        //TODO TO be Removed
-//        try {
-//            initSipService("76890709");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-        myNumber.setSelection(0, false);
-        myNumber.setOnItemSelectedListener(CallsActivity.this);
-
-
-        // Removing action bar
-
-//        actionBar = getSupportActionBar();
-//        assert actionBar != null;
-//        actionBar.hide();
-
-        this.context = this;
-
-
-        mReceiver.register(this);
-
         number = findViewById(R.id.number);
         answer = findViewById(R.id.call);
         hangup = findViewById(R.id.hangUp);
@@ -231,6 +185,78 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         overlayTransferLayout = findViewById(R.id.overlay_transfer_layout);
         callsActivity = findViewById(R.id.calls_activity);
         callsHistoryActivity = findViewById(R.id.calls_history_activity);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        myNumber.setAdapter(adapter);
+
+        phone_calls_view.setVisibility(View.VISIBLE);
+        recycler_list.setVisibility(View.GONE);
+
+        initRecycler();
+
+        String no = map.values().iterator().next().getPhoneNumber();
+
+
+
+        if(arraySpinner.length <= 1) {
+            getBusinessNumbers();
+            ParentItemList();
+            try {
+                initSipService(no, false);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            ParentItemList();
+            try {
+                if(active != null && !active){
+                    no = Objects.requireNonNull(map.get(ServiceCommunicator.number)).getPhoneNumber();
+                    initSipService(no, false);
+                    Intent intent = getIntent();
+                    if (intent != null && intent.getStringExtra("call").equals("incoming")) {
+                        callsActivity.setVisibility(View.VISIBLE);
+                        callsHistoryActivity.setVisibility(View.GONE);
+                        callHorizontalLayout.setVisibility(View.VISIBLE);
+                        hangup.setVisibility(View.VISIBLE);
+                        answer.setVisibility(View.VISIBLE);
+                        dialPad1Layout.setVisibility(View.GONE);
+                        linearLayout1.setVisibility(View.VISIBLE);
+                        linearLayout2.setVisibility(View.GONE);
+                    }
+                }
+                else if(active == null){
+                    initSipService(no, false);
+                    mReceiver.register(this);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            ParentRecyclerViewItem.setLayoutManager(layoutManager);
+            transferRecycler.setLayoutManager(layoutManager2);
+            ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+            transferRecycler.setAdapter(transferRecyclerViewAdapter);
+        }
+
+        //TODO TO be Removed
+//        try {
+//            initSipService("76890709");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+        myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
+        myNumber.setOnItemSelectedListener(CallsActivity.this);
+
+
+        // Removing action bar
+
+//        actionBar = getSupportActionBar();
+//        assert actionBar != null;
+//        actionBar.hide();
+
+        this.context = this;
+
         //Add default visibility at the start of activity.
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -242,7 +268,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(apiHasRetrievedNumbers) {
             try {
                 ParentItemList();
-                initSipService(parent.getItemAtPosition(position).toString());
+                initSipService(parent.getItemAtPosition(position).toString(), false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -362,15 +388,18 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         });
 
     }
-    private void initSipService(String number) throws Exception {
+    private void initSipService(String number, boolean StopService) throws Exception {
         //Remove logging // TODO
-        SipServiceCommand.stop(this);
+        if(StopService) {
+            SipServiceCommand.stop(this);
+        }
         ServiceCommunicator.username = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getUsername();
         String password = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getPassword();
         String nonce = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getNonce();
         ServiceCommunicator.hostname = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getDomain();
         //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
+        ServiceCommunicator.number = number;
 
 //        ServiceCommunicator.username = "5294241166";
 //        ServiceCommunicator.password = "3Daet((t";
@@ -691,7 +720,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
 
-            SipServiceCommand.acceptIncomingCall(this, accountID, String.valueOf(callID1), isVideo);
+            SipServiceCommand.acceptIncomingCall(this, ServiceCommunicator.uri, String.valueOf(callID1), isVideo);
             Toast.makeText(this, "Answering Call !", Toast.LENGTH_LONG).show();
 
         }
@@ -730,7 +759,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
           else if(isHold) {
 
                 if(ServiceCommunicator.sipAccountData.getCallId() == null || ServiceCommunicator.sipAccountData.getCallId().length() < 2){
-                    ServiceCommunicator.sipAccountData.setCallId(String.valueOf(this.callID1));
+                    ServiceCommunicator.sipAccountData.setCallId(String.valueOf(callID1));
                 }
 
                 SipServiceCommand.setCallHold(this, ServiceCommunicator.uri, Integer.parseInt(ServiceCommunicator.sipAccountData.getCallId()), false);
@@ -803,10 +832,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         Log.i(TAG, "onRegistration: ");
 
         if(registrationStateCode == 200){
-            Toast.makeText(context, "New Registration successful", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(context, "Registration Failed, Switch Number or contact IT", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Registration OK", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -847,7 +873,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             //TODO
             //Call Time set Counter
             CallsActivity.this.accountID = accountID;
-            CallsActivity.this.callID1 = callID;
+            callID1 = callID;
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
@@ -875,7 +901,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             answer.setVisibility(View.VISIBLE);
 
              CallsActivity.this.accountID = accountID;
-             CallsActivity.this.callID1 = callID;
+             callID1 = callID;
              CallsActivity.this.displayName = displayName;
              CallsActivity.this.remoteUri = remoteUri;
              CallsActivity.this.isVideo = isVideo;
@@ -892,7 +918,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onOutgoingCall(accountID, callID, number, isVideo, isVideoConference, isTransfer);
 
             CallsActivity.this.accountID = accountID;
-            CallsActivity.this.callID2 = callID;
+            callID2 = callID;
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
@@ -900,23 +926,22 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
     };
 
-//    static boolean active = false;
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        active = true;
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        active = false;
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        active = false;
-//    }
+    static Boolean active = null;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        active = null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
 }

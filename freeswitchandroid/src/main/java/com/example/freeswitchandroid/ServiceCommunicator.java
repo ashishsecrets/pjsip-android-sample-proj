@@ -33,8 +33,9 @@ import org.pjsip.pjsua2.pjsip_status_code;
 import java.util.List;
 import java.util.Map;
 
-public class ServiceCommunicator {
+public class ServiceCommunicator extends BroadcastEventReceiver {
 
+    public static String number;
     static String uri;
     static String username = "";
     static String password = "";
@@ -52,6 +53,9 @@ public class ServiceCommunicator {
     static List<BusinessNumber> businessNumbers;
     static Map<String, BusinessNumber> map;
     static boolean apiHasRetrievedNumbers = false;
+
+    static int callID1;
+    static int callID2;
 
     //static long port = 5060;
 
@@ -85,8 +89,13 @@ public class ServiceCommunicator {
 
             uri = SipServiceCommand.setAccount(context, sipAccountData);
             SipServiceCommand.start(context);
+
         }
     }
 
-
+    @Override
+    public void onIncomingCall(String accountID, int callID, String displayName, String remoteUri, boolean isVideo) {
+        super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
+        callID1 = callID;
+    }
 }

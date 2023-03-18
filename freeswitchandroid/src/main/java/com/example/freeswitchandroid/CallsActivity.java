@@ -208,9 +208,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         myNumber.setAdapter(adapter);
 
-        phone_calls_view.setVisibility(View.VISIBLE);
-        recycler_list.setVisibility(View.GONE);
-
         initRecycler();
 
 
@@ -218,7 +215,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             getBusinessNumbers();
             try {
                 if(!arraySpinner[0].equals("No Business Number Found")) {
-                    ParentItemList();
                     initSipService(no, false);
                     mReceiver.register(this);
                 }
@@ -243,7 +239,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         linearLayout1.setVisibility(View.VISIBLE);
                         linearLayout2.setVisibility(View.GONE);
                     } else if (intent != null && intent.getStringExtra("call").equals("data")) {
-                        ParentItemList();
                         try {
                             if(!arraySpinner[0].equals("No Business Number Found")) {
                                 initSipService(no, false);

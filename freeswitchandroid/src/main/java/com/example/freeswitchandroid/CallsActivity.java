@@ -139,8 +139,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     ImageButton deleteBtn;
     TextView callTime; //Visibility Toggle
-    TextView tvName; //Caller's name
-    TextView tvNumber; //Caller's number
+    static TextView tvName; //Caller's name
+    static TextView tvNumber; //Caller's number
     ImageButton muteBtn; //Highlight on press toggle
     ImageButton speakerBtn; //Highlight on press toggle
     ImageButton keypadBtn; //Highlight on press toggle
@@ -517,6 +517,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public static void callLogItemPressed(ChildItem item, int position){
         number.setText(item.getNumber());
+        tvName.setText(item.getChildItemTitle());
+        tvNumber.setText(item.getNumber());
         callsHistoryActivity.setVisibility(View.GONE);
         callsActivity.setVisibility(View.VISIBLE);
     }

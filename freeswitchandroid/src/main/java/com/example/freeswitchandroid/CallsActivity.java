@@ -234,7 +234,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         linearLayout1.setVisibility(View.VISIBLE);
                         linearLayout2.setVisibility(View.GONE);
                     } else if (intent != null && intent.getStringExtra("call").equals("none")) {
-                        getBusinessNumbers();
+                        ParentItemList();
                         try {
                             if(!arraySpinner[0].equals("No Business Number Found")) {
                                 initSipService(no, false);
@@ -261,12 +261,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
         myNumber.setOnItemSelectedListener(CallsActivity.this);
 
-
-        // Removing action bar
-
-//        actionBar = getSupportActionBar();
-//        assert actionBar != null;
-//        actionBar.hide();
 
         this.context = this;
 
@@ -487,11 +481,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     public void keypadPress(View v){
         callsActivity.setVisibility(View.VISIBLE);
         callsHistoryActivity.setVisibility(View.GONE);
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        getSupportActionBar().show();
         callsActivity.setVisibility(View.GONE);
         callsHistoryActivity.setVisibility(View.VISIBLE);
     }
@@ -628,7 +624,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
 
     public void terminate(View v){
-
+        getSupportActionBar().show();
         callsHistoryActivity.setVisibility(View.VISIBLE);
         callsActivity.setVisibility(View.GONE);
         SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);

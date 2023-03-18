@@ -2,24 +2,21 @@ package com.example.freeswitchandroid;
 
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
-import static com.example.freeswitchandroid.ServiceCommunicator.map;
-import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
+import android.Manifest;import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
@@ -28,9 +25,7 @@ import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.CallDetail;
 import com.example.freeswitchandroid.rest.model.UserDatum;
-
-import net.gotev.sipservice.SipAccountData;
-import net.gotev.sipservice.SipServiceCommand;
+import com.tbruyelle.rxpermissions3.RxPermissions;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         actionBar.hide();
 
         imageButton = findViewById(R.id.imageButton);
+
+        final RxPermissions rxPermissions = new RxPermissions(this);
+
+        rxPermissions.request(Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.SYSTEM_ALERT_WINDOW);
 
         ServiceCommunicator.itemList = new ArrayList<>();
         ServiceCommunicator.transferList = new ArrayList<>();

@@ -206,7 +206,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         initRecycler();
 
 
-        if(arraySpinner.length <= 1 || no.equals("No Business Number Found")) {
+        if(arraySpinner.length <= 1 && no.equals("No Business Number Found")) {
             getBusinessNumbers();
             try {
                 if(!arraySpinner[0].equals("No Business Number Found")) {
@@ -271,7 +271,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(apiHasRetrievedNumbers) {
             try {
                 ParentItemList();
-                initSipService(parent.getItemAtPosition(position).toString(), false);
+                initSipService(parent.getItemAtPosition(position).toString(), true);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

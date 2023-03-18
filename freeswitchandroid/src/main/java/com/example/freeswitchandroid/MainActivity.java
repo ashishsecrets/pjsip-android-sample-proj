@@ -1,5 +1,6 @@
 package com.example.freeswitchandroid;
 
+import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
@@ -114,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     ServiceCommunicator.apiHasRetrievedNumbers = true;
                     ParentItemList();
-                    System.out.print("Map" + map.values());
                 }
                 else{
                     ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
+                    ParentItemList();
                 }
 
             }
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        if(ServiceCommunicator.map != null) {
+        if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
             Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
 
             call.enqueue(new Callback<List<CallDetail>>() {
@@ -185,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
             });
 
         }
+
+        Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+        startActivity(intent);
 
     }
 

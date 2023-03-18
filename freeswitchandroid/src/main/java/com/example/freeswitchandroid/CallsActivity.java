@@ -188,7 +188,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         callsActivity = findViewById(R.id.calls_activity);
         callsHistoryActivity = findViewById(R.id.calls_history_activity);
 
-        if(arraySpinner != null && arraySpinner.length > 0) {
+        if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
             no = map.values().iterator().next().getPhoneNumber();
         }
         else{

@@ -233,6 +233,16 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         dialPad1Layout.setVisibility(View.GONE);
                         linearLayout1.setVisibility(View.VISIBLE);
                         linearLayout2.setVisibility(View.GONE);
+                    } else if (intent != null && intent.getStringExtra("call").equals("none")) {
+                        getBusinessNumbers();
+                        try {
+                            if(!arraySpinner[0].equals("No Business Number Found")) {
+                                initSipService(no, false);
+                                mReceiver.register(this);
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 else if(active == null){
@@ -263,7 +273,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         //Add default visibility at the start of activity.
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
     }
 
     @Override

@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         ServiceCommunicator.transferList.clear();
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
+        Intent intent = new Intent(MainActivity.this, CallsActivity.class);
 
         if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
             Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
@@ -170,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                                             .with(ADJUSTERS.get("day"))));
 
                             result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
-
                         }
 
                     }
@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        Intent intent = new Intent(MainActivity.this, CallsActivity.class);
         intent.putExtra("call", "none");
         startActivity(intent);
 

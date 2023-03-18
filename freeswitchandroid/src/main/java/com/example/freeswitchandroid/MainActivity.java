@@ -171,8 +171,6 @@ public class MainActivity extends AppCompatActivity {
 
                             result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
 
-                            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
-                            startActivity(intent);
                         }
 
                     }
@@ -188,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+        intent.putExtra("call", "none");
         startActivity(intent);
 
     }

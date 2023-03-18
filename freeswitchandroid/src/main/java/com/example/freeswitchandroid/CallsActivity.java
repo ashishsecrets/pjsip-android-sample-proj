@@ -206,7 +206,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         initRecycler();
 
 
-        if(arraySpinner.length <= 1 && no.equals("No Business Number Found")) {
+        if(arraySpinner.length <= 1 || no.equals("No Business Number Found")) {
             getBusinessNumbers();
             try {
                 if(!arraySpinner[0].equals("No Business Number Found")) {
@@ -633,6 +633,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         linearLayout2.setVisibility(View.GONE);
         callHorizontalLayout.setVisibility(View.VISIBLE);
         answer.setVisibility(View.VISIBLE);
+        hangup.setVisibility(View.GONE);
 
     }
 

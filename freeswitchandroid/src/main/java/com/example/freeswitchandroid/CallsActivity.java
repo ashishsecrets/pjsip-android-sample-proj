@@ -2,12 +2,15 @@ package com.example.freeswitchandroid;
 
 import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
+import static com.example.freeswitchandroid.ServiceCommunicator.audioManager;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID1;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID2;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
+import static com.example.freeswitchandroid.ServiceCommunicator.ringtone;
 import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
+import static com.example.freeswitchandroid.ServiceCommunicator.vibrator;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
 import androidx.appcompat.app.ActionBar;
@@ -138,9 +141,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     ImageButton muteBtn; //Highlight on press toggle
     ImageButton speakerBtn; //Highlight on press toggle
     ImageButton keypadBtn; //Highlight on press toggle
-
-    AudioManager audioManager;
-
     String no; // phone number
 
 
@@ -728,6 +728,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 call();
          }
          else {
+             stopRingTone();
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
@@ -745,7 +746,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void hangUp(View view){
-
+        stopRingTone();
     SipServiceCommand.declineIncomingCall(this, ServiceCommunicator.uri, callID1);
 
         dialPad1Layout.setVisibility(View.VISIBLE);
@@ -940,6 +941,24 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         }
     };
+
+    public static void startRingTone(){
+
+        audioManager.setMode(AudioManager.MODE_RINGTONE);
+        ringtone.play();
+        long[] pattern = {0, 1000, 1000};
+        vibrator.vibrate(pattern, 0);
+
+    }
+
+    private void stopRingTone(){
+
+        if(ringtone.isPlaying()) {
+            ringtone.stop();
+        }
+        vibrator.cancel();
+
+    }
 
     static Boolean active = null;
 

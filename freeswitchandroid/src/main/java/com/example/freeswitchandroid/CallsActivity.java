@@ -55,6 +55,7 @@ import com.example.freeswitchandroid.rest.model.CallDetail;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
+import net.gotev.sipservice.CallReconnectionState;
 import net.gotev.sipservice.SipServiceCommand;
 
 import org.pjsip.pjsua2.pjsip_inv_state;
@@ -217,6 +218,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             getBusinessNumbers();
             try {
                 if(!arraySpinner[0].equals("No Business Number Found")) {
+                    ParentItemList();
                     initSipService(no, false);
                     mReceiver.register(this);
                 }
@@ -949,6 +951,14 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
 
+        }
+
+        @Override
+        protected void onCallReconnectionState(CallReconnectionState state) {
+            super.onCallReconnectionState(state);
+            if(state.equals(CallReconnectionState.PROGRESS)){
+                Toast.makeText(CallsActivity.this, "Reconnecting...", Toast.LENGTH_LONG).show();
+            }
         }
     };
 

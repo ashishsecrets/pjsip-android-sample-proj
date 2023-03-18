@@ -148,7 +148,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     ImageButton muteBtn; //Highlight on press toggle
     ImageButton speakerBtn; //Highlight on press toggle
     ImageButton keypadBtn; //Highlight on press toggle
-    String no; // phone number
+    static String no; // phone number
 
     PowerManager powerManager;
     PowerManager.WakeLock lock;
@@ -203,9 +203,21 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         initRecycler();
 
         Intent intent = getIntent();
+        if(ServiceCommunicator.number != null && !ServiceCommunicator.number.isEmpty()) {
+            no = ServiceCommunicator.number;
+        }
+        else{
+            no = arraySpinner[0];
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
+                android.R.layout.simple_spinner_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        myNumber.setAdapter(adapter);
+
+        myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
+        mReceiver.register(this);
 
         if(!apiHasRetrievedNumbers) {
-            mReceiver.register(this);
             getBusinessNumbers();
             ParentRecyclerViewItem.setLayoutManager(layoutManager);
             transferRecycler.setLayoutManager(layoutManager2);
@@ -297,7 +309,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
                         arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
-                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
+                        if(apiHasRetrievedNumbers)map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
                 }
@@ -310,6 +322,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
                 no = arraySpinner[0];
+                ServiceCommunicator.number = no;
                 if(apiHasRetrievedNumbers){
                     ParentItemList();
                     myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);

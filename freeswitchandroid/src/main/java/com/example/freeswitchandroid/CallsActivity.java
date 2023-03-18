@@ -210,6 +210,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         initRecycler();
 
+        Intent intent = getIntent();
 
         if(arraySpinner.length <= 1 && no.equals("No Business Number Found")) {
             getBusinessNumbers();
@@ -228,7 +229,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 if(active != null && !active){
                     no = Objects.requireNonNull(map.get(ServiceCommunicator.number)).getPhoneNumber();
                     initSipService(no, false);
-                    Intent intent = getIntent();
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
                         callsActivity.setVisibility(View.VISIBLE);
                         callsHistoryActivity.setVisibility(View.GONE);
@@ -238,7 +238,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         dialPad1Layout.setVisibility(View.GONE);
                         linearLayout1.setVisibility(View.VISIBLE);
                         linearLayout2.setVisibility(View.GONE);
-                    } else if (intent != null && intent.getStringExtra("call").equals("data")) {
+                    }
+                }
+                else if(active == null){
+                    initSipService(no, false);
+                    mReceiver.register(this);
+
+                    if (intent != null && intent.getStringExtra("call").equals("data")) {
                         try {
                             if(!arraySpinner[0].equals("No Business Number Found")) {
                                 initSipService(no, false);
@@ -248,10 +254,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                             throw new RuntimeException(e);
                         }
                     }
-                }
-                else if(active == null){
-                    initSipService(no, false);
-                    mReceiver.register(this);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

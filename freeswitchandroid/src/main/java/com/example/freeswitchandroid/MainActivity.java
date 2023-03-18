@@ -7,12 +7,11 @@ import android.Manifest;import static com.example.freeswitchandroid.ServiceCommu
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;

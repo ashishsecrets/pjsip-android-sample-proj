@@ -22,8 +22,12 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.os.PowerManager;
 import android.content.res.ColorStateList;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,9 +51,7 @@ import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.adapters.TransferRecyclerViewAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
-import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallDetail;
-import com.example.freeswitchandroid.rest.model.Receiver;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
@@ -77,7 +79,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class CallsActivity extends AppCompatActivity implements TransferRecyclerViewAdapter.ItemClickListener, AdapterView.OnItemSelectedListener{
+public class CallsActivity extends AppCompatActivity implements TransferRecyclerViewAdapter.ItemClickListener, AdapterView.OnItemSelectedListener,SensorEventListener {
 
     /////Combining Calls History Activity////
 
@@ -142,6 +144,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     ImageButton speakerBtn; //Highlight on press toggle
     ImageButton keypadBtn; //Highlight on press toggle
     String no; // phone number
+
+    PowerManager powerManager;
+    PowerManager.WakeLock lock;
+
+
 
 
     @Override
@@ -233,7 +240,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         dialPad1Layout.setVisibility(View.GONE);
                         linearLayout1.setVisibility(View.VISIBLE);
                         linearLayout2.setVisibility(View.GONE);
-                    } else if (intent != null && intent.getStringExtra("call").equals("none")) {
+                    } else if (intent != null && intent.getStringExtra("call").equals("data")) {
                         ParentItemList();
                         try {
                             if(!arraySpinner[0].equals("No Business Number Found")) {
@@ -267,6 +274,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         //Add default visibility at the start of activity.
 
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
     }
 
     @Override
@@ -498,6 +511,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     protected void onResume() {
         super.onResume();
         //active = true;
+        mSensorManager.registerListener(CallsActivity.this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
         if(!apiHasRetrievedNumbers){
             getBusinessNumbers();
         }
@@ -966,6 +980,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     @Override
     protected void onPause() {
         super.onPause();
+        mSensorManager.unregisterListener(CallsActivity.this);
         active = null;
     }
 
@@ -974,4 +989,31 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onStop();
         active = false;
     }
+
+    private SensorManager mSensorManager;
+    private Sensor mProximity;
+    private static final int SENSOR_SENSITIVITY = 4;
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
+                //near
+                // Enable : Acquire the lock if it was not already acquired
+                if(!lock.isHeld()) lock.acquire();
+
+            } else {
+                //far
+                // Disable : Release the lock if it was not already released
+                if(lock.isHeld()) lock.release();
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
 }

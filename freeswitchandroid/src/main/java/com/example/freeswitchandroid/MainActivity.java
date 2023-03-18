@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.SYSTEM_ALERT_WINDOW)
                 .subscribe(granted -> {
-            if (granted) { // Always true pre-M
-                // I can control the camera now
+            if (granted) {
+                System.out.print(granted);
             } else {
-                // Oups permission denied
+                System.out.print("Permission Denied");
             }
         });
 
@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
         Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+        intent.putExtra("call", "none");
 
         if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
             Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
@@ -180,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                                             .with(ADJUSTERS.get("day"))));
 
                             result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+                            intent.putExtra("call", "data");
                         }
 
                     }
@@ -194,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        intent.putExtra("call", "none");
         startActivity(intent);
 
     }

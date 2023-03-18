@@ -70,7 +70,14 @@ public class MainActivity extends AppCompatActivity {
         rxPermissions.request(Manifest.permission.RECORD_AUDIO,
                         Manifest.permission.MODIFY_AUDIO_SETTINGS,
                         Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.SYSTEM_ALERT_WINDOW);
+                        Manifest.permission.SYSTEM_ALERT_WINDOW)
+                .subscribe(granted -> {
+            if (granted) { // Always true pre-M
+                // I can control the camera now
+            } else {
+                // Oups permission denied
+            }
+        });
 
         ServiceCommunicator.itemList = new ArrayList<>();
         ServiceCommunicator.transferList = new ArrayList<>();

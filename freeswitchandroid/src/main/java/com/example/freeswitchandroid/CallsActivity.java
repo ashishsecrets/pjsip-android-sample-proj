@@ -2,19 +2,16 @@ package com.example.freeswitchandroid;
 
 import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
-import static com.example.freeswitchandroid.ServiceCommunicator.audioManager;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID1;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID2;
 import static com.example.freeswitchandroid.ServiceCommunicator.hostname;
 import static com.example.freeswitchandroid.ServiceCommunicator.itemList;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
-import static com.example.freeswitchandroid.ServiceCommunicator.ringtone;
 import static com.example.freeswitchandroid.ServiceCommunicator.sipAccountData;
 import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
 import static com.example.freeswitchandroid.ServiceCommunicator.uri;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
-import static com.example.freeswitchandroid.ServiceCommunicator.vibrator;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
 import androidx.appcompat.app.ActionBar;
@@ -26,6 +23,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.PowerManager;
 import android.content.res.ColorStateList;
 import android.hardware.Sensor;
@@ -35,6 +35,8 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -51,6 +53,7 @@ import com.example.freeswitchandroid.Helpers.CryptoUtils;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.Pojo.TransferData;
+import com.example.freeswitchandroid.RingtoneService.RingtonePlayingService;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.adapters.TransferRecyclerViewAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
@@ -153,6 +156,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     PowerManager powerManager;
     PowerManager.WakeLock lock;
 
+     AudioManager audioManager;
+     Vibrator vibrator;
+     Uri ringtoneUri;
+     Ringtone ringtone;
+     RingtoneManager ringtoneManager;
 
 
 
@@ -174,6 +182,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.custom_action_bar);
         actionBar.show();
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        ringtoneManager = new RingtoneManager(context);
+        if(Settings.System.canWrite(this))
+            ringtoneUri = ringtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
+        ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
 
         myNumber = (Spinner) findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
@@ -205,16 +220,24 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         Intent intent = getIntent();
         if(ServiceCommunicator.number != null && !ServiceCommunicator.number.isEmpty()) {
             no = ServiceCommunicator.number;
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
+                    android.R.layout.simple_spinner_item, arraySpinner);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            myNumber.setAdapter(adapter);
+            myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
         }
         else{
-            no = arraySpinner[0];
+            if(arraySpinner != null) {
+                no = arraySpinner[0];
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
+                        android.R.layout.simple_spinner_item, arraySpinner);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                myNumber.setAdapter(adapter);
+                myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
+            }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
-                android.R.layout.simple_spinner_item, arraySpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        myNumber.setAdapter(adapter);
 
-        myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
+
         mReceiver.register(this);
 
         if(!apiHasRetrievedNumbers) {
@@ -636,6 +659,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
 
     public void terminate(View v){
+        stopRingTone();
         getSupportActionBar().show();
         callsHistoryActivity.setVisibility(View.VISIBLE);
         callsActivity.setVisibility(View.GONE);
@@ -755,8 +779,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void hangUp(View view){
         stopRingTone();
-    SipServiceCommand.declineIncomingCall(this, uri, callID1);
-
+        SipServiceCommand.declineIncomingCall(this, uri, callID1);
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
         linearLayout2.setVisibility(View.GONE);
@@ -918,6 +941,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         public void onIncomingCall (String accountID,int callID, String displayName, String
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
+            startRingTone();
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.VISIBLE);
@@ -958,22 +982,18 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
     };
 
-    public static void startRingTone(){
+    public void startRingTone(){
 
         audioManager.setMode(AudioManager.MODE_RINGTONE);
         ringtone.play();
-        long[] pattern = {0, 1000, 1000};
-        vibrator.vibrate(pattern, 0);
+        //long[] pattern = {0, 1000, 1000};
+        //vibrator.vibrate(pattern, 0);
 
     }
 
     private void stopRingTone(){
-
-        if(ringtone.isPlaying()) {
-            ringtone.stop();
-        }
-        vibrator.cancel();
-
+        ringtoneManager.stopPreviousRingtone();
+        ringtone.stop();
     }
 
     static Boolean active = null;

@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         authToken = shared.getString("token", "");
 
+        System.out.print("token  " + authToken);
+
         if(!authToken.isEmpty()){
             imageButton.setVisibility(View.GONE);
             Retrofit retrofit = RetrofitData.getRetrofit();
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 if(userDatum != null) {
                     businessNumbers = userDatum.getBusinessNumbers();
                 }
-                if(businessNumbers != null && !(businessNumbers.size() == 0)) {
+                if(businessNumbers.size() != 0 && businessNumbers.get(0) != null && (businessNumbers.get(0).getPhoneNumber() != null && !businessNumbers.get(0).getPhoneNumber().isEmpty())) {
                     ServiceCommunicator.arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
                         ServiceCommunicator.arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();

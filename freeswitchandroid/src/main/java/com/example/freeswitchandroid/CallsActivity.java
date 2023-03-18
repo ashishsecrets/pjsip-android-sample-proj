@@ -6,9 +6,13 @@ import static com.example.freeswitchandroid.ServiceCommunicator.audioManager;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID1;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID2;
+import static com.example.freeswitchandroid.ServiceCommunicator.hostname;
+import static com.example.freeswitchandroid.ServiceCommunicator.itemList;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
 import static com.example.freeswitchandroid.ServiceCommunicator.ringtone;
+import static com.example.freeswitchandroid.ServiceCommunicator.sipAccountData;
 import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
+import static com.example.freeswitchandroid.ServiceCommunicator.uri;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 import static com.example.freeswitchandroid.ServiceCommunicator.vibrator;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
@@ -196,28 +200,20 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         callsActivity = findViewById(R.id.calls_activity);
         callsHistoryActivity = findViewById(R.id.calls_history_activity);
 
-        if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
-            no = map.values().iterator().next().getPhoneNumber();
-        }
-        else{
-            ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
-            no = arraySpinner[0];
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        myNumber.setAdapter(adapter);
-
         initRecycler();
 
         Intent intent = getIntent();
 
-        if(arraySpinner.length <= 1 && no.equals("No Business Number Found")) {
+        if(!apiHasRetrievedNumbers) {
+            mReceiver.register(this);
             getBusinessNumbers();
+            ParentRecyclerViewItem.setLayoutManager(layoutManager);
+            transferRecycler.setLayoutManager(layoutManager2);
+            ParentRecyclerViewItem.setAdapter(parentItemAdapter);
+            transferRecycler.setAdapter(transferRecyclerViewAdapter);
             try {
-                if(!arraySpinner[0].equals("No Business Number Found")) {
+                if(apiHasRetrievedNumbers) {
                     initSipService(no, false);
-                    mReceiver.register(this);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -240,22 +236,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         linearLayout2.setVisibility(View.GONE);
                     }
                 }
-                else if(active == null){
-                    initSipService(no, false);
-                    mReceiver.register(this);
-
-                    if (intent != null && intent.getStringExtra("call").equals("data")) {
-                        getBusinessNumbers();
-                        try {
-                            if(!arraySpinner[0].equals("No Business Number Found")) {
-                                initSipService(no, false);
-                                mReceiver.register(this);
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -265,9 +245,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             transferRecycler.setAdapter(transferRecyclerViewAdapter);
         }
 
-        myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
         myNumber.setOnItemSelectedListener(CallsActivity.this);
-
 
         this.context = this;
 
@@ -315,24 +293,27 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 if(userDatum != null) {
                     businessNumbers = userDatum.getBusinessNumbers();
                 }
-                if(businessNumbers != null || !(businessNumbers.size() == 0)) {
-                    ServiceCommunicator.arraySpinner = new String[businessNumbers.size()];
+                if(businessNumbers.size() != 0 && businessNumbers.get(0) != null && (businessNumbers.get(0).getPhoneNumber() != null && !businessNumbers.get(0).getPhoneNumber().isEmpty())) {
+                    arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
-                        ServiceCommunicator.arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
-                        ServiceCommunicator.map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
+                        arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
+                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
                 }
-                else{
-                    ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
-                }
+
+
+                if(arraySpinner == null || arraySpinner.length == 0) arraySpinner = new String[]{"No Business Number Found"};
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
-                        android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
+                        android.R.layout.simple_spinner_item, arraySpinner);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
-
-                ParentItemList();
+                no = arraySpinner[0];
+                if(apiHasRetrievedNumbers){
+                    ParentItemList();
+                    myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
+                }
 
             }
 
@@ -346,13 +327,15 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
     private void ParentItemList()
     {
-        ServiceCommunicator.itemList.clear();
-        ServiceCommunicator.transferList.clear();
+        if(itemList != null && transferList != null) {
+            itemList.clear();
+            transferList.clear();
+        }
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
-            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.get(myNumber.getSelectedItem().toString()).getId().toString());
+        if(apiHasRetrievedNumbers && !no.equals("No Business Number Found")) {
+            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
 
             call.enqueue(new Callback<List<CallDetail>>() {
                 @Override
@@ -374,12 +357,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                             for (CallDetail callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                                ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0, 1)));
+                                transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0, 1)));
                             }
 
-                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
-                            ServiceCommunicator.transferList.clear();
-                            ServiceCommunicator.transferList.addAll(uniqueContacts);
+                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(transferList);
+                            transferList.clear();
+                            transferList.addAll(uniqueContacts);
 
                             transferRecyclerViewAdapter.notifyDataSetChanged();
 
@@ -388,7 +371,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                                     .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                                             .with(ADJUSTERS.get("day"))));
 
-                            result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+                            result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
 
                             parentItemAdapter.notifyDataSetChanged();
                         }
@@ -414,10 +397,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(StopService) {
             SipServiceCommand.stop(this);
         }
-        ServiceCommunicator.username = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getUsername();
-        String password = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getPassword();
-        String nonce = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getNonce();
-        ServiceCommunicator.hostname = Objects.requireNonNull(ServiceCommunicator.map.get(number)).getReceivers().get(0).getLine().getDomain();
+        ServiceCommunicator.username = (map.get(number)).getReceivers().get(0).getLine().getUsername();
+        String password = (map.get(number)).getReceivers().get(0).getLine().getPassword();
+        String nonce = (map.get(number)).getReceivers().get(0).getLine().getNonce();
+        hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
         //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
         ServiceCommunicator.number = number;
@@ -442,8 +425,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         layoutManager = new LinearLayoutManager(CallsActivity.this);
         layoutManager2 = new LinearLayoutManager(CallsActivity.this);
 
-        parentItemAdapter = new ParentItemAdapter(ServiceCommunicator.itemList, CallsActivity.this);
-        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, ServiceCommunicator.transferList);
+        parentItemAdapter = new ParentItemAdapter(itemList, CallsActivity.this);
+        transferRecyclerViewAdapter = new TransferRecyclerViewAdapter( CallsActivity.this, transferList);
         transferRecyclerViewAdapter.setClickListener(this);
 
     }
@@ -584,51 +567,51 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void dtmf1Pressed(View v){
-    SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "1");
+    SipServiceCommand.sendDTMF(this, uri, callID1, "1");
     }
 
     public void dtmf2Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "2");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "2");
     }
 
     public void dtmf3Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "3");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "3");
     }
 
     public void dtmf4Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "4");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "4");
     }
 
     public void dtmf5Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "5");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "5");
     }
 
     public void dtmf6Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "6");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "6");
     }
 
     public void dtmf7Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "7");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "7");
     }
 
     public void dtmf8Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "8");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "8");
     }
 
     public void dtmf9Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "9");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "9");
     }
 
     public void dtmf0Pressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "0");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "0");
     }
 
     public void dtmfStarPressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "*");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "*");
     }
 
     public void dtmfHashPressed(View v){
-        SipServiceCommand.sendDTMF(this, ServiceCommunicator.uri, callID1, "#");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "#");
     }
 
     public void deleteBtnPressed(View v){
@@ -643,7 +626,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         getSupportActionBar().show();
         callsHistoryActivity.setVisibility(View.VISIBLE);
         callsActivity.setVisibility(View.GONE);
-        SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
+        SipServiceCommand.hangUpActiveCalls(this, uri);
 
 
         Toast.makeText(this, "Hanging up !",
@@ -674,12 +657,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     public void mute(View v){
 
         if(!isMute) {
-            SipServiceCommand.setCallMute(this, ServiceCommunicator.uri, callID1, true);
+            SipServiceCommand.setCallMute(this, uri, callID1, true);
             muteBtn.setImageResource(R.drawable.mute_active);
             isMute = true;
         }
         else{
-            SipServiceCommand.setCallMute(this, ServiceCommunicator.uri, callID1, false);
+            SipServiceCommand.setCallMute(this, uri, callID1, false);
             muteBtn.setImageResource(R.drawable.mute);
             isMute = false;
         }
@@ -727,7 +710,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             answer.setVisibility(View.GONE);
 
 
-            SipServiceCommand.makeCall(this, ServiceCommunicator.uri, "sip:" + numberToCall + "@" + ServiceCommunicator.hostname, false, false, false);
+            SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
             Toast.makeText(this, "Calling... !",
                     Toast.LENGTH_LONG).show();
         }
@@ -748,7 +731,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
 
-            SipServiceCommand.acceptIncomingCall(this, ServiceCommunicator.uri, String.valueOf(callID1), isVideo);
+            SipServiceCommand.acceptIncomingCall(this, uri, String.valueOf(callID1), isVideo);
             Toast.makeText(this, "Answering Call !", Toast.LENGTH_LONG).show();
 
         }
@@ -759,7 +742,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void hangUp(View view){
         stopRingTone();
-    SipServiceCommand.declineIncomingCall(this, ServiceCommunicator.uri, callID1);
+    SipServiceCommand.declineIncomingCall(this, uri, callID1);
 
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
@@ -776,7 +759,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         if(!isHold) {
 
-            SipServiceCommand.holdActiveCalls(this, ServiceCommunicator.uri);
+            SipServiceCommand.holdActiveCalls(this, uri);
 
             hold.setImageResource(R.drawable.hold_active);
 
@@ -786,11 +769,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
           else if(isHold) {
 
-                if(ServiceCommunicator.sipAccountData.getCallId() == null || ServiceCommunicator.sipAccountData.getCallId().length() < 2){
-                    ServiceCommunicator.sipAccountData.setCallId(String.valueOf(callID1));
+                if(sipAccountData.getCallId() == null || sipAccountData.getCallId().length() < 2){
+                    sipAccountData.setCallId(String.valueOf(callID1));
                 }
 
-                SipServiceCommand.setCallHold(this, ServiceCommunicator.uri, Integer.parseInt(ServiceCommunicator.sipAccountData.getCallId()), false);
+                SipServiceCommand.setCallHold(this, uri, Integer.parseInt(sipAccountData.getCallId()), false);
 
                 hold.setImageResource(R.drawable.hold);
 
@@ -819,18 +802,18 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
             if(!isHold) {
 
-                SipServiceCommand.toggleCallHold(this, ServiceCommunicator.uri, callID1);
+                SipServiceCommand.toggleCallHold(this, uri, callID1);
 
                 hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
 
                 Toast.makeText(this, "Holding before transfer !",
                         Toast.LENGTH_LONG).show();
 
-                SipServiceCommand.makeCall(this, ServiceCommunicator.uri, numberToTransfer, true);
+                SipServiceCommand.makeCall(this, uri, numberToTransfer, true);
             }
             else if(isHold){
 
-                SipServiceCommand.attendedTransferCall(this, ServiceCommunicator.uri, callID1, callID2);
+                SipServiceCommand.attendedTransferCall(this, uri, callID1, callID2);
 
                 Toast.makeText(this, "Making attended transfer !",
                         Toast.LENGTH_LONG).show();

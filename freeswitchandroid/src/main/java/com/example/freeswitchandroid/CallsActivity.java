@@ -245,6 +245,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     mReceiver.register(this);
 
                     if (intent != null && intent.getStringExtra("call").equals("data")) {
+                        getBusinessNumbers();
                         try {
                             if(!arraySpinner[0].equals("No Business Number Found")) {
                                 initSipService(no, false);

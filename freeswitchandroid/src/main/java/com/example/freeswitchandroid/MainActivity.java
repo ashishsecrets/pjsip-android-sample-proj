@@ -1,6 +1,7 @@
 package com.example.freeswitchandroid;
 
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
+import static com.example.freeswitchandroid.ServiceCommunicator.map;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 
 import androidx.appcompat.app.ActionBar;
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 if(userDatum != null) {
                     businessNumbers = userDatum.getBusinessNumbers();
                 }
-                if(businessNumbers != null || !(businessNumbers.size() == 0)) {
+                if(businessNumbers != null && !(businessNumbers.size() == 0)) {
                     ServiceCommunicator.arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
                         ServiceCommunicator.arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     ServiceCommunicator.apiHasRetrievedNumbers = true;
                     ParentItemList();
+                    System.out.print("Map" + map.values());
                 }
                 else{
                     ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
@@ -134,53 +136,55 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
+        if(ServiceCommunicator.map != null) {
+            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
 
-        Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
+            call.enqueue(new Callback<List<CallDetail>>() {
+                @Override
+                public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
 
-        call.enqueue(new Callback<List<CallDetail>>() {
-            @Override
-            public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
+                    List<CallDetail> callsEndDatumList = response.body();
 
-                List<CallDetail> callsEndDatumList = response.body();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
+                            final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
 
-                        final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
-
-                        ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
+                            ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
 
 
-                        List<ChildItem> childList = new ArrayList<>();
+                            List<ChildItem> childList = new ArrayList<>();
 
-                        for (CallDetail callsEndDatum : callsEndDatumList) {
-                            childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                            ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
+                            for (CallDetail callsEndDatum : callsEndDatumList) {
+                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                                ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0, 1)));
+                            }
+
+                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
+                            ServiceCommunicator.transferList.clear();
+                            ServiceCommunicator.transferList.addAll(uniqueContacts);
+
+                            Map<LocalDate, List<ChildItem>> result = childList.stream()
+                                    .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                                            .with(ADJUSTERS.get("day"))));
+
+                            result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+
+                            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+                            startActivity(intent);
                         }
 
-                        Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
-                        ServiceCommunicator.transferList.clear();
-                        ServiceCommunicator.transferList.addAll(uniqueContacts);
-
-                        Map<LocalDate, List<ChildItem>> result = childList.stream()
-                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                                        .with(ADJUSTERS.get("day"))));
-
-                        result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
-
-                        Intent intent = new Intent(MainActivity.this, CallsActivity.class);
-                        startActivity(intent);
                     }
 
                 }
 
-            }
+                @Override
+                public void onFailure(Call<List<CallDetail>> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<List<CallDetail>> call, Throwable t) {
+                }
+            });
 
-            }
-        });
+        }
 
     }
 

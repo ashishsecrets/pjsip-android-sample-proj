@@ -141,6 +141,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     AudioManager audioManager;
 
+    String no; // phone number
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +188,14 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         callsActivity = findViewById(R.id.calls_activity);
         callsHistoryActivity = findViewById(R.id.calls_history_activity);
 
+        if(arraySpinner != null && arraySpinner.length > 0) {
+            no = map.values().iterator().next().getPhoneNumber();
+        }
+        else{
+            ServiceCommunicator.arraySpinner = new String[]{"No Business Number Found"};
+            no = arraySpinner[0];
+        }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this, android.R.layout.simple_spinner_item, ServiceCommunicator.arraySpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         myNumber.setAdapter(adapter);
@@ -195,15 +205,14 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         initRecycler();
 
-        String no = map.values().iterator().next().getPhoneNumber();
 
-
-
-        if(arraySpinner.length <= 1) {
+        if(arraySpinner.length <= 1 && no.equals("No Business Number Found")) {
             getBusinessNumbers();
-            ParentItemList();
             try {
-                initSipService(no, false);
+                if(!arraySpinner[0].equals("No Business Number Found")) {
+                    initSipService(no, false);
+                    mReceiver.register(this);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -239,12 +248,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             transferRecycler.setAdapter(transferRecyclerViewAdapter);
         }
 
-        //TODO TO be Removed
-//        try {
-//            initSipService("76890709");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
         myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
         myNumber.setOnItemSelectedListener(CallsActivity.this);
 
@@ -332,60 +335,62 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
+        if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
+            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.get(myNumber.getSelectedItem().toString()).getId().toString());
 
-        Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.get(myNumber.getSelectedItem().toString()).getId().toString());
+            call.enqueue(new Callback<List<CallDetail>>() {
+                @Override
+                public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
 
-        call.enqueue(new Callback<List<CallDetail>>() {
-            @Override
-            public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
+                    List<CallDetail> callsEndDatumList = response.body();
 
-                List<CallDetail> callsEndDatumList = response.body();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
+                            phone_calls_view.setVisibility(View.GONE);
+                            recycler_list.setVisibility(View.VISIBLE);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
-                        phone_calls_view.setVisibility(View.GONE);
-                        recycler_list.setVisibility(View.VISIBLE);
+                            final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
 
-                        final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
-
-                        ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
+                            ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
 
 
-                        List<ChildItem> childList = new ArrayList<>();
+                            List<ChildItem> childList = new ArrayList<>();
 
-                        for (CallDetail callsEndDatum : callsEndDatumList) {
-                            childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                            ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0,1)));
+                            for (CallDetail callsEndDatum : callsEndDatumList) {
+                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+                                ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0, 1)));
+                            }
+
+                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
+                            ServiceCommunicator.transferList.clear();
+                            ServiceCommunicator.transferList.addAll(uniqueContacts);
+
+                            transferRecyclerViewAdapter.notifyDataSetChanged();
+
+
+                            Map<LocalDate, List<ChildItem>> result = childList.stream()
+                                    .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                                            .with(ADJUSTERS.get("day"))));
+
+                            result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+
+                            parentItemAdapter.notifyDataSetChanged();
                         }
 
-                        Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
-                        ServiceCommunicator.transferList.clear();
-                        ServiceCommunicator.transferList.addAll(uniqueContacts);
-
-                        transferRecyclerViewAdapter.notifyDataSetChanged();
-
-
-                        Map<LocalDate, List<ChildItem>> result = childList.stream()
-                                .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                                        .with(ADJUSTERS.get("day"))));
-
-                        result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
-
-                        parentItemAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
                     }
 
-                } else {
-                    Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
                 }
 
-            }
+                @Override
+                public void onFailure(Call<List<CallDetail>> call, Throwable t) {
+                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
 
-            @Override
-            public void onFailure(Call<List<CallDetail>> call, Throwable t) {
-                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-            }
-        });
+        }
 
     }
     private void initSipService(String number, boolean StopService) throws Exception {

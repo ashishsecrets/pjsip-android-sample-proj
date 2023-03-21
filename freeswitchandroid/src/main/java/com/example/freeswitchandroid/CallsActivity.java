@@ -254,6 +254,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 if(apiHasRetrievedNumbers) {
                     initSipService(no, false);
                 }
+                else{
+                    phone_calls_view.setVisibility(View.VISIBLE);
+                    recycler_list.setVisibility(View.GONE);
+                }
             } catch (Exception e) {
                 Toast.makeText(this, "Service Crashed " + e, Toast.LENGTH_LONG).show();
                 try {
@@ -405,8 +409,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
-                            phone_calls_view.setVisibility(View.GONE);
-                            recycler_list.setVisibility(View.VISIBLE);
 
                             final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
 

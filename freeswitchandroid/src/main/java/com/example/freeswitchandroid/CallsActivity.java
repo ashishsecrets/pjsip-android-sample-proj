@@ -770,29 +770,27 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void call() throws Exception {
 
-        if(accountIsValid()) {
-
             String numberToCall = number.getText().toString();
 
             if (!numberToCall.isEmpty()) {
-
-                dialPad1Layout.setVisibility(View.GONE);
-                linearLayout1.setVisibility(View.VISIBLE);
-                linearLayout2.setVisibility(View.VISIBLE);
-                callHorizontalLayout.setVisibility(View.GONE);
-                callTime.setVisibility(View.GONE);
-                answer.setVisibility(View.GONE);
-
+                if(accountIsValid()) {
+                    dialPad1Layout.setVisibility(View.GONE);
+                    linearLayout1.setVisibility(View.VISIBLE);
+                    linearLayout2.setVisibility(View.VISIBLE);
+                    callHorizontalLayout.setVisibility(View.GONE);
+                    callTime.setVisibility(View.GONE);
+                    answer.setVisibility(View.GONE);
+                } else {
+                    handleErrors();
+                }
 
                 SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
             }
 
         }
 
-    }
-
     public void answer(View view) throws Exception {
-            if (hangup.getVisibility() == View.GONE && accountIsValid()) {
+            if (hangup.getVisibility() == View.GONE) {
                 call();
             } else {
                 stopRingTone();

@@ -93,10 +93,10 @@ public class MainActivity extends AppCompatActivity {
             imageButton.setVisibility(View.GONE);
             Retrofit retrofit = RetrofitData.getRetrofit();
             retrofitAPI = retrofit.create(PressOneAPI.class);
-            //getBusinessNumbers();
-            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
-            intent.putExtra("call", "none");
-            startActivity(intent);
+            getBusinessNumbers();
+//            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+//            intent.putExtra("call", "none");
+//            startActivity(intent);
         }
 
     }

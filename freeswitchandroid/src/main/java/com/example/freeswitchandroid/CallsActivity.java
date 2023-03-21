@@ -1136,24 +1136,24 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
         resetTimer();
-        Snackbar snackbar = Snackbar.make(layout, "Error Occurred ! Please re-register", Snackbar.LENGTH_LONG).setAction("REGISTER", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("CANCEL", new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                getBusinessNumbers();
-                try {
-                    initSipService(no, true);
-                    callsHistoryActivity.setVisibility(View.VISIBLE);
-                    callsActivity.setVisibility(View.GONE);
-                    if(mReceiver.getReceiverContext() == null) {
-                        mReceiver.register(CallsActivity.this);
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
-                }
+
             }
         });
-
+        getBusinessNumbers();
+        try {
+            initSipService(no, true);
+            callsHistoryActivity.setVisibility(View.VISIBLE);
+            callsActivity.setVisibility(View.GONE);
+            if(mReceiver.getReceiverContext() == null) {
+                mReceiver.register(CallsActivity.this);
+            }
+        } catch (Exception e) {
+            Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
+        }
         snackbar.show();
 
     }

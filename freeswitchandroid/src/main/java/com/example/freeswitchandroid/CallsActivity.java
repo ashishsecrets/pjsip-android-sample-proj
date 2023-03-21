@@ -12,6 +12,7 @@ import static com.example.freeswitchandroid.ServiceCommunicator.sipAccountData;
 import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
 import static com.example.freeswitchandroid.ServiceCommunicator.uri;
 import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
+import static net.gotev.sipservice.SipServiceCommand.accountIsValid;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
 import androidx.appcompat.app.ActionBar;
@@ -239,7 +240,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
 
 
-        mReceiver.register(this);
 
         if(!apiHasRetrievedNumbers) {
             getBusinessNumbers();
@@ -252,7 +252,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     initSipService(no, false);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Toast.makeText(this, "Service Crashed", Toast.LENGTH_LONG).show();
             }
         }
         else{
@@ -273,12 +273,16 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     }
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Toast.makeText(this, "Service Crashed", Toast.LENGTH_LONG).show();
             }
             ParentRecyclerViewItem.setLayoutManager(layoutManager);
             transferRecycler.setLayoutManager(layoutManager2);
             ParentRecyclerViewItem.setAdapter(parentItemAdapter);
             transferRecycler.setAdapter(transferRecyclerViewAdapter);
+        }
+
+        if(mReceiver.getReceiverContext() == null) {
+            mReceiver.register(this);
         }
 
         myNumber.setOnItemSelectedListener(CallsActivity.this);
@@ -303,7 +307,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 ParentItemList();
                 initSipService(parent.getItemAtPosition(position).toString(), true);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Toast.makeText(this, "Service Crashed", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -447,15 +451,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         String password = (map.get(number)).getReceivers().get(0).getLine().getPassword();
         String nonce = (map.get(number)).getReceivers().get(0).getLine().getNonce();
         hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
-        //ServiceCommunicator.port = Long.parseLong(map.get(number).getReceivers().get(0).getLine().getPort());
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
         ServiceCommunicator.number = number;
-
-//        ServiceCommunicator.username = "5294241166";
-//        ServiceCommunicator.password = "3Daet((t";
-//        ServiceCommunicator.hostname = "david380.fs1.pressone.co";
-
-
         SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.startService(activityManager, this);
@@ -539,7 +536,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     @Override
     protected void onResume() {
         super.onResume();
-        //active = true;
+        if(mReceiver.getReceiverContext() == null){
+            mReceiver.register(this);
+        }
         mSensorManager.registerListener(CallsActivity.this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
         if(!apiHasRetrievedNumbers){
             getBusinessNumbers();
@@ -613,51 +612,51 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void dtmf1Pressed(View v){
-    SipServiceCommand.sendDTMF(this, uri, callID1, "1");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "1");
     }
 
     public void dtmf2Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "2");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "2");
     }
 
     public void dtmf3Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "3");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "3");
     }
 
     public void dtmf4Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "4");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "4");
     }
 
     public void dtmf5Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "5");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "5");
     }
 
     public void dtmf6Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "6");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "6");
     }
 
     public void dtmf7Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "7");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "7");
     }
 
     public void dtmf8Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "8");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "8");
     }
 
     public void dtmf9Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "9");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "9");
     }
 
     public void dtmf0Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "0");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "0");
     }
 
     public void dtmfStarPressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "*");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "*");
     }
 
     public void dtmfHashPressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "#");
+        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "#");
     }
 
     public void deleteBtnPressed(View v){
@@ -670,21 +669,26 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void terminate(View v){
         stopRingTone();
-        getSupportActionBar().show();
-        callsHistoryActivity.setVisibility(View.VISIBLE);
-        callsActivity.setVisibility(View.GONE);
-        SipServiceCommand.hangUpActiveCalls(this, uri);
+        if(accountIsValid()) {
+            getSupportActionBar().show();
+            callsHistoryActivity.setVisibility(View.VISIBLE);
+            callsActivity.setVisibility(View.GONE);
+            SipServiceCommand.hangUpActiveCalls(this, uri);
 
 
-        Toast.makeText(this, "Hanging up !",
-                Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Hanging up !",
+                    Toast.LENGTH_LONG).show();
 
-        dialPad1Layout.setVisibility(View.VISIBLE);
-        linearLayout1.setVisibility(View.GONE);
-        linearLayout2.setVisibility(View.GONE);
-        callHorizontalLayout.setVisibility(View.VISIBLE);
-        answer.setVisibility(View.VISIBLE);
-        hangup.setVisibility(View.GONE);
+            dialPad1Layout.setVisibility(View.VISIBLE);
+            linearLayout1.setVisibility(View.GONE);
+            linearLayout2.setVisibility(View.GONE);
+            callHorizontalLayout.setVisibility(View.VISIBLE);
+            answer.setVisibility(View.VISIBLE);
+            hangup.setVisibility(View.GONE);
+        }
+        else{
+            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -702,16 +706,21 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void mute(View v){
+        if(accountIsValid()) {
 
-        if(!isMute) {
-            SipServiceCommand.setCallMute(this, uri, callID1, true);
-            muteBtn.setImageResource(R.drawable.mute_active);
-            isMute = true;
+            if (!isMute) {
+                SipServiceCommand.setCallMute(this, uri, callID1, true);
+                muteBtn.setImageResource(R.drawable.mute_active);
+                isMute = true;
+            } else {
+                SipServiceCommand.setCallMute(this, uri, callID1, false);
+                muteBtn.setImageResource(R.drawable.mute);
+                isMute = false;
+            }
+
         }
         else{
-            SipServiceCommand.setCallMute(this, uri, callID1, false);
-            muteBtn.setImageResource(R.drawable.mute);
-            isMute = false;
+            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
         }
 
 
@@ -745,63 +754,78 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void call(){
 
-        String numberToCall = number.getText().toString();
+        if(accountIsValid()) {
 
-        if(!numberToCall.isEmpty()) {
+            String numberToCall = number.getText().toString();
 
-            dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.VISIBLE);
-            linearLayout2.setVisibility(View.VISIBLE);
-            callHorizontalLayout.setVisibility(View.GONE);
-            callTime.setVisibility(View.GONE);
-            answer.setVisibility(View.GONE);
+            if (!numberToCall.isEmpty()) {
+
+                dialPad1Layout.setVisibility(View.GONE);
+                linearLayout1.setVisibility(View.VISIBLE);
+                linearLayout2.setVisibility(View.VISIBLE);
+                callHorizontalLayout.setVisibility(View.GONE);
+                callTime.setVisibility(View.GONE);
+                answer.setVisibility(View.GONE);
 
 
-            SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
-            Toast.makeText(this, "Calling... !",
-                    Toast.LENGTH_LONG).show();
+                SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
+                Toast.makeText(this, "Calling... !",
+                        Toast.LENGTH_LONG).show();
+            }
+
+        }
+        else{
+            Toast.makeText(this, "Not Registered. Unable to call.", Toast.LENGTH_LONG).show();
         }
 
     }
 
     public void answer(View view){
-
-         if(hangup.getVisibility() == View.GONE) {
+            if (hangup.getVisibility() == View.GONE && accountIsValid()) {
                 call();
-         }
-         else {
-             stopRingTone();
-            dialPad1Layout.setVisibility(View.GONE);
-            linearLayout1.setVisibility(View.VISIBLE);
-            linearLayout2.setVisibility(View.VISIBLE);
-            callOptionsLayout.setVisibility(View.VISIBLE);
-            callHorizontalLayout.setVisibility(View.GONE);
-            answer.setVisibility(View.GONE);
+            } else {
+                stopRingTone();
+                if(accountIsValid()) {
 
-            SipServiceCommand.acceptIncomingCall(this, uri, String.valueOf(callID1), isVideo);
-            Toast.makeText(this, "Answering Call !", Toast.LENGTH_LONG).show();
+                    dialPad1Layout.setVisibility(View.GONE);
+                    linearLayout1.setVisibility(View.VISIBLE);
+                    linearLayout2.setVisibility(View.VISIBLE);
+                    callOptionsLayout.setVisibility(View.VISIBLE);
+                    callHorizontalLayout.setVisibility(View.GONE);
+                    answer.setVisibility(View.GONE);
 
-        }
+                    SipServiceCommand.acceptIncomingCall(this, uri, String.valueOf(callID1), isVideo);
+                    Toast.makeText(this, "Answering Call !", Toast.LENGTH_LONG).show();
 
+                } else{
+                    Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                }
 
+            }
 
     }
 
     public void hangUp(View view){
         stopRingTone();
-        SipServiceCommand.declineIncomingCall(this, uri, callID1);
-        dialPad1Layout.setVisibility(View.VISIBLE);
-        linearLayout1.setVisibility(View.GONE);
-        linearLayout2.setVisibility(View.GONE);
-        callHorizontalLayout.setVisibility(View.VISIBLE);
-        dtmfKeyPadLayout.setVisibility(View.GONE);
-        callTime.setVisibility(View.GONE);
-        hangup.setVisibility(View.GONE);
-        answer.setVisibility(View.VISIBLE);
+        if(accountIsValid()) {
+            SipServiceCommand.declineIncomingCall(this, uri, callID1);
+            dialPad1Layout.setVisibility(View.VISIBLE);
+            linearLayout1.setVisibility(View.GONE);
+            linearLayout2.setVisibility(View.GONE);
+            callHorizontalLayout.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callTime.setVisibility(View.GONE);
+            hangup.setVisibility(View.GONE);
+            answer.setVisibility(View.VISIBLE);
+        }
+        else{
+            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+        }
 
     }
 
     public void hold(View view){
+        if(accountIsValid()) {
 
         if(!isHold) {
 
@@ -821,6 +845,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                 SipServiceCommand.setCallHold(this, uri, Integer.parseInt(sipAccountData.getCallId()), false);
 
+
                 hold.setImageResource(R.drawable.hold);
 
 
@@ -829,10 +854,16 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
             }
           isHold = !isHold;
+          }
+        else{
+            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+        }
 
     }
 
     public void transfer(View view){
+        if(accountIsValid()) {
+
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
@@ -841,12 +872,16 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
             overlayTransferLayout.setVisibility(View.VISIBLE);
+        }
+        else{
+            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void finalTransfer(View v){
+        if(accountIsValid()) {
 
-
-            if(!isHold) {
+            if (!isHold) {
 
                 SipServiceCommand.toggleCallHold(this, uri, callID1);
 
@@ -856,8 +891,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         Toast.LENGTH_LONG).show();
 
                 SipServiceCommand.makeCall(this, uri, numberToTransfer, true);
-            }
-            else if(isHold){
+            } else if (isHold) {
 
                 SipServiceCommand.attendedTransferCall(this, uri, callID1, callID2);
 
@@ -877,6 +911,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
             isHold = !isHold;
 
+        }
+        else{
+            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+            SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
+        }
+
     }
 
     BroadcastEventReceiver mReceiver = new BroadcastEventReceiver()
@@ -889,7 +929,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         Log.i(TAG, "onRegistration: ");
 
         if(registrationStateCode == 200){
-            Toast.makeText(context, "Registration OK", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Registered", Toast.LENGTH_SHORT).show();
         }
     }
 

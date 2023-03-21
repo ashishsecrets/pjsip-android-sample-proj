@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.view.Surface;
 
 import org.pjsip.PjCameraInfo2;
-import org.pjsip.pjsua2.AccountConfig;
 
 import java.util.ArrayList;
 
@@ -17,6 +16,12 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("unused")
 public class SipServiceCommand implements SipServiceConstants {
+
+    static Boolean isAccountValid = false;
+
+    public static boolean accountIsValid(){
+        return isAccountValid;
+    }
 
     /**
      * This should be changed on the app side
@@ -39,9 +44,10 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static String setAccount(Context context, SipAccountData sipAccount) {
         if (sipAccount == null) {
-            throw new IllegalArgumentException("sipAccount MUST not be null!");
+            isAccountValid = false;
+            System.out.print("sipAccount MUST not be null!");
         }
-
+        isAccountValid = true;
         String accountID = sipAccount.getIdUri();
         checkAccount(accountID);
 
@@ -65,9 +71,10 @@ public class SipServiceCommand implements SipServiceConstants {
     public static String setAccountWithCodecs(Context context, SipAccountData sipAccount,
                                               ArrayList<CodecPriority> codecPriorities) {
         if (sipAccount == null) {
-            throw new IllegalArgumentException("sipAccount MUST not be null!");
+            isAccountValid = false;
+            System.out.print("sipAccount MUST not be null!");
         }
-
+        isAccountValid = true;
         String accountID = sipAccount.getIdUri();
         checkAccount(accountID);
 
@@ -87,11 +94,12 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void removeAccount(Context context, String accountID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_REMOVE_ACCOUNT);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_REMOVE_ACCOUNT);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -99,7 +107,7 @@ public class SipServiceCommand implements SipServiceConstants {
      * @param context application context
      */
     public static void start(Context context) {
-        context.startService(new Intent(context, SipService.class));
+        if(isAccountValid)context.startService(new Intent(context, SipService.class));
     }
 
     /**
@@ -115,9 +123,11 @@ public class SipServiceCommand implements SipServiceConstants {
      * @param context application context
      */
     public static void restartSipStack(Context context) {
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_RESTART_SIP_STACK);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_RESTART_SIP_STACK);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -483,7 +493,11 @@ public class SipServiceCommand implements SipServiceConstants {
 
     private static void checkAccount(String accountID) {
         if (accountID == null || !accountID.startsWith("sip:")) {
-            throw new IllegalArgumentException("Invalid accountID! Example: sip:user@domain");
+            isAccountValid = false;
+            System.out.println("Invalid accountID! Example: sip:user@domain");
+        }
+        else{
+            isAccountValid = true;
         }
     }
 
@@ -494,29 +508,33 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void getRegistrationStatus(Context context, String accountID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_GET_REGISTRATION_STATUS);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_GET_REGISTRATION_STATUS);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            context.startService(intent);
+        }
     }
 
     public static void refreshRegistration(Context context, String accountID, int regExpTimeout, String regContactParams){
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_REFRESH_REGISTRATION);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_REG_EXP_TIMEOUT, regExpTimeout);
-        intent.putExtra(PARAM_REG_CONTACT_PARAMS, regContactParams);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_REFRESH_REGISTRATION);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_REG_EXP_TIMEOUT, regExpTimeout);
+            intent.putExtra(PARAM_REG_CONTACT_PARAMS, regContactParams);
+            context.startService(intent);
+        }
     }
 
     public static void setDND(Context context, boolean dnd) {
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SET_DND);
-        intent.putExtra(PARAM_DND, dnd);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SET_DND);
+            intent.putExtra(PARAM_DND, dnd);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -530,13 +548,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void setupIncomingVideoFeed(Context context, String accountID, int callID, Surface surface) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SET_INCOMING_VIDEO);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_SURFACE, surface);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SET_INCOMING_VIDEO);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_SURFACE, surface);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -550,13 +569,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void setVideoMute(Context context, String accountID, int callID, boolean mute) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SET_VIDEO_MUTE);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_VIDEO_MUTE, mute);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SET_VIDEO_MUTE);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_VIDEO_MUTE, mute);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -570,13 +590,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void startVideoPreview(Context context, String accountID,  int callID, Surface surface) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_START_VIDEO_PREVIEW);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_SURFACE, surface);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_START_VIDEO_PREVIEW);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_SURFACE, surface);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -590,13 +611,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void changeVideoOrientation(Context context, String accountID, int callID, int orientation) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SET_SELF_VIDEO_ORIENTATION);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_ORIENTATION, orientation);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SET_SELF_VIDEO_ORIENTATION);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_ORIENTATION, orientation);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -609,12 +631,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void stopVideoPreview(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_STOP_VIDEO_PREVIEW);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_STOP_VIDEO_PREVIEW);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -627,12 +650,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void switchVideoCaptureDevice(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SWITCH_VIDEO_CAPTURE_DEVICE);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SWITCH_VIDEO_CAPTURE_DEVICE);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -648,9 +672,11 @@ public class SipServiceCommand implements SipServiceConstants {
      * @param context the context
      */
     public static void reconnectCall(Context context) {
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_RECONNECT_CALL);
-        context.startService(intent);
+        {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_RECONNECT_CALL);
+            context.startService(intent);
+        }
     }
 
     /**

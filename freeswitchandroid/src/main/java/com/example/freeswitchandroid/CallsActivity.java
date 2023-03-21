@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.content.res.ColorStateList;
 import android.hardware.Sensor;
@@ -70,6 +71,7 @@ import net.gotev.sipservice.SipServiceCommand;
 
 import org.pjsip.pjsua2.pjsip_inv_state;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -77,6 +79,7 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -937,7 +940,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-
+            cancelTimer();
             dialPad1Layout.setVisibility(View.VISIBLE);
             linearLayout1.setVisibility(View.GONE);
             linearLayout2.setVisibility(View.GONE);
@@ -953,8 +956,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             muteBtn.setImageResource(R.drawable.mute);
             speakerBtn.setImageResource(R.drawable.speaker);
             keypadBtn.setImageResource(R.drawable.keypad);
-            //TODO
-            //Call Time Re-set Counter
+            resetTimer();
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
@@ -966,16 +968,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             callTime.setVisibility(View.VISIBLE);
             answer.setVisibility(View.GONE);
-            //TODO
-            //Call Time set Counter
             CallsActivity.this.accountID = accountID;
             callID1 = callID;
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
-
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-
+            startTimer();
         }
 
 //        Logger.debug(LOG_TAG, "onCallState - accountID: " + getValue(getReceiverContext(), accountID) +
@@ -1045,8 +1044,35 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         ringtone.stop();
     }
 
-    static Boolean active = null;
+    public void startTimer(){
 
+        long millisInFuture = 2000*60000;
+        countDownTimer = new CountDownTimer(millisInFuture, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+                callTime.setText(new SimpleDateFormat("mm:ss").format(new Date(millisInFuture - millisUntilFinished)));
+            }
+
+            public void onFinish() {
+                resetTimer();
+            }
+        }.start();
+    }
+
+    public void cancelTimer(){
+        countDownTimer.cancel();
+    }
+
+    public void resetTimer(){
+        callTime.setText(new SimpleDateFormat("mm:ss").format(new Date(0)));
+    }
+
+    public String checkDigit(int number) {
+        return number >= 9 ? number + "0"  : String.valueOf(number);
+    }
+    static Boolean active = null;
+    CountDownTimer countDownTimer;
     @Override
     public void onStart() {
         super.onStart();
@@ -1093,6 +1119,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void handleErrors() throws Exception {
         if(ServiceCommunicator.uri != null && !ServiceCommunicator.uri.isEmpty())SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
+        startTimer();
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
         linearLayout2.setVisibility(View.GONE);
@@ -1108,8 +1135,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         muteBtn.setImageResource(R.drawable.mute);
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
-        //TODO
-        //Call Time Re-set Counter
+        resetTimer();
         Snackbar snackbar = Snackbar.make(layout, "Error Occurred ! Please re-register", Snackbar.LENGTH_LONG).setAction("REGISTER", new View.OnClickListener() {
             @Override
             public void onClick(View view)

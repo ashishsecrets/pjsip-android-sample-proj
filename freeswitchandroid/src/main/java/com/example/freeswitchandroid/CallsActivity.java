@@ -1034,6 +1034,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 if(accountIsValid() && activeNetwork != null && activeNetwork.isConnected()){
                     SipServiceCommand.reconnectCall(CallsActivity.this);
                 }
+                else{
+                    Toast.makeText(CallsActivity.this, "Lost Network", Toast.LENGTH_LONG).show();
+                }
             }
         }
     };

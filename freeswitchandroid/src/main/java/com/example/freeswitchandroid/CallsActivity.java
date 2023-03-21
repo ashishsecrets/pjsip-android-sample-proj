@@ -461,7 +461,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     }
     private void initSipService(String number, boolean StopService) throws Exception {
-        //Remove logging // TODO
         if(StopService) {
             SipServiceCommand.stop(this);
         }
@@ -471,7 +470,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
         ServiceCommunicator.number = number;
-        SipServiceCommand.enableSipDebugLogging(true);
+        SipServiceCommand.enableSipDebugLogging(false);
         serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.startService(activityManager, this);
     }

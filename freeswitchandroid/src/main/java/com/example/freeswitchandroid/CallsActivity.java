@@ -1120,8 +1120,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     initSipService(no, true);
                     callsHistoryActivity.setVisibility(View.VISIBLE);
                     callsActivity.setVisibility(View.GONE);
+                    if(mReceiver.getReceiverContext() == null) {
+                        mReceiver.register(CallsActivity.this);
+                    }
                 } catch (Exception e) {
-                    Toast.makeText(CallsActivity.this, "Registration Failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
                 }
             }
         });

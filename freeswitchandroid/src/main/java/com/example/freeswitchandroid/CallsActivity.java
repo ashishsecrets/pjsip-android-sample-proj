@@ -790,19 +790,22 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     callHorizontalLayout.setVisibility(View.GONE);
                     callTime.setVisibility(View.GONE);
                     answer.setVisibility(View.GONE);
+
+                SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
                 } else {
                     handleErrors();
                 }
-
-                SipServiceCommand.makeCall(this, uri, "sip:" + numberToCall + "@" + hostname, false, false, false);
             }
 
-        }
+    }
+
 
     public void answer(View view) throws Exception {
+
             if (hangup.getVisibility() == View.GONE) {
                 call();
-            } else {
+         }
+            else {
                 stopRingTone();
                 if(accountIsValid()) {
 
@@ -1128,8 +1131,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void handleErrors() throws Exception {
-        if(ServiceCommunicator.uri != null && !ServiceCommunicator.uri.isEmpty())SipServiceCommand.hangUpActiveCalls(this, ServiceCommunicator.uri);
-        startTimer();
+        getBusinessNumbers();
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
         linearLayout2.setVisibility(View.GONE);
@@ -1146,22 +1148,18 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
         resetTimer();
-        Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("REGISTER", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("WAIT", new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                getBusinessNumbers();
-                try {
-                    initSipService(no, true);
-                    if(mReceiver.getReceiverContext() == null) {
-                        mReceiver.register(CallsActivity.this);
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
-                }
+
             }
         });
-
+        try {
+            initSipService(no, false);
+        } catch (Exception e) {
+            Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
+        }
         snackbar.show();
 
     }

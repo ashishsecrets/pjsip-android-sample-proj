@@ -148,15 +148,16 @@ public class SipServiceCommand implements SipServiceConstants {
             boolean isTransfer
     ) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_MAKE_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_NUMBER, numberToCall);
-        intent.putExtra(PARAM_IS_VIDEO, isVideo);
-        intent.putExtra(PARAM_IS_VIDEO_CONF, isVideoConference);
-        intent.putExtra(PARAM_IS_TRANSFER, isTransfer);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_MAKE_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_NUMBER, numberToCall);
+            intent.putExtra(PARAM_IS_VIDEO, isVideo);
+            intent.putExtra(PARAM_IS_VIDEO_CONF, isVideoConference);
+            intent.putExtra(PARAM_IS_TRANSFER, isTransfer);
+            context.startService(intent);
+        }
     }
 
     public static void makeCall(Context context, String accountID, String numberToCall, boolean isVideo, boolean isVideoConference) {
@@ -183,12 +184,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void makeSilentCall(Context context, String accountID, String numberToCall) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_MAKE_SILENT_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_NUMBER, numberToCall);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_MAKE_SILENT_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_NUMBER, numberToCall);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -210,15 +212,17 @@ public class SipServiceCommand implements SipServiceConstants {
             boolean isVideoConference,
             SipAccountTransport transport
     ) {
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_MAKE_DIRECT_CALL);
-        intent.putExtra(PARAM_GUEST_NAME, guestName);
-        intent.putExtra(PARAM_DIRECT_CALL_URI, sipUri);
-        intent.putExtra(PARAM_DIRECT_CALL_SIP_SERVER, host);
-        intent.putExtra(PARAM_IS_VIDEO, isVideo);
-        intent.putExtra(PARAM_IS_VIDEO_CONF, isVideoConference);
-        intent.putExtra(PARAM_DIRECT_CALL_TRANSPORT, transport.ordinal());
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_MAKE_DIRECT_CALL);
+            intent.putExtra(PARAM_GUEST_NAME, guestName);
+            intent.putExtra(PARAM_DIRECT_CALL_URI, sipUri);
+            intent.putExtra(PARAM_DIRECT_CALL_SIP_SERVER, host);
+            intent.putExtra(PARAM_IS_VIDEO, isVideo);
+            intent.putExtra(PARAM_IS_VIDEO_CONF, isVideoConference);
+            intent.putExtra(PARAM_DIRECT_CALL_TRANSPORT, transport.ordinal());
+            context.startService(intent);
+        }
     }
 
     public static void makeDirectCall(Context context, String guestName, Uri sipUri, String host, boolean isVideo, boolean isVideoConference) {
@@ -234,12 +238,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void getCallStatus(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_GET_CALL_STATUS);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_GET_CALL_STATUS);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -250,14 +255,15 @@ public class SipServiceCommand implements SipServiceConstants {
      * @param accountID account ID
      * @param callID call ID to hang up
      */
-    public static void hangUpCall(Context context, String accountID, String callID) {
+    public static void hangUpCall(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_HANG_UP_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_HANG_UP_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -267,11 +273,12 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void hangUpActiveCalls(Context context, String accountID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_HANG_UP_CALLS);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_HANG_UP_CALLS);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -281,11 +288,12 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void holdActiveCalls(Context context, String accountID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_HOLD_CALLS);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_HOLD_CALLS);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -300,13 +308,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void sendDTMF(Context context, String accountID, int callID, String dtmfTone) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SEND_DTMF);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_DTMF, dtmfTone);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SEND_DTMF);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_DTMF, dtmfTone);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -320,13 +329,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void acceptIncomingCall(Context context, String accountID, String callID, boolean isVideo) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_ACCEPT_INCOMING_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_IS_VIDEO, isVideo);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_ACCEPT_INCOMING_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_IS_VIDEO, isVideo);
+            context.startService(intent);
+        }
     }
 
     public static void acceptIncomingCall(Context context, String accountID, String callID) {
@@ -343,12 +353,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void declineIncomingCall(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_DECLINE_INCOMING_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_DECLINE_INCOMING_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -362,13 +373,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void transferCall(Context context, String accountID, int callID, String number) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_TRANSFER_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_NUMBER, number);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_TRANSFER_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_NUMBER, number);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -382,13 +394,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void attendedTransferCall(Context context, String accountID, int callIdOrig, int callIdDest) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_ATTENDED_TRANSFER_CALL);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callIdOrig);
-        intent.putExtra(PARAM_CALL_ID_DEST, callIdDest);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_ATTENDED_TRANSFER_CALL);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callIdOrig);
+            intent.putExtra(PARAM_CALL_ID_DEST, callIdDest);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -402,13 +415,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void setCallHold(Context context, String accountID, int callID, boolean hold) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SET_HOLD);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_HOLD, hold);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SET_HOLD);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_HOLD, hold);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -421,12 +435,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void toggleCallHold(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_TOGGLE_HOLD);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_TOGGLE_HOLD);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -440,13 +455,14 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void setCallMute(Context context, String accountID, int callID, boolean mute) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_SET_MUTE);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        intent.putExtra(PARAM_MUTE, mute);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_SET_MUTE);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            intent.putExtra(PARAM_MUTE, mute);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -459,12 +475,13 @@ public class SipServiceCommand implements SipServiceConstants {
      */
     public static void toggleCallMute(Context context, String accountID, int callID) {
         checkAccount(accountID);
-
-        Intent intent = new Intent(context, SipService.class);
-        intent.setAction(ACTION_TOGGLE_MUTE);
-        intent.putExtra(PARAM_ACCOUNT_ID, accountID);
-        intent.putExtra(PARAM_CALL_ID, callID);
-        context.startService(intent);
+        if(isAccountValid) {
+            Intent intent = new Intent(context, SipService.class);
+            intent.setAction(ACTION_TOGGLE_MUTE);
+            intent.putExtra(PARAM_ACCOUNT_ID, accountID);
+            intent.putExtra(PARAM_CALL_ID, callID);
+            context.startService(intent);
+        }
     }
 
     /**
@@ -672,7 +689,7 @@ public class SipServiceCommand implements SipServiceConstants {
      * @param context the context
      */
     public static void reconnectCall(Context context) {
-        {
+        if(isAccountValid) {
             Intent intent = new Intent(context, SipService.class);
             intent.setAction(ACTION_RECONNECT_CALL);
             context.startService(intent);

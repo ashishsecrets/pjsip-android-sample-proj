@@ -63,6 +63,7 @@ import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.adapters.TransferRecyclerViewAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
+import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallDetail;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 import com.google.android.material.snackbar.Snackbar;
@@ -980,14 +981,15 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-            startTimer();
+            tvNumber.setText(number.getText());
+                for (Map.Entry<String, BusinessNumber> e : map.entrySet()) {
+                    if (!e.getKey().endsWith(number.getText().toString().substring(1))) {
+                        tvName.setText("");
+                    }
+                }
+                startTimer();
         }
 
-//        Logger.debug(LOG_TAG, "onCallState - accountID: " + getValue(getReceiverContext(), accountID) +
-//                ", callID: " + callID +
-//                ", callStateCode: " + callStateCode +
-//                ", callStatusCode: " + callStatusCode +
-//                ", connectTimestamp: " + connectTimestamp);
     }
 
 

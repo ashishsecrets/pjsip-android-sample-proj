@@ -31,7 +31,8 @@ lint
 .idea/vcs.xml
 .idea/markdown*
 *.iml
-
+android/
+*.hprof
 # OS-specific files
 .DS_Store
 .DS_Store?
@@ -48,3 +49,4 @@ Thumbs.db
 
 # CA Bundle (use your own)
 ca-bundle.crt
+/java_pid1088.hprof

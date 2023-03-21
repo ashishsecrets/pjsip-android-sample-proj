@@ -1,5 +1,6 @@
 package com.example.freeswitchandroid;
 
+import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import android.Manifest;import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
             Retrofit retrofit = RetrofitData.getRetrofit();
             retrofitAPI = retrofit.create(PressOneAPI.class);
             getBusinessNumbers();
+            //Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+            //startActivity(intent);
         }
 
     }
@@ -149,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, CallsActivity.class);
         intent.putExtra("call", "none");
 
-        if(arraySpinner != null && arraySpinner.length > 0 && !arraySpinner[0].equals("No Business Number Found")) {
+        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
             Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
 
             call.enqueue(new Callback<List<CallDetail>>() {

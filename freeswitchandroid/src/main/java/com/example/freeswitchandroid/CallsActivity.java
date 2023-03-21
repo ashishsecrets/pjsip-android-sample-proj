@@ -122,6 +122,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     boolean isHold = false;
 
     RecyclerView transferRecycler;
+    ArrayAdapter<String> adapter;
 
     /////////////// Adding Final UI Items ////////////////
 
@@ -220,16 +221,16 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         Intent intent = getIntent();
         if(ServiceCommunicator.number != null && !ServiceCommunicator.number.isEmpty()) {
             no = ServiceCommunicator.number;
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
+            adapter = new ArrayAdapter<String>(CallsActivity.this,
                     android.R.layout.simple_spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             myNumber.setAdapter(adapter);
             myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
         }
         else{
-            if(arraySpinner != null) {
+            if(arraySpinner != null && arraySpinner.length > 0) {
                 no = arraySpinner[0];
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
+                adapter = new ArrayAdapter<String>(CallsActivity.this,
                         android.R.layout.simple_spinner_item, arraySpinner);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
@@ -332,23 +333,28 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     arraySpinner = new String[businessNumbers.size()];
                     for(int i = 0; i < businessNumbers.size(); i++){
                         arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
-                        if(apiHasRetrievedNumbers)map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
+                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
+                    adapter = new ArrayAdapter<String>(CallsActivity.this,
+                            android.R.layout.simple_spinner_item, arraySpinner);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    myNumber.setAdapter(adapter);
+                    no = arraySpinner[0];
+                    ServiceCommunicator.number = no;
+                    myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
                 }
 
-
-                if(arraySpinner == null || arraySpinner.length == 0) arraySpinner = new String[]{"No Business Number Found"};
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(CallsActivity.this,
-                        android.R.layout.simple_spinner_item, arraySpinner);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                myNumber.setAdapter(adapter);
-                no = arraySpinner[0];
-                ServiceCommunicator.number = no;
-                if(apiHasRetrievedNumbers){
-                    ParentItemList();
+                if(arraySpinner == null || arraySpinner.length == 0) {
+                    arraySpinner = new String[]{"No Business Number Found"};
+                    adapter = new ArrayAdapter<String>(CallsActivity.this,
+                            android.R.layout.simple_spinner_item, arraySpinner);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    myNumber.setAdapter(adapter);
+                    no = arraySpinner[0];
+                    ServiceCommunicator.number = no;
                     myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
+                    ParentItemList();
                 }
 
             }
@@ -363,14 +369,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
     private void ParentItemList()
     {
-        if(itemList != null && transferList != null) {
-            itemList.clear();
-            transferList.clear();
-        }
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        if(apiHasRetrievedNumbers && !no.equals("No Business Number Found")) {
+        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
             Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
 
             call.enqueue(new Callback<List<CallDetail>>() {
@@ -391,6 +393,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                             List<ChildItem> childList = new ArrayList<>();
 
+                            if(transferList != null) {
+                                transferList.clear();
+                            }
+
                             for (CallDetail callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
                                 transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0, 1)));
@@ -406,6 +412,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                             Map<LocalDate, List<ChildItem>> result = childList.stream()
                                     .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                                             .with(ADJUSTERS.get("day"))));
+
+                            if(itemList != null) {
+                                itemList.clear();
+                            }
 
                             result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
 

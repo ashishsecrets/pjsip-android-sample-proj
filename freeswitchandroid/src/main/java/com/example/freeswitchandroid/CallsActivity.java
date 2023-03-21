@@ -27,6 +27,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
@@ -168,7 +170,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
      Uri ringtoneUri;
      Ringtone ringtone;
      RingtoneManager ringtoneManager;
-
+     ConnectivityManager conMgr;
+     NetworkInfo activeNetwork;
 
 
     @Override
@@ -318,6 +321,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
+
+        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        activeNetwork = conMgr.getActiveNetworkInfo();
     }
 
     @Override
@@ -1024,8 +1030,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         @Override
         protected void onCallReconnectionState(CallReconnectionState state) {
             super.onCallReconnectionState(state);
-            if(state.equals(CallReconnectionState.PROGRESS)){
-                Toast.makeText(CallsActivity.this, "Reconnecting...", Toast.LENGTH_LONG).show();
+            if(state.equals(CallReconnectionState.FAILED)){
+                if(accountIsValid() && activeNetwork != null && activeNetwork.isConnected()){
+                    SipServiceCommand.reconnectCall(CallsActivity.this);
+                }
             }
         }
     };
@@ -1034,9 +1042,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         audioManager.setMode(AudioManager.MODE_RINGTONE);
         ringtone.play();
-        //long[] pattern = {0, 1000, 1000};
-        //vibrator.vibrate(pattern, 0);
-
     }
 
     private void stopRingTone(){
@@ -1068,9 +1073,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         callTime.setText(new SimpleDateFormat("mm:ss").format(new Date(0)));
     }
 
-    public String checkDigit(int number) {
-        return number >= 9 ? number + "0"  : String.valueOf(number);
-    }
+//    public String checkDigit(int number) {
+//        return number >= 9 ? number + "0"  : String.valueOf(number);
+//    }
     static Boolean active = null;
     CountDownTimer countDownTimer;
     @Override

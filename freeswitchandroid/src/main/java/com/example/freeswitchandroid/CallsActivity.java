@@ -252,6 +252,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
         if(!apiHasRetrievedNumbers) {
+            phone_calls_view.setVisibility(View.VISIBLE);
+            recycler_list.setVisibility(View.GONE);
             getBusinessNumbers();
             ParentRecyclerViewItem.setLayoutManager(layoutManager);
             transferRecycler.setLayoutManager(layoutManager2);
@@ -260,10 +262,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             try {
                 if(apiHasRetrievedNumbers) {
                     initSipService(no, false);
-                }
-                else{
-                    phone_calls_view.setVisibility(View.VISIBLE);
-                    recycler_list.setVisibility(View.GONE);
                 }
             } catch (Exception e) {
                 Toast.makeText(this, "Service Crashed " + e, Toast.LENGTH_LONG).show();
@@ -372,6 +370,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
                     }
                     apiHasRetrievedNumbers = true;
+                    recycler_list.setVisibility(View.VISIBLE);
+                    phone_calls_view.setVisibility(View.GONE);
                     adapter = new ArrayAdapter<String>(CallsActivity.this,
                             android.R.layout.simple_spinner_item, arraySpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -1146,24 +1146,22 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
         resetTimer();
-        Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("CANCEL", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("REGISTER", new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-
+                getBusinessNumbers();
+                try {
+                    initSipService(no, true);
+                    if(mReceiver.getReceiverContext() == null) {
+                        mReceiver.register(CallsActivity.this);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
+                }
             }
         });
-        getBusinessNumbers();
-        try {
-            initSipService(no, true);
-            callsHistoryActivity.setVisibility(View.VISIBLE);
-            callsActivity.setVisibility(View.GONE);
-            if(mReceiver.getReceiverContext() == null) {
-                mReceiver.register(CallsActivity.this);
-            }
-        } catch (Exception e) {
-            Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
-        }
+
         snackbar.show();
 
     }

@@ -8,12 +8,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.Mobile;
 import com.example.freeswitchandroid.rest.model.MobileData;
 import com.example.freeswitchandroid.rest.model.Token;
+import com.google.android.material.snackbar.Snackbar;
 
 import in.aabhasjindal.otptextview.OTPListener;
 import in.aabhasjindal.otptextview.OtpTextView;
@@ -27,7 +29,7 @@ public class OtpActivity extends AppCompatActivity {
 
     boolean isOTPEntered = false;
     OtpTextView otpTextView;
-
+    CoordinatorLayout layout;
     PressOneAPI retrofitAPI;
     Mobile mobile;
 
@@ -39,7 +41,7 @@ public class OtpActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();
-
+        layout = findViewById(R.id.layout_otp);
         otpTextView = findViewById(R.id.otp_view);
         otpTextView.requestFocusOTP();
 
@@ -63,14 +65,14 @@ public class OtpActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 // this method is called when we get response from our api.
-                Toast.makeText(OtpActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                Snackbar.make(layout, response.message(), Snackbar.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 // we get error response from API.
-                Toast.makeText(OtpActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                Snackbar.make(layout, t.toString(), Snackbar.LENGTH_SHORT).show();
             }
         });
 

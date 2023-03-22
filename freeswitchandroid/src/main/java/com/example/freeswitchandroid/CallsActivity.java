@@ -994,6 +994,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
+            for (Map.Entry<String, BusinessNumber> e : map.entrySet()) {
+                if (!e.getKey().endsWith(number.getText().toString())) {
+                    tvName.setText("");
+                }
+            }
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             dialPad1Layout.setVisibility(View.GONE);

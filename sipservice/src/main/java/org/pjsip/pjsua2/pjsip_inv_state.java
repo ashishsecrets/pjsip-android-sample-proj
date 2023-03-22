@@ -16,5 +16,7 @@ public final class pjsip_inv_state {
   public final static int PJSIP_INV_STATE_CONNECTING = PJSIP_INV_STATE_EARLY + 1;
   public final static int PJSIP_INV_STATE_CONFIRMED = PJSIP_INV_STATE_CONNECTING + 1;
   public final static int PJSIP_INV_STATE_DISCONNECTED = PJSIP_INV_STATE_CONFIRMED + 1;
+
+  public final static int PJSIP_INV_STATE_ERROR = PJSIP_INV_STATE_DISCONNECTED + 1;
 }
 

@@ -96,6 +96,7 @@ public class SipCall extends Call {
             CallInfo info = getInfo();
             int callID = info.getId();
             int callState = info.getState();
+            System.out.println("callsState " + callState);
             int callStatus = pjsip_status_code.PJSIP_SC_NULL;
 
             /*

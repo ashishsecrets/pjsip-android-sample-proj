@@ -70,6 +70,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
 import net.gotev.sipservice.CallReconnectionState;
+import net.gotev.sipservice.MediaState;
 import net.gotev.sipservice.SipServiceCommand;
 
 import org.pjsip.pjsua2.pjsip_inv_state;
@@ -89,6 +90,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -173,6 +175,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
      RingtoneManager ringtoneManager;
      ConnectivityManager conMgr;
      NetworkInfo activeNetwork;
+
+     Boolean callIsActive = false;
 
 
     @Override
@@ -487,7 +491,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
         ServiceCommunicator.number = number;
-        SipServiceCommand.enableSipDebugLogging(false);
+        SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.startService(activityManager, this);
     }
@@ -955,23 +959,28 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-            cancelTimer();
-            dialPad1Layout.setVisibility(View.VISIBLE);
-            linearLayout1.setVisibility(View.GONE);
-            linearLayout2.setVisibility(View.GONE);
-            callHorizontalLayout.setVisibility(View.VISIBLE);
-            dtmfKeyPadLayout.setVisibility(View.GONE);
-            callTime.setVisibility(View.GONE);
-            hangup.setVisibility(View.GONE);
-            answer.setVisibility(View.VISIBLE);
-            overlayTransferLayout.setVisibility(View.GONE);
-            audioManager.setMode(AudioManager.MODE_NORMAL);
-            hold.setImageResource(R.drawable.hold);
-            transfer.setImageResource(R.drawable.transfer);
-            muteBtn.setImageResource(R.drawable.mute);
-            speakerBtn.setImageResource(R.drawable.speaker);
-            keypadBtn.setImageResource(R.drawable.keypad);
-            resetTimer();
+            if(callID == callID2 || callID == callID1) {
+                dialPad1Layout.setVisibility(View.VISIBLE);
+                linearLayout1.setVisibility(View.GONE);
+                linearLayout2.setVisibility(View.GONE);
+                callHorizontalLayout.setVisibility(View.VISIBLE);
+                dtmfKeyPadLayout.setVisibility(View.GONE);
+                callTime.setVisibility(View.GONE);
+                hangup.setVisibility(View.GONE);
+                answer.setVisibility(View.VISIBLE);
+                overlayTransferLayout.setVisibility(View.GONE);
+                audioManager.setMode(AudioManager.MODE_NORMAL);
+                hold.setImageResource(R.drawable.hold);
+                transfer.setImageResource(R.drawable.transfer);
+                muteBtn.setImageResource(R.drawable.mute);
+                speakerBtn.setImageResource(R.drawable.speaker);
+                keypadBtn.setImageResource(R.drawable.keypad);
+                callIsActive = false;
+            }
+        }
+
+        if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_ERROR){
+
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
@@ -1002,6 +1011,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
         @Override
+        public void onCallMediaState(String accountID, int callID, MediaState stateType, boolean stateValue) {
+            super.onCallMediaState(accountID, callID, stateType, stateValue);
+
+
+        }
+
+        @Override
         public void onIncomingCall (String accountID,int callID, String displayName, String
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
@@ -1021,7 +1037,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.GONE);
-
+            callIsActive = true;
     }
 
         @Override
@@ -1029,12 +1045,14 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         boolean isVideoConference, boolean isTransfer){
         super.onOutgoingCall(accountID, callID, number, isVideo, isVideoConference, isTransfer);
 
+
+
             CallsActivity.this.accountID = accountID;
             callID2 = callID;
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
-
+            callIsActive = true;
         }
 
         @Override
@@ -1063,23 +1081,20 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void startTimer(){
-
-        long millisInFuture = 2000*60000;
+        long initial = 0;
+        long millisInFuture = 200*60000;
+        SimpleDateFormat date = new SimpleDateFormat("mm:ss");
+        date.setTimeZone(TimeZone.getTimeZone("UTC"));
         countDownTimer = new CountDownTimer(millisInFuture, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
-                callTime.setText(new SimpleDateFormat("mm:ss").format(new Date(millisInFuture - millisUntilFinished)));
+                callTime.setText(date.format(new Date(millisInFuture - millisUntilFinished)));
             }
 
             public void onFinish() {
-                resetTimer();
             }
         }.start();
-    }
-
-    public void cancelTimer(){
-        countDownTimer.cancel();
     }
 
     public void resetTimer(){
@@ -1120,7 +1135,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
                 //near
                 // Enable : Acquire the lock if it was not already acquired
-                if(!lock.isHeld()) lock.acquire();
+                if(callIsActive){
+                if(!lock.isHeld()) lock.acquire();}
 
             } else {
                 //far
@@ -1135,7 +1151,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     }
 
-    public void handleErrors() throws Exception {
+    public void handleErrors() {
         mReceiver.unregister(this);
         getBusinessNumbers();
         dialPad1Layout.setVisibility(View.VISIBLE);
@@ -1153,7 +1169,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         muteBtn.setImageResource(R.drawable.mute);
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
-        resetTimer();
         mReceiver.register(this);
         Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("WAIT", new View.OnClickListener() {
             @Override

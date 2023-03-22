@@ -41,7 +41,7 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
     static List<BusinessNumber> businessNumbers;
     static Map<String, BusinessNumber> map;
     static boolean apiHasRetrievedNumbers = false;
-
+    static boolean permissionsDone = false;
     static int callID1;
     static int callID2;
 

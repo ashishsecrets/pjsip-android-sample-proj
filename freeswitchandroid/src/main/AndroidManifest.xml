@@ -37,8 +37,7 @@
             android:theme="@style/Theme.Pjsipandroidmaster.Fullscreen" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false"
-            android:noHistory="true"/>
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

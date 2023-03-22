@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         ServiceCommunicator.itemList = new ArrayList<>();
         ServiceCommunicator.transferList = new ArrayList<>();
         businessNumbers = new ArrayList<>();

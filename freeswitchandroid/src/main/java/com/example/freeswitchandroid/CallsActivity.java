@@ -581,10 +581,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(!apiHasRetrievedNumbers){
             getBusinessNumbers();
         }
-        try {
-            initSipService(no, false);
-        } catch (Exception e) {
-            handleErrors();
+        else if(apiHasRetrievedNumbers){
+            try {
+                initSipService(no, false);
+            } catch (Exception e) {
+                handleErrors();
+            }
         }
         ParentItemList();
     }

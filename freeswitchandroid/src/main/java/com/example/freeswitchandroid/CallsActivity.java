@@ -581,12 +581,22 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(!apiHasRetrievedNumbers){
             getBusinessNumbers();
         }
+        try {
+            initSipService(no, false);
+        } catch (Exception e) {
+            handleErrors();
+        }
         ParentItemList();
     }
 
     public static void callLogItemPressed(ChildItem item, int position){
         number.setText(item.getNumber());
-        tvName.setText(item.getChildItemTitle());
+        if(!item.getChildItemTitle().matches("[0-9]+")) {
+            tvName.setText(item.getChildItemTitle());
+        }
+        else{
+            tvName.setText("");
+        }
         tvNumber.setText(item.getNumber());
         callsHistoryActivity.setVisibility(View.GONE);
         callsActivity.setVisibility(View.VISIBLE);
@@ -999,11 +1009,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.isVideo = isVideo;
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
             tvNumber.setText(number.getText());
-                for (Map.Entry<String, BusinessNumber> e : map.entrySet()) {
-                    if (!e.getKey().endsWith(number.getText().toString().substring(1))) {
-                        tvName.setText("");
-                    }
-                }
                 startTimer();
         }
 

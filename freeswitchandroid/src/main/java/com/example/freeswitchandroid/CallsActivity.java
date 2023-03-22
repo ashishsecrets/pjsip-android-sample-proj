@@ -323,6 +323,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         activeNetwork = conMgr.getActiveNetworkInfo();
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String authtoken = shared.getString("token", "");
+
+        System.out.print("authtoken  " + authtoken);
     }
 
     @Override
@@ -520,9 +525,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     private String getCallerId(CallDetail callsEndDatum) {
         String callerId = null;
 
-        callerId = callsEndDatum.getUser();
+       if(callsEndDatum.getCallerName() != null)callerId = callsEndDatum.getCallerName().toString();
 
-        if(callerId.isEmpty()){
+       if(callerId == null || callerId.isEmpty()){
             callerId = callsEndDatum.getCallerId();
         }
         return callerId;
@@ -1131,6 +1136,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void handleErrors() throws Exception {
+        mReceiver.unregister(this);
         getBusinessNumbers();
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
@@ -1148,6 +1154,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
         resetTimer();
+        mReceiver.register(this);
         Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("WAIT", new View.OnClickListener() {
             @Override
             public void onClick(View view)

@@ -72,7 +72,7 @@ public class ChildItemAdapter
         if (childItem.getChildItemImg() == 0) {
             childViewHolder.childItemImg.setImageResource(R.drawable.outgoing);
             childViewHolder.childItemDesc.setText(R.string.outgoing);
-            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
+            if (childItem.getChildItemTitle().matches("[0-9]+")) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
             } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
@@ -83,7 +83,7 @@ public class ChildItemAdapter
         } else if (childItem.getChildItemImg() == 1) {
             childViewHolder.childItemImg.setImageResource(R.drawable.missed);
             childViewHolder.childItemDesc.setText(R.string.missed);
-            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
+            if (childItem.getChildItemTitle().matches("[0-9]+")) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
             } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
@@ -94,7 +94,7 @@ public class ChildItemAdapter
         } else if (childItem.getChildItemImg() == 2) {
             childViewHolder.childItemImg.setImageResource(R.drawable.incoming);
             childViewHolder.childItemDesc.setText(R.string.incoming);
-            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
+            if (childItem.getChildItemTitle().matches("[0-9]+")) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_blue));
             } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
@@ -105,7 +105,7 @@ public class ChildItemAdapter
         } else if (childItem.getChildItemImg() == 3) {
             childViewHolder.childItemImg.setImageResource(R.drawable.forwarded);
             childViewHolder.childItemDesc.setText(R.string.forwarded);
-            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
+            if (childItem.getChildItemTitle().matches("[0-9]+")) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
             } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));
@@ -116,7 +116,7 @@ public class ChildItemAdapter
         } else if (childItem.getChildItemImg() == 4) {
             childViewHolder.childItemImg.setImageResource(R.drawable.rejected);
             childViewHolder.childItemDesc.setText(R.string.rejected);
-            if (childItem.getChildItemTitle().matches("[0-9]+") && childItem.getChildItemTitle().length() > 2) {
+            if (childItem.getChildItemTitle().matches("[0-9]+")) {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_green));
             } else {
                 childViewHolder.iconImg.setBackground(AppCompatResources.getDrawable(context, R.drawable.plain_bg_caller_no_fill));

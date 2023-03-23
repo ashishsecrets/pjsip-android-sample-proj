@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/layout"
     android:background="@drawable/calls_act_bg"
     android:gravity="center"
     tools:context=".CallsActivity">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
 
     <LinearLayout
         android:id="@+id/calls_history_activity"
@@ -638,12 +644,14 @@
 
     </LinearLayout>
 
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <LinearLayout
         android:id="@+id/overlay_transfer_layout"
         android:orientation="vertical"
         android:background="@drawable/overlay_transfer"
         android:layout_marginTop="-400dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="400dp">
@@ -672,7 +680,5 @@
 
 
     </LinearLayout>
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
 

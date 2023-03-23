@@ -897,7 +897,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     }
 
-    public void transfer(View view) throws Exception {
+    public void transfer(View view) {
         if(accountIsValid()) {
 
             dialPad1Layout.setVisibility(View.GONE);
@@ -914,7 +914,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
     }
 
-    public void finalTransfer(View v) throws Exception {
+    public void finalTransfer(View v) {
         if(accountIsValid()) {
 
             if (!isHold) {

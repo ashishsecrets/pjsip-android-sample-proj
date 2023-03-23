@@ -18,6 +18,8 @@ import net.gotev.sipservice.SipServiceCommand;
 import org.pjsip.pjsua2.pjmedia_srtp_use;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,14 +34,14 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
 
     static String[] arraySpinner;
 
-    static List<ParentItem> itemList;
+    static List<ParentItem> itemList = new ArrayList<>();
 
-    static  List<TransferData> transferList;
+    static  List<TransferData> transferList = new ArrayList<>();
 
     static UserDatum userDatum;
 
-    static List<BusinessNumber> businessNumbers;
-    static Map<String, BusinessNumber> map;
+    static List<BusinessNumber> businessNumbers = new ArrayList<>();
+    static Map<String, BusinessNumber> map = new HashMap<>();
     static boolean apiHasRetrievedNumbers = false;
     static boolean permissionsDone = false;
     static int callID1;

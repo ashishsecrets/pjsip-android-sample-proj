@@ -967,7 +967,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             Snackbar.make(layout, "Registered", Snackbar.LENGTH_SHORT).show();
         }
         else{
-            Snackbar.make(layout, "Registered Error " + registrationStateCode, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(layout, "Registration Error " + registrationStateCode, Snackbar.LENGTH_SHORT).show();
         }
     }
 

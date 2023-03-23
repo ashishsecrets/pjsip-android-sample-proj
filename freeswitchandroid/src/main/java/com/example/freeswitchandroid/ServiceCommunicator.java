@@ -49,7 +49,7 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
 
     Context context;
 
-    private boolean foregroundServiceRunning(ActivityManager activityManager){
+    public boolean foregroundServiceRunning(ActivityManager activityManager){
         for(ActivityManager.RunningServiceInfo service: activityManager.getRunningServices(Integer.MAX_VALUE)) {
             if(SipService.class.getName().equals(service.service.getClassName())) {
                 return true;
@@ -72,7 +72,6 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
             sipAccountData.setHost(hostname);
             sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);
             sipAccountData.setSrtpSecureSignalling(0);
-            sipAccountData.setTransport(SipAccountTransport.TCP);
 
             this.context = context;
 

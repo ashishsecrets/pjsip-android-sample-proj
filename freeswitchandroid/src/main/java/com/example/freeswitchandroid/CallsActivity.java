@@ -486,10 +486,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             SipServiceCommand.stop(this);
         }
         ServiceCommunicator.username = (map.get(number)).getReceivers().get(0).getLine().getUsername();
+        System.out.println("Username " + ServiceCommunicator.username );
         String password = (map.get(number)).getReceivers().get(0).getLine().getPassword();
         String nonce = (map.get(number)).getReceivers().get(0).getLine().getNonce();
         hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
         ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
+        System.out.println("Password " + ServiceCommunicator.password );
         ServiceCommunicator.number = number;
         SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();
@@ -964,6 +966,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(registrationStateCode == 200){
             Snackbar.make(layout, "Registered", Snackbar.LENGTH_SHORT).show();
         }
+        else{
+            Snackbar.make(layout, "Registered Error " + registrationStateCode, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -1164,7 +1169,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void handleErrors() {
-        mReceiver.unregister(this);
         getBusinessNumbers();
         dialPad1Layout.setVisibility(View.VISIBLE);
         linearLayout1.setVisibility(View.GONE);
@@ -1181,11 +1185,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         muteBtn.setImageResource(R.drawable.mute);
         speakerBtn.setImageResource(R.drawable.speaker);
         keypadBtn.setImageResource(R.drawable.keypad);
-        mReceiver.register(this);
         Snackbar snackbar = Snackbar.make(layout, "Connection Lost ! Reconnecting...", Snackbar.LENGTH_LONG).setAction("WAIT", new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
 
             }
         });
@@ -1195,7 +1197,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             Toast.makeText(CallsActivity.this, "No Business Number Found. Registration failed", Toast.LENGTH_LONG).show();
         }
         snackbar.show();
-
+        if (mReceiver.getReceiverContext() == null && serviceCommunicator.foregroundServiceRunning(activityManager)) mReceiver.register(this);
     }
 
 }

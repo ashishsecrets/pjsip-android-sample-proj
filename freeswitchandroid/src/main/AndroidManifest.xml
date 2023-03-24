@@ -33,7 +33,6 @@
             android:name=".OtpActivity"
             android:exported="false"
             android:label="@string/title_activity_otp"
-            android:noHistory="true"
             android:theme="@style/Theme.Pjsipandroidmaster.Fullscreen" />
         <activity
             android:name=".LoginActivity"

@@ -8,10 +8,15 @@ public class TransferData {
     boolean checked = false;
 
 
-    public TransferData(String transferNumber, String transferName, String transferText) {
+    public TransferData(String transferNumber, String transferName) {
         this.transferNumber = transferNumber;
         this.transferName = transferName;
-        this.transferText = transferText;
+        if(transferName != null && !transferName.isEmpty()) {
+            this.transferText = transferName.substring(0, 1);
+        }
+        else{
+            this.transferText = transferNumber.substring(0,1);
+        }
     }
 
     public boolean isChecked() {

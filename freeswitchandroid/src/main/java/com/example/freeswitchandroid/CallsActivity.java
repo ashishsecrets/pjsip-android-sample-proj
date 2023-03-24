@@ -178,6 +178,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
      Boolean callIsActive = false;
 
+     Boolean isOutgoingCall = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -442,7 +444,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                             for (CallDetail callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                                transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallerId(callsEndDatum).substring(0, 1)));
+                                transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum)));
                             }
 
                             Set<TransferData> uniqueContacts = new HashSet<TransferData>(transferList);
@@ -919,38 +921,65 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
     }
 
+    private void makeAttendedCallTransfer(){
+        if (!isHold) {
+
+            SipServiceCommand.toggleCallHold(this, uri, callID1);
+
+            hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
+
+            Toast.makeText(this, "Holding before transfer !",
+                    Toast.LENGTH_LONG).show();
+
+            SipServiceCommand.makeCall(this, uri, numberToTransfer, true);
+        } else if (isHold) {
+
+            SipServiceCommand.attendedTransferCall(this, uri, callID1, callID2);
+
+            Toast.makeText(this, "Making attended transfer !",
+                    Toast.LENGTH_LONG).show();
+
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+
+            overlayTransferLayout.setVisibility(View.GONE);
+        }
+
+        isHold = !isHold;
+    }
+
+    private void makeBlindTransfer(){
+            int callId = 0;
+            if(isOutgoingCall) {
+                 callId = callID2;
+            }
+            else{
+                 callId = callID1;
+            }
+
+            SipServiceCommand.transferCall(this, uri, callId, numberToTransfer);
+
+            dialPad1Layout.setVisibility(View.GONE);
+            linearLayout1.setVisibility(View.VISIBLE);
+            linearLayout2.setVisibility(View.VISIBLE);
+            dtmfKeyPadLayout.setVisibility(View.GONE);
+            callOptionsLayout.setVisibility(View.VISIBLE);
+            callHorizontalLayout.setVisibility(View.GONE);
+            answer.setVisibility(View.GONE);
+
+            overlayTransferLayout.setVisibility(View.GONE);
+    }
+
     public void finalTransfer(View v) {
         if(accountIsValid()) {
 
-            if (!isHold) {
-
-                SipServiceCommand.toggleCallHold(this, uri, callID1);
-
-                hold.setBackgroundTintList(ColorStateList.valueOf(this.getResources().getColor(R.color.cardview_dark_background)));
-
-                Toast.makeText(this, "Holding before transfer !",
-                        Toast.LENGTH_LONG).show();
-
-                SipServiceCommand.makeCall(this, uri, numberToTransfer, true);
-            } else if (isHold) {
-
-                SipServiceCommand.attendedTransferCall(this, uri, callID1, callID2);
-
-                Toast.makeText(this, "Making attended transfer !",
-                        Toast.LENGTH_LONG).show();
-
-                dialPad1Layout.setVisibility(View.GONE);
-                linearLayout1.setVisibility(View.VISIBLE);
-                linearLayout2.setVisibility(View.VISIBLE);
-                dtmfKeyPadLayout.setVisibility(View.GONE);
-                callOptionsLayout.setVisibility(View.VISIBLE);
-                callHorizontalLayout.setVisibility(View.GONE);
-                answer.setVisibility(View.GONE);
-
-                overlayTransferLayout.setVisibility(View.GONE);
-            }
-
-            isHold = !isHold;
+            //makeAttendedCallTransfer();
+            makeBlindTransfer();
 
         }
         else{
@@ -998,6 +1027,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 speakerBtn.setImageResource(R.drawable.speaker);
                 keypadBtn.setImageResource(R.drawable.keypad);
                 callIsActive = false;
+                isOutgoingCall = false;
             }
         }
 
@@ -1067,14 +1097,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         boolean isVideoConference, boolean isTransfer){
         super.onOutgoingCall(accountID, callID, number, isVideo, isVideoConference, isTransfer);
 
-
-
             CallsActivity.this.accountID = accountID;
             callID2 = callID;
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
             callIsActive = true;
+            isOutgoingCall = true;
         }
 
         @Override

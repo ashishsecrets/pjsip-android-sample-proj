@@ -567,8 +567,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     public void onBackPressed() {
         //super.onBackPressed();
         getSupportActionBar().show();
-        callsActivity.setVisibility(View.GONE);
-        callsHistoryActivity.setVisibility(View.VISIBLE);
+        if(callIsActive) {
+            overlayTransferLayout.setVisibility(View.GONE);
+        }
+        else {
+            callsActivity.setVisibility(View.GONE);
+            callsHistoryActivity.setVisibility(View.VISIBLE);
+        }
     }
 
 

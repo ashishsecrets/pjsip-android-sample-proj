@@ -69,17 +69,14 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
 
             sipAccountData.setRealm(hostname);
 
-            //sipAccountData.setPort(port);
             sipAccountData.setPassword(password);
             sipAccountData.setHost(hostname);
             sipAccountData.setSrtpUse(pjmedia_srtp_use.PJMEDIA_SRTP_DISABLED);
             sipAccountData.setSrtpSecureSignalling(0);
-
             this.context = context;
 
             uri = SipServiceCommand.setAccount(context, sipAccountData);
             SipServiceCommand.start(context);
-
         }
     }
 

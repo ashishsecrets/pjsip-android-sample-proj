@@ -11,11 +11,11 @@ public class TransferData {
     public TransferData(String transferNumber, String transferName) {
         this.transferNumber = transferNumber;
         this.transferName = transferName;
-        if(transferName != null && !transferName.isEmpty()) {
+        if(this.transferName != null && !this.transferName.isEmpty()) {
             this.transferText = transferName.substring(0, 1);
         }
         else{
-            this.transferText = transferNumber.substring(0,1);
+            if(this.transferNumber != null && !this.transferNumber.isEmpty()) this.transferText = transferNumber.substring(0,1);
         }
     }
 

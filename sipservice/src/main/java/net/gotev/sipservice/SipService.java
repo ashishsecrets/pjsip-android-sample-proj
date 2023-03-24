@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Surface;
+import android.widget.Toast;
 
 import org.pjsip.pjsua2.AccountVideoConfig;
 import org.pjsip.pjsua2.AudDevManager;
@@ -1124,8 +1125,13 @@ public class SipService extends BackgroundService implements SipServiceConstants
             mActiveSipAccounts.put(accountString, pjSipAndroidAccount);
             Logger.debug(TAG, "SIP account " + getValue(getApplicationContext(), account.getIdUri()) + " successfully added");
         } else {
-            sipAccount.setRegistration(true);
+            try {
+                sipAccount.setRegistration(true);
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(),"Please wait... SIP Registration Object is busy", Toast.LENGTH_LONG).show();
+            }
         }
+
     }
 
     /**

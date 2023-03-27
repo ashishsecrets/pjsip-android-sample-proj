@@ -186,6 +186,17 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
 
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
+
+        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        activeNetwork = conMgr.getActiveNetworkInfo();
+
         ///From Calls History
 
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -319,21 +330,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         //Add default visibility at the start of activity.
 
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
-        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
-
-        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        activeNetwork = conMgr.getActiveNetworkInfo();
-
-        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String authtoken = shared.getString("token", "");
-
-        System.out.print("authtoken  " + authtoken);
     }
 
     @Override
@@ -1050,7 +1048,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.isVideo = isVideo;
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
             tvNumber.setText(number.getText());
-                startTimer();
+        }
+
+        if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED){
+            startTimer();
         }
 
     }

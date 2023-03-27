@@ -463,21 +463,18 @@ public class SipService extends BackgroundService implements SipServiceConstants
 
     private void handleTransferCall(Intent intent) {
         String accountID = intent.getStringExtra(PARAM_ACCOUNT_ID);
-        String callID = intent.getStringExtra(PARAM_CALL_ID);
+        int callID = intent.getIntExtra(PARAM_CALL_ID, 0);
 
-        if(callID.equals("")){
-            callID = "0";
-        }
         String number = intent.getStringExtra(PARAM_NUMBER);
 
         try {
-            SipCall sipCall = getCall(accountID, Integer.parseInt(callID));
+            SipCall sipCall = getCall(accountID, callID);
             if (sipCall != null) {
                 sipCall.transferTo(number);
             }
         } catch (Exception exc) {
             Logger.error(TAG, "Error while transferring call to " + getValue(getApplicationContext(), number), exc);
-            notifyCallDisconnected(accountID, Integer.parseInt(callID));
+            notifyCallDisconnected(accountID, callID);
         }
     }
 

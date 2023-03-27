@@ -1090,6 +1090,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.GONE);
             callIsActive = true;
+            isOutgoingCall = false;
     }
 
         @Override

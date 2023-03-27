@@ -186,17 +186,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calls);
 
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-
-        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
-
-        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        activeNetwork = conMgr.getActiveNetworkInfo();
-
         ///From Calls History
 
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -217,6 +206,15 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if(Settings.System.canWrite(this))
             ringtoneUri = ringtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
         ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
+
+        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        activeNetwork = conMgr.getActiveNetworkInfo();
 
         layout = findViewById(R.id.layout);
         myNumber = (Spinner) findViewById(R.id.my_number);

@@ -37,9 +37,7 @@ public class CryptoUtils {
     // AES secret key
     public static SecretKey getAESKey(int keysize) throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             keyGen.init(keysize, SecureRandom.getInstanceStrong());
-        }
         return keyGen.generateKey();
     }
 
@@ -58,7 +56,6 @@ public class CryptoUtils {
 
     public static String decyrptNew(String password, String nonce) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         String secret = "2F8D89B734DBADE00D31FA21D400143E";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             SecretKey secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "AES");
         AlgorithmParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(nonce));
 
@@ -66,7 +63,6 @@ public class CryptoUtils {
         cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
 
             password = new String(cipher.doFinal(Base64.getDecoder().decode(password)), StandardCharsets.UTF_8);
-        }
 
         return password;
     }

@@ -428,7 +428,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                     List<CallDetail> callsEndDatumList = response.body();
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
 
                             final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
@@ -462,15 +461,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                                 itemList.clear();
                             }
 
-                            result.entrySet().forEach(x -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
+                            result.forEach((key, value) -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(key), value)));
 
                             parentItemAdapter.notifyDataSetChanged();
                         }
-
-                    } else {
-                        Toast.makeText(CallsActivity.this, "Please update your phone's software", Toast.LENGTH_SHORT).show();
-                    }
-
                 }
 
                 @Override

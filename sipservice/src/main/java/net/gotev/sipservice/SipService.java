@@ -198,7 +198,6 @@ public class SipService extends BackgroundService implements SipServiceConstants
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         final String CHANNELID = "Foreground Service ID";
         NotificationChannel channel = new NotificationChannel(
                 CHANNELID,
@@ -215,7 +214,6 @@ public class SipService extends BackgroundService implements SipServiceConstants
                     .setSmallIcon(R.drawable.ic_launcher_background);
 
             startForeground(1001, notification.build());
-        }
 
 
         return START_NOT_STICKY;

@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
 
                     List<CallDetail> callsEndDatumList = response.body();
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
 
                             final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
@@ -190,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
                             result.entrySet().forEach(x -> ServiceCommunicator.itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(x.getKey()), x.getValue())));
                             intent.putExtra("call", "data");
                         }
-
-                    }
 
                 }
 

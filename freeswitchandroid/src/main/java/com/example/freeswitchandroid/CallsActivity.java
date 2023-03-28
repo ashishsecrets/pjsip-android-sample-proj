@@ -43,6 +43,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -292,6 +293,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     no = Objects.requireNonNull(map.get(ServiceCommunicator.number)).getPhoneNumber();
                     initSipService(no, false);
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON|WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                         callsActivity.setVisibility(View.VISIBLE);
                         callsHistoryActivity.setVisibility(View.GONE);
                         callHorizontalLayout.setVisibility(View.VISIBLE);
@@ -1064,6 +1066,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
             startRingTone();
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON|WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.VISIBLE);

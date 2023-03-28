@@ -38,7 +38,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -58,7 +57,6 @@ import com.example.freeswitchandroid.Helpers.CryptoUtils;
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.Pojo.TransferData;
-import com.example.freeswitchandroid.RingtoneService.RingtonePlayingService;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.adapters.TransferRecyclerViewAdapter;
 import com.example.freeswitchandroid.rest.PressOneAPI;
@@ -217,7 +215,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         activeNetwork = conMgr.getActiveNetworkInfo();
 
         layout = findViewById(R.id.layout);
-        myNumber = (Spinner) findViewById(R.id.my_number);
+        myNumber = findViewById(R.id.my_number);
         recycler_list = findViewById(R.id.recycler_list);
         phone_calls_view = findViewById(R.id.phone_calls_view);
         number = findViewById(R.id.number);
@@ -247,7 +245,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         Intent intent = getIntent();
         if(ServiceCommunicator.number != null && !ServiceCommunicator.number.isEmpty()) {
             no = ServiceCommunicator.number;
-            adapter = new ArrayAdapter<String>(CallsActivity.this,
+            adapter = new ArrayAdapter<>(CallsActivity.this,
                     android.R.layout.simple_spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             myNumber.setAdapter(adapter);
@@ -256,7 +254,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         else{
             if(arraySpinner != null && arraySpinner.length > 0) {
                 no = arraySpinner[0];
-                adapter = new ArrayAdapter<String>(CallsActivity.this,
+                adapter = new ArrayAdapter<>(CallsActivity.this,
                         android.R.layout.simple_spinner_item, arraySpinner);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
@@ -379,7 +377,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     apiHasRetrievedNumbers = true;
                     recycler_list.setVisibility(View.VISIBLE);
                     phone_calls_view.setVisibility(View.GONE);
-                    adapter = new ArrayAdapter<String>(CallsActivity.this,
+                    adapter = new ArrayAdapter<>(CallsActivity.this,
                             android.R.layout.simple_spinner_item, arraySpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     myNumber.setAdapter(adapter);
@@ -390,7 +388,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                 if(arraySpinner == null || arraySpinner.length == 0) {
                     arraySpinner = new String[]{"No Business Number Found"};
-                    adapter = new ArrayAdapter<String>(CallsActivity.this,
+                    adapter = new ArrayAdapter<>(CallsActivity.this,
                             android.R.layout.simple_spinner_item, arraySpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     myNumber.setAdapter(adapter);
@@ -442,7 +440,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                                 transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum)));
                             }
 
-                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(transferList);
+                            Set<TransferData> uniqueContacts = new HashSet<>(transferList);
                             transferList.clear();
                             transferList.addAll(uniqueContacts);
 
@@ -482,7 +480,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         String password = (map.get(number)).getReceivers().get(0).getLine().getPassword();
         String nonce = (map.get(number)).getReceivers().get(0).getLine().getNonce();
         hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
-        ServiceCommunicator.password = CryptoUtils.decyrptNew(password, nonce);
+        ServiceCommunicator.password = CryptoUtils.decyrpt(password, nonce);
         System.out.println("Password " + ServiceCommunicator.password );
         ServiceCommunicator.number = number;
         SipServiceCommand.enableSipDebugLogging(true);
@@ -1146,9 +1144,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         callTime.setText(new SimpleDateFormat("mm:ss").format(new Date(0)));
     }
 
-//    public String checkDigit(int number) {
-//        return number >= 9 ? number + "0"  : String.valueOf(number);
-//    }
     static Boolean active = null;
     CountDownTimer countDownTimer;
     @Override

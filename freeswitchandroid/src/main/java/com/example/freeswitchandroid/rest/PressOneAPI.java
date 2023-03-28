@@ -1,9 +1,7 @@
 package com.example.freeswitchandroid.rest;
 
 
-import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallDetail;
-import com.example.freeswitchandroid.rest.model.CallsEndDatum;
 import com.example.freeswitchandroid.rest.model.Mobile;
 import com.example.freeswitchandroid.rest.model.MobileData;
 import com.example.freeswitchandroid.rest.model.Token;

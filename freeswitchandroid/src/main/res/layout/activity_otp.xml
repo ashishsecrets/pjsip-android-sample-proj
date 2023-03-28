@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Please enter the verification code sent to"
+            android:text="@string/enter_verify_code"
             android:fontFamily="@font/urbanistfont"
             android:textColor="#616C74"
             android:layout_marginTop="20dp"

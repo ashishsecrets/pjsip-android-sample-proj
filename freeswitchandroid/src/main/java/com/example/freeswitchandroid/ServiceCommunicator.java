@@ -11,7 +11,6 @@ import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
 import net.gotev.sipservice.SipAccountData;
-import net.gotev.sipservice.SipAccountTransport;
 import net.gotev.sipservice.SipService;
 import net.gotev.sipservice.SipServiceCommand;
 
@@ -30,7 +29,7 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
     static String username = "";
     static String password = "";
     static SipAccountData sipAccountData;
-    static String hostname = "david380.fs1.pressone.co";
+    static String hostname = "";
 
     static String[] arraySpinner;
 

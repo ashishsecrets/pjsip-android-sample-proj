@@ -1,11 +1,7 @@
 package com.example.freeswitchandroid;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Application;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 
 
 public class App extends Application {

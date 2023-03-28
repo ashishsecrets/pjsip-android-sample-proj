@@ -7,4 +7,6 @@
     <string name="incoming">Incoming</string>
     <string name="forwarded">Forwarded</string>
     <string name="rejected">Rejected</string>
+    <string name="enter_verify_code">Please enter the verification code sent to</string>
+    <string name="welcome_text_two">Separate business from pleasure, keep your personal number private by using a PressOne phone number</string>
 </resources>

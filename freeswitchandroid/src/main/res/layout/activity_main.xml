@@ -14,22 +14,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="30dp"
-        android:layout_weight="@integer/material_motion_duration_long_1"
+        android:layout_weight="1"
         app:srcCompat="@drawable/welcome_msg"/>
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="@integer/material_motion_duration_long_1"
+        android:layout_weight="1"
         app:srcCompat="@drawable/layer_2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Keep personal and business"
+        android:fontFamily="@font/recoleta_bold"
+        android:textColor="@color/purple_500"
+        android:textSize="25sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="calls separate"
+        android:fontFamily="@font/recoleta_bold"
+        android:textColor="@color/purple_500"
+        android:textSize="25sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome_text_two"
+        android:fontFamily="@font/urbanistnormal"
+        android:gravity="center"
+        android:padding="20dp"/>
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="@integer/material_motion_duration_long_1"
-        app:srcCompat="@drawable/welcome_txt" />
+        android:layout_weight="1"
+        app:srcCompat="@drawable/slider" />
 
 
     <ImageButton
@@ -39,7 +63,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:onClick="initialLoginClick"
-        android:layout_weight="@integer/material_motion_duration_long_1"
+        android:layout_weight="1"
         android:background="@color/white"
         app:srcCompat="@drawable/login_button" />
 

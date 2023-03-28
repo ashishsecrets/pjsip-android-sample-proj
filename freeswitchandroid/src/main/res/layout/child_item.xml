@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:text="+91 888 434 0404"
+                android:text="+432 888 434 0404"
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.LinearLayoutCompat

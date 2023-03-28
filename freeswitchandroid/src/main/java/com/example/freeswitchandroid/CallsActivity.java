@@ -202,7 +202,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         ringtoneManager = new RingtoneManager(context);
         if(Settings.System.canWrite(this))
-            ringtoneUri = ringtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
+            ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
         ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -476,13 +476,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             SipServiceCommand.stop(this);
         }
         ServiceCommunicator.username = (map.get(number)).getReceivers().get(0).getLine().getUsername();
-        System.out.println("Username " + ServiceCommunicator.username );
         String password = (map.get(number)).getReceivers().get(0).getLine().getPassword();
         String nonce = (map.get(number)).getReceivers().get(0).getLine().getNonce();
         hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
         ServiceCommunicator.password = CryptoUtils.decyrpt(password, nonce);
-        System.out.println("Password " + ServiceCommunicator.password );
         ServiceCommunicator.number = number;
+        //TODO Remove logging
         SipServiceCommand.enableSipDebugLogging(true);
         serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.startService(activityManager, this);

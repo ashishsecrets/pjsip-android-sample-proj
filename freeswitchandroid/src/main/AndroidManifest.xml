@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -31,9 +33,7 @@
             android:exported="false" />
         <activity
             android:name=".OtpActivity"
-            android:exported="false"
-            android:label="@string/title_activity_otp"
-            android:theme="@style/Theme.Pjsipandroidmaster.Fullscreen" />
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />

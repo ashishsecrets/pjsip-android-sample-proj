@@ -20,7 +20,7 @@ public class App extends Application {
     private void handleUncaughtException (Thread thread, Throwable e) {
 
         // The following shows what I'd like, though it won't work like this.
-        Intent intent = new Intent(getApplicationContext(), CallsActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 

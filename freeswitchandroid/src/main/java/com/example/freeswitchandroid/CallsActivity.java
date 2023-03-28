@@ -171,7 +171,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
      Vibrator vibrator;
      Uri ringtoneUri;
      Ringtone ringtone;
-     RingtoneManager ringtoneManager;
      ConnectivityManager conMgr;
      NetworkInfo activeNetwork;
 
@@ -201,7 +200,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        ringtoneManager = new RingtoneManager(context);
+        ServiceCommunicator.ringtoneManager = new RingtoneManager(context);
         if(Settings.System.canWrite(this))
             ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
         ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
@@ -294,6 +293,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     initSipService(no, false);
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
                         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON|WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        if(ServiceCommunicator.ringtoneManager == null) ServiceCommunicator.ringtoneManager = new RingtoneManager(this);
                         callsActivity.setVisibility(View.VISIBLE);
                         callsHistoryActivity.setVisibility(View.GONE);
                         callHorizontalLayout.setVisibility(View.VISIBLE);
@@ -1121,7 +1121,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     private void stopRingTone(){
-        ringtoneManager.stopPreviousRingtone();
+        ServiceCommunicator.ringtoneManager.stopPreviousRingtone();
         ringtone.stop();
     }
 

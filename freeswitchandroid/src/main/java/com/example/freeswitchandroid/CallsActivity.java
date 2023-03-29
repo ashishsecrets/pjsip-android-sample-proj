@@ -328,8 +328,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         //Add default visibility at the start of activity.
 
-
-
     }
 
     @Override

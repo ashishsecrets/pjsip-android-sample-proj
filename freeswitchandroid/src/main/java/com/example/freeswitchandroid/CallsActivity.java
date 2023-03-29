@@ -170,7 +170,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
      AudioManager audioManager;
      Vibrator vibrator;
      Uri ringtoneUri;
-     Ringtone ringtone;
      ConnectivityManager conMgr;
      NetworkInfo activeNetwork;
 
@@ -200,10 +199,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        ServiceCommunicator.ringtoneManager = new RingtoneManager(context);
         if(Settings.System.canWrite(this))
             ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
-        ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -293,7 +290,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     initSipService(no, false);
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
                         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON|WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                        if(ServiceCommunicator.ringtoneManager == null) ServiceCommunicator.ringtoneManager = new RingtoneManager(this);
                         callsActivity.setVisibility(View.VISIBLE);
                         callsHistoryActivity.setVisibility(View.GONE);
                         callHorizontalLayout.setVisibility(View.VISIBLE);
@@ -821,7 +817,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
             if (hangup.getVisibility() == View.GONE) {
                 call();
-         }
+            }
             else {
                 stopRingTone();
                 if(accountIsValid()) {
@@ -1114,13 +1110,18 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void startRingTone(){
 
-        audioManager.setMode(AudioManager.MODE_RINGTONE);
-        ringtone.play();
+//        audioManager.setMode(AudioManager.MODE_RINGTONE);
+//        ringtone.play();
+        Intent startIntent = new Intent(context, RingTonePlayingService.class);
+        startIntent.putExtra("ringtone-uri", ringtoneUri);
+        context.startService(startIntent);
     }
 
     private void stopRingTone(){
-        ServiceCommunicator.ringtoneManager.stopPreviousRingtone();
-        ringtone.stop();
+//        ServiceCommunicator.ringtoneManager.stopPreviousRingtone();
+//        ringtone.stop();
+        Intent stopIntent = new Intent(context, RingTonePlayingService.class);
+        context.stopService(stopIntent);
     }
 
     public void startTimer(){

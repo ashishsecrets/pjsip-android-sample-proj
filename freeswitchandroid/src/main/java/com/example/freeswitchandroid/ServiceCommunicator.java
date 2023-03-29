@@ -39,9 +39,6 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
     static  List<TransferData> transferList = new ArrayList<>();
 
     static UserDatum userDatum;
-
-    static RingtoneManager ringtoneManager;
-
     static List<BusinessNumber> businessNumbers = new ArrayList<>();
     static Map<String, BusinessNumber> map = new HashMap<>();
     static boolean apiHasRetrievedNumbers = false;

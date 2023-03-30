@@ -45,9 +45,9 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
 
     static UserDatum userDatum;
 
-    static RingtoneManager ringtoneManager;
-    static Ringtone ringtone;
-    static Uri ringtoneUri;
+    RingtoneManager ringtoneManager;
+    Ringtone ringtone;
+    Uri ringtoneUri;
     static List<BusinessNumber> businessNumbers = new ArrayList<>();
     static Map<String, BusinessNumber> map = new HashMap<>();
     static boolean apiHasRetrievedNumbers = false;
@@ -59,6 +59,16 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
 
     Context context;
 
+    static ServiceCommunicator serviceCommunicator;
+
+    public static ServiceCommunicator getInstance()
+    {
+        if (serviceCommunicator == null)
+            serviceCommunicator = new ServiceCommunicator();
+
+        return serviceCommunicator;
+    }
+
     public boolean foregroundServiceRunning(ActivityManager activityManager){
         for(ActivityManager.RunningServiceInfo service: activityManager.getRunningServices(Integer.MAX_VALUE)) {
             if(SipService.class.getName().equals(service.service.getClassName())) {
@@ -68,11 +78,12 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
         return false;
     }
 
-    static public void initializeRingTone(Context context){
+    public void initializeRingTone(Context context){
+        ringtoneManager = new RingtoneManager(context);
+        ringtoneManager.setType(RingtoneManager.TYPE_RINGTONE);
         if(Settings.System.canWrite(context))
             ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE);
         ringtone = RingtoneManager.getRingtone(context, ringtoneUri);
-        ringtoneManager = new RingtoneManager(context);
     }
 
     public void startService(ActivityManager activityManager, Context context){

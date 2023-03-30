@@ -113,7 +113,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     LinearLayoutManager layoutManager;
     LinearLayoutManager layoutManager2;
     Spinner myNumber;
-
+    AudioManager audioManager;
     String numberToTransfer = "";
     String accountID;
     String displayName;
@@ -166,8 +166,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     PowerManager powerManager;
     PowerManager.WakeLock lock;
-
-     AudioManager audioManager;
      Vibrator vibrator;
      ConnectivityManager conMgr;
      NetworkInfo activeNetwork;
@@ -200,7 +198,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        ServiceCommunicator.initializeRingTone(context);
+        serviceCommunicator = ServiceCommunicator.getInstance();
+        serviceCommunicator.initializeRingTone(context);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
@@ -475,7 +474,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         ServiceCommunicator.number = number;
         //TODO Remove logging
         SipServiceCommand.enableSipDebugLogging(true);
-        serviceCommunicator = new ServiceCommunicator();
         serviceCommunicator.startService(activityManager, this);
     }
 
@@ -706,7 +704,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
 
     public void terminate(View v) throws Exception {
-        stopRingTone();
         if(accountIsValid()) {
             getSupportActionBar().show();
             callsHistoryActivity.setVisibility(View.VISIBLE);
@@ -1007,12 +1004,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 keypadBtn.setImageResource(R.drawable.keypad);
                 callIsActive = false;
                 isOutgoingCall = false;
+                resetTimer();
             }
         }
 
-        if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_ERROR){
-
-        }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
             for (Map.Entry<String, BusinessNumber> e : map.entrySet()) {
@@ -1069,8 +1064,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
              CallsActivity.this.remoteUri = remoteUri;
              CallsActivity.this.isVideo = isVideo;
 
-            if(displayName != null) tvName.setText(displayName);
-            tvNumber.setText("");
+            tvName.setText(displayName);
+            tvNumber.setText(remoteUri.substring(5));
+
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.GONE);
@@ -1107,18 +1103,17 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     };
 
     public void startRingTone(){
-        audioManager.setMode(AudioManager.MODE_RINGTONE);
-        ServiceCommunicator.ringtone.play();
+        Intent startIntent = new Intent(this, RingTonePlayingService.class);
+        startService(startIntent);
     }
 
-    private void stopRingTone(){
-        ServiceCommunicator.ringtoneManager.stopPreviousRingtone();
-        ServiceCommunicator.ringtone.stop();
+    public void stopRingTone(){
+        Intent stopIntent = new Intent(this, RingTonePlayingService.class);
+        stopService(stopIntent);
     }
 
     public void startTimer(){
-        long initial = 0;
-        long millisInFuture = 200*60000;
+        long millisInFuture = 8*60*60000;
         SimpleDateFormat date = new SimpleDateFormat("mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("UTC"));
         countDownTimer = new CountDownTimer(millisInFuture, 1000) {

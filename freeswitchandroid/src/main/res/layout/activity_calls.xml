@@ -305,7 +305,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text=""
                 android:layout_marginRight="5dp"
                 android:gravity="right"
                 android:textStyle="bold"
@@ -315,7 +314,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0867576576"
                 android:textStyle="bold"
                 android:fontFamily="@font/urbanistnormal"/>
 

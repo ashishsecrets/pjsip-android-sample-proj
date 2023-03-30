@@ -1065,7 +1065,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
              CallsActivity.this.isVideo = isVideo;
 
             tvName.setText(displayName);
-            tvNumber.setText(remoteUri.substring(5));
+            tvNumber.setText(remoteUri.substring(5, remoteUri.indexOf("@")));
 
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);

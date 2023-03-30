@@ -197,9 +197,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         this.context = this;
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         serviceCommunicator = ServiceCommunicator.getInstance();
-        serviceCommunicator.initializeRingTone(context);
+
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 

@@ -13,8 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
     <LinearLayout
         android:id="@+id/calls_history_activity"
         android:layout_width="match_parent"
@@ -124,7 +122,6 @@
             android:id="@+id/number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginRight="50dp"
             android:textSize="25sp"
             android:layout_gravity="center_vertical"

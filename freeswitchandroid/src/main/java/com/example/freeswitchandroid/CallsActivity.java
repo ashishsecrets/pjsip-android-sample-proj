@@ -543,7 +543,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         getSupportActionBar().show();
         if(callIsActive) {
             overlayTransferLayout.setVisibility(View.GONE);
@@ -1064,7 +1063,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
              CallsActivity.this.isVideo = isVideo;
 
             tvName.setText(displayName);
-            tvNumber.setText(remoteUri.substring(5, remoteUri.indexOf("@")));
+            tvNumber.setText("");
 
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
@@ -1102,24 +1101,25 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     };
 
     public void startRingTone(){
-        Intent startIntent = new Intent(this, RingTonePlayingService.class);
+        Intent startIntent = new Intent(getApplicationContext(), RingTonePlayingService.class);
         startService(startIntent);
     }
 
     public void stopRingTone(){
-        Intent stopIntent = new Intent(this, RingTonePlayingService.class);
+        Intent stopIntent = new Intent(getApplicationContext(), RingTonePlayingService.class);
         stopService(stopIntent);
     }
 
+    long millisInFuture = 8*60*60000;
+    SimpleDateFormat date = new SimpleDateFormat("mm:ss");
     public void startTimer(){
-        long millisInFuture = 8*60*60000;
-        SimpleDateFormat date = new SimpleDateFormat("mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("UTC"));
         countDownTimer = new CountDownTimer(millisInFuture, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
-                callTime.setText(date.format(new Date(millisInFuture - millisUntilFinished)));
+                long time = millisInFuture - millisUntilFinished;
+                callTime.setText(date.format(new Date(time)));
             }
 
             public void onFinish() {

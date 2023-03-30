@@ -28,9 +28,9 @@ public class RingTonePlayingService extends Service
         Uri ringtoneUri = null;
         ringtoneManager = new RingtoneManager(getApplicationContext());
         ringtoneManager.setType(RingtoneManager.TYPE_RINGTONE);
-        if(Settings.System.canWrite(this))
-            ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
-        ringtone = RingtoneManager.getRingtone(this, ringtoneUri);
+        if(Settings.System.canWrite(getApplicationContext()))
+            ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_RINGTONE);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), ringtoneUri);
         ringtone.play();
 
         return START_NOT_STICKY;

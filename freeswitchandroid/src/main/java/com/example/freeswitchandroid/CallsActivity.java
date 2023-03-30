@@ -169,7 +169,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
      AudioManager audioManager;
      Vibrator vibrator;
-     Uri ringtoneUri;
      ConnectivityManager conMgr;
      NetworkInfo activeNetwork;
 
@@ -197,11 +196,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         actionBar.setCustomView(R.layout.custom_action_bar);
         actionBar.show();
 
+        this.context = this;
+
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if(Settings.System.canWrite(this))
-            ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
-
+        ServiceCommunicator.initializeRingTone(context);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
@@ -320,10 +319,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         myNumber.setOnItemSelectedListener(CallsActivity.this);
 
-        this.context = this;
-
         //Add default visibility at the start of activity.
-
     }
 
     @Override
@@ -1024,6 +1020,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     tvName.setText("");
                 }
             }
+            tvNumber.setText(number.getText());
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             dialPad1Layout.setVisibility(View.GONE);
@@ -1038,7 +1035,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-            tvNumber.setText(number.getText());
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED){
@@ -1073,6 +1069,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
              CallsActivity.this.remoteUri = remoteUri;
              CallsActivity.this.isVideo = isVideo;
 
+            if(displayName != null) tvName.setText(displayName);
+            tvNumber.setText("");
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.GONE);
@@ -1109,19 +1107,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     };
 
     public void startRingTone(){
-
-//        audioManager.setMode(AudioManager.MODE_RINGTONE);
-//        ringtone.play();
-        Intent startIntent = new Intent(context, RingTonePlayingService.class);
-        startIntent.putExtra("ringtone-uri", ringtoneUri);
-        context.startService(startIntent);
+        audioManager.setMode(AudioManager.MODE_RINGTONE);
+        ServiceCommunicator.ringtone.play();
     }
 
     private void stopRingTone(){
-//        ServiceCommunicator.ringtoneManager.stopPreviousRingtone();
-//        ringtone.stop();
-        Intent stopIntent = new Intent(context, RingTonePlayingService.class);
-        context.stopService(stopIntent);
+        ServiceCommunicator.ringtoneManager.stopPreviousRingtone();
+        ServiceCommunicator.ringtone.stop();
     }
 
     public void startTimer(){

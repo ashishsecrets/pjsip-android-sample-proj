@@ -2,7 +2,12 @@ package com.example.freeswitchandroid;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Vibrator;
+import android.provider.Settings;
 
 
 import com.example.freeswitchandroid.Pojo.ParentItem;
@@ -39,6 +44,10 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
     static  List<TransferData> transferList = new ArrayList<>();
 
     static UserDatum userDatum;
+
+    static RingtoneManager ringtoneManager;
+    static Ringtone ringtone;
+    static Uri ringtoneUri;
     static List<BusinessNumber> businessNumbers = new ArrayList<>();
     static Map<String, BusinessNumber> map = new HashMap<>();
     static boolean apiHasRetrievedNumbers = false;
@@ -57,6 +66,13 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
             }
         }
         return false;
+    }
+
+    static public void initializeRingTone(Context context){
+        if(Settings.System.canWrite(context))
+            ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE);
+        ringtone = RingtoneManager.getRingtone(context, ringtoneUri);
+        ringtoneManager = new RingtoneManager(context);
     }
 
     public void startService(ActivityManager activityManager, Context context){

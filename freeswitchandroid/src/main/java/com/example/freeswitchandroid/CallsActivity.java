@@ -805,12 +805,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
     public void answer(View view) throws Exception {
-
+            stopRingTone();
             if (hangup.getVisibility() == View.GONE) {
                 call();
             }
             else {
-                stopRingTone();
                 if(accountIsValid()) {
 
                     dialPad1Layout.setVisibility(View.GONE);

@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -963,6 +964,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
             if(callID == callID2 || callID == callID1) {
+                Objects.requireNonNull(getSupportActionBar()).hide();
                 dialPad1Layout.setVisibility(View.VISIBLE);
                 linearLayout1.setVisibility(View.GONE);
                 linearLayout2.setVisibility(View.GONE);
@@ -1030,7 +1032,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
             startRingTone();
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON|WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            if( myKM.inKeyguardRestrictedInputMode()) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             callHorizontalLayout.setVisibility(View.VISIBLE);

@@ -646,19 +646,19 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void dtmf1Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "1");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "1");
     }
 
     public void dtmf2Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "2");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "2");
     }
 
     public void dtmf3Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "3");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "3");
     }
 
     public void dtmf4Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "4");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "4");
     }
 
     public void dtmf5Pressed(View v){
@@ -666,31 +666,31 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void dtmf6Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "6");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "6");
     }
 
     public void dtmf7Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "7");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "7");
     }
 
     public void dtmf8Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "8");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "8");
     }
 
     public void dtmf9Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "9");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "9");
     }
 
     public void dtmf0Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "0");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "0");
     }
 
     public void dtmfStarPressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "*");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "*");
     }
 
     public void dtmfHashPressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "#");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "#");
     }
 
     public void deleteBtnPressed(View v){
@@ -701,8 +701,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
 
-    public void terminate(View v) throws Exception {
-        if(accountIsValid()) {
+    public void terminate(View v) {
             getSupportActionBar().show();
             callsHistoryActivity.setVisibility(View.VISIBLE);
             callsActivity.setVisibility(View.GONE);
@@ -715,10 +714,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.VISIBLE);
             answer.setVisibility(View.VISIBLE);
             hangup.setVisibility(View.GONE);
-        }
-        else{
-            handleErrors();
-        }
 
     }
 
@@ -735,8 +730,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     }
 
-    public void mute(View v) throws Exception {
-        if(accountIsValid()) {
+    public void mute(View v) {
 
             if (!isMute) {
                 SipServiceCommand.setCallMute(this, uri, callID1, true);
@@ -747,12 +741,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 muteBtn.setImageResource(R.drawable.mute);
                 isMute = false;
             }
-
-        }
-        else{
-            handleErrors();
-        }
-
 
     }
 
@@ -810,7 +798,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 call();
             }
             else {
-                if(accountIsValid()) {
 
                     dialPad1Layout.setVisibility(View.GONE);
                     linearLayout1.setVisibility(View.VISIBLE);
@@ -820,17 +807,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     answer.setVisibility(View.GONE);
 
                     SipServiceCommand.acceptIncomingCall(this, uri, String.valueOf(callID1), isVideo);
-                } else{
-                    handleErrors();
                 }
 
-            }
 
     }
 
     public void hangUp(View view) throws Exception {
         stopRingTone();
-        if(accountIsValid()) {
             SipServiceCommand.declineIncomingCall(this, uri, callID1);
             dialPad1Layout.setVisibility(View.VISIBLE);
             linearLayout1.setVisibility(View.GONE);
@@ -840,16 +823,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callTime.setVisibility(View.GONE);
             hangup.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
-        }
-        else{
-            handleErrors();
-        }
-
     }
 
-    public void hold(View view) throws Exception {
-        if(accountIsValid()) {
-
+    public void hold(View view) {
         if(!isHold) {
 
             SipServiceCommand.holdActiveCalls(this, uri);
@@ -870,16 +846,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
             }
           isHold = !isHold;
-          }
-        else{
-            handleErrors();
-        }
-
     }
 
     public void transfer(View view) {
-        if(accountIsValid()) {
-
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
@@ -888,10 +857,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
             overlayTransferLayout.setVisibility(View.VISIBLE);
-        }
-        else{
-            handleErrors();
-        }
     }
 
     private void makeAttendedCallTransfer(){
@@ -949,15 +914,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void finalTransfer(View v) {
-        if(accountIsValid()) {
 
             //makeAttendedCallTransfer();
             makeBlindTransfer();
-
-        }
-        else{
-            handleErrors();
-        }
 
     }
 

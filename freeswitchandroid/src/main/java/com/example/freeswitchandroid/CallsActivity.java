@@ -241,7 +241,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         Intent intent = getIntent();
         if(ServiceCommunicator.number != null && !ServiceCommunicator.number.isEmpty()) {
             no = ServiceCommunicator.number;
-            adapter = new ArrayAdapter<>(CallsActivity.this,
+            adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             myNumber.setAdapter(adapter);
@@ -250,7 +250,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         else{
             if(arraySpinner != null && arraySpinner.length > 0) {
                 no = arraySpinner[0];
-                adapter = new ArrayAdapter<>(CallsActivity.this,
+                adapter = new ArrayAdapter<>(this,
                         android.R.layout.simple_spinner_item, arraySpinner);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 myNumber.setAdapter(adapter);
@@ -288,7 +288,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     no = Objects.requireNonNull(map.get(ServiceCommunicator.number)).getPhoneNumber();
                     initSipService(no, false);
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
-                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON|WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        String caller = intent.getStringExtra("caller");
+                        tvNumber.setText(caller.substring(0, caller.indexOf('@')));
                         callsActivity.setVisibility(View.VISIBLE);
                         callsHistoryActivity.setVisibility(View.GONE);
                         callHorizontalLayout.setVisibility(View.VISIBLE);
@@ -317,7 +318,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             mReceiver.register(this);
         }
 
-        myNumber.setOnItemSelectedListener(CallsActivity.this);
+        myNumber.setOnItemSelectedListener(this);
 
         //Add default visibility at the start of activity.
     }
@@ -982,6 +983,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 keypadBtn.setImageResource(R.drawable.keypad);
                 callIsActive = false;
                 isOutgoingCall = false;
+                number.setText("");
                 startTimer(true);
                 resetTimer();
                 stopRingTone();
@@ -995,7 +997,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     tvName.setText("");
                 }
             }
-            tvNumber.setText(number.getText());
+            if(isOutgoingCall){
+                tvNumber.setText(number.getText());
+            }
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);
             dialPad1Layout.setVisibility(View.GONE);

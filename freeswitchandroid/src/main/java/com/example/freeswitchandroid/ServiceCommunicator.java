@@ -1,14 +1,10 @@
 package com.example.freeswitchandroid;
 
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Vibrator;
-import android.provider.Settings;
+
 
 
 import com.example.freeswitchandroid.Pojo.ParentItem;
@@ -53,7 +49,7 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
     static int callID1;
     static int callID2;
 
-    //static long port = 5060;
+    static String remoteUri;
 
     Context context;
 
@@ -100,6 +96,7 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
     public void onIncomingCall(String accountID, int callID, String displayName, String remoteUri, boolean isVideo) {
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
         callID1 = callID;
+        ServiceCommunicator.remoteUri = remoteUri;
     }
 
     @Override
@@ -110,6 +107,6 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
             Intent stopIntent = new Intent(context, RingTonePlayingService.class);
             context.stopService(stopIntent);
         }
-        
+
     }
 }

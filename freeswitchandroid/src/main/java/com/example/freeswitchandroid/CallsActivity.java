@@ -92,6 +92,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.annotations.Nullable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -662,7 +663,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void dtmf5Pressed(View v){
-        if(accountIsValid())SipServiceCommand.sendDTMF(this, uri, callID1, "5");
+        SipServiceCommand.sendDTMF(this, uri, callID1, "5");
     }
 
     public void dtmf6Pressed(View v){
@@ -702,11 +703,19 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     //////////////////////////////////////// Calls related functions below(Call Options) //////////////////////////////////////////////////////////
 
     public void terminate(View v) {
+
+            int callId = 0;
+            if(isOutgoingCall){
+                callId = callID1;
+            }
+            else{
+                callId = callID2;
+            }
             getSupportActionBar().show();
             callsHistoryActivity.setVisibility(View.VISIBLE);
             callsActivity.setVisibility(View.GONE);
+            SipServiceCommand.hangUpCall(this, uri, callId);
             SipServiceCommand.hangUpActiveCalls(this, uri);
-
 
             dialPad1Layout.setVisibility(View.VISIBLE);
             linearLayout1.setVisibility(View.GONE);
@@ -770,7 +779,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
     }
 
-    public void call() throws Exception {
+    public void call() {
 
             String numberToCall = number.getText().toString();
 
@@ -792,13 +801,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
 
-    public void answer(View view) throws Exception {
+    public void answer(View view) {
             stopRingTone();
             if (hangup.getVisibility() == View.GONE) {
                 call();
             }
             else {
-
                     dialPad1Layout.setVisibility(View.GONE);
                     linearLayout1.setVisibility(View.VISIBLE);
                     linearLayout2.setVisibility(View.VISIBLE);
@@ -808,8 +816,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                     SipServiceCommand.acceptIncomingCall(this, uri, String.valueOf(callID1), isVideo);
                 }
-
-
     }
 
     public void hangUp(View view) throws Exception {
@@ -826,6 +832,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void hold(View view) {
+
         if(!isHold) {
 
             SipServiceCommand.holdActiveCalls(this, uri);
@@ -835,20 +842,26 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
           else if(isHold) {
 
-                if(sipAccountData.getCallId() == null || sipAccountData.getCallId().length() < 2){
-                    sipAccountData.setCallId(String.valueOf(callID1));
+                int callId = 0;
+                if(isOutgoingCall){
+                    callId = callID2;
+                }
+                else{
+                    callId = callID1;
                 }
 
-                SipServiceCommand.setCallHold(this, uri, Integer.parseInt(sipAccountData.getCallId()), false);
+                SipServiceCommand.setCallHold(this, uri, callId, false);
 
 
                 hold.setImageResource(R.drawable.hold);
 
             }
           isHold = !isHold;
+
     }
 
     public void transfer(View view) {
+
             dialPad1Layout.setVisibility(View.GONE);
             linearLayout1.setVisibility(View.VISIBLE);
             linearLayout2.setVisibility(View.VISIBLE);
@@ -857,6 +870,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callHorizontalLayout.setVisibility(View.GONE);
             answer.setVisibility(View.GONE);
             overlayTransferLayout.setVisibility(View.VISIBLE);
+
     }
 
     private void makeAttendedCallTransfer(){
@@ -914,9 +928,15 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void finalTransfer(View v) {
+        if(accountIsValid()) {
 
             //makeAttendedCallTransfer();
             makeBlindTransfer();
+
+        }
+        else{
+            handleErrors();
+        }
 
     }
 
@@ -960,7 +980,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 keypadBtn.setImageResource(R.drawable.keypad);
                 callIsActive = false;
                 isOutgoingCall = false;
+                startTimer(true);
                 resetTimer();
+                stopRingTone();
             }
         }
 
@@ -989,7 +1011,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED){
-            startTimer();
+            startTimer(false);
+            stopRingTone();
         }
 
     }
@@ -1068,25 +1091,29 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         stopService(stopIntent);
     }
 
-    long millisInFuture = 8*60*60000;
-    SimpleDateFormat date = new SimpleDateFormat("mm:ss");
-    public void startTimer(){
+    public void startTimer(boolean stop){
+        long tStart = 8*60*60000;
+        SimpleDateFormat date = new SimpleDateFormat("H:mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("UTC"));
-        countDownTimer = new CountDownTimer(millisInFuture, 1000) {
 
-            public void onTick(long millisUntilFinished) {
+        if(stop) {
+        if(countDownTimer != null) countDownTimer.cancel();
+        }
+        else {
+            countDownTimer = new CountDownTimer(8 * 60 * 60000, 1000) {
 
-                long time = millisInFuture - millisUntilFinished;
-                callTime.setText(date.format(new Date(time)));
-            }
+                public void onTick(long millisUntilFinished) {
+                    callTime.setText(date.format(new Date(tStart - millisUntilFinished)));
+                }
 
-            public void onFinish() {
-            }
-        }.start();
+                public void onFinish() {
+                }
+            }.start();
+        }
     }
 
     public void resetTimer(){
-        callTime.setText(new SimpleDateFormat("mm:ss").format(new Date(0)));
+        callTime.setText(new SimpleDateFormat("H:mm:ss").format(new Date(0)));
     }
 
     static Boolean active = null;

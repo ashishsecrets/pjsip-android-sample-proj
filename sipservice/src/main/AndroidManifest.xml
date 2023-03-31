@@ -36,7 +36,6 @@
         <service
             android:name=".SipService"
             android:enabled="true"
-            android:process=":remote"
             android:exported="false" />
     </application>
 

@@ -289,6 +289,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     initSipService(no, false);
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
                         String caller = intent.getStringExtra("caller");
+                        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                        if( myKM.inKeyguardRestrictedInputMode()) {
+                            startRingTone();
+                            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        }
                         tvNumber.setText(caller.substring(0, caller.indexOf('@')));
                         callsActivity.setVisibility(View.VISIBLE);
                         callsHistoryActivity.setVisibility(View.GONE);
@@ -1035,10 +1040,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         public void onIncomingCall (String accountID,int callID, String displayName, String
         remoteUri,boolean isVideo){
         super.onIncomingCall(accountID, callID, displayName, remoteUri, isVideo);
-            startRingTone();
             KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-            if( myKM.inKeyguardRestrictedInputMode()) {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if( !myKM.inKeyguardRestrictedInputMode()) {
+                startRingTone();
             }
             callsActivity.setVisibility(View.VISIBLE);
             callsHistoryActivity.setVisibility(View.GONE);

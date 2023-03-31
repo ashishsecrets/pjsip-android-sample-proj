@@ -2,6 +2,7 @@ package com.example.freeswitchandroid;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -21,6 +22,7 @@ import net.gotev.sipservice.SipService;
 import net.gotev.sipservice.SipServiceCommand;
 
 import org.pjsip.pjsua2.pjmedia_srtp_use;
+import org.pjsip.pjsua2.pjsip_inv_state;
 
 
 import java.util.ArrayList;
@@ -100,5 +102,14 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
         callID1 = callID;
     }
 
+    @Override
+    public void onCallState(String accountID, int callID, int callStateCode, int callStatusCode, long connectTimestamp) {
+        super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
+        if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
+            Intent stopIntent = new Intent(context, RingTonePlayingService.class);
+            context.stopService(stopIntent);
+        }
+        
+    }
 }

@@ -1008,11 +1008,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            stopRingTone();
         }
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED){
             startTimer(false);
-            stopRingTone();
         }
 
     }

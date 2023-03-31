@@ -1003,7 +1003,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             callTime.setVisibility(View.VISIBLE);
             answer.setVisibility(View.GONE);
             CallsActivity.this.accountID = accountID;
-            callID1 = callID;
+            if(isOutgoingCall) callID2 = callID; else callID1 = callID;
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;

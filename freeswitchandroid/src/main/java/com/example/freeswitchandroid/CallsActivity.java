@@ -176,6 +176,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
      Boolean isOutgoingCall = false;
 
+     Boolean isSpeakerOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -735,7 +736,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
     public void speaker(View v) {
 
-        if (!audioManager.isSpeakerphoneOn()) {
+        if (!isSpeakerOn) {
             audioManager.setSpeakerphoneOn(true);
             speakerBtn.setImageResource(R.drawable.speaker_active);
         }
@@ -969,7 +970,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         super.onCallState(accountID, callID, callStateCode, callStatusCode, connectTimestamp);
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED){
-            if(callID == callID2 || callID == callID1) {
+
+            if(isOutgoingCall && callID == callID2 || !isOutgoingCall && callID == callID1) {
                 Objects.requireNonNull(getSupportActionBar()).hide();
                 dialPad1Layout.setVisibility(View.VISIBLE);
                 linearLayout1.setVisibility(View.GONE);

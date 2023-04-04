@@ -739,10 +739,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         if (!isSpeakerOn) {
             audioManager.setSpeakerphoneOn(true);
             speakerBtn.setImageResource(R.drawable.speaker_active);
+            isSpeakerOn = true;
         }
         else{
             audioManager.setSpeakerphoneOn(false);
             speakerBtn.setImageResource(R.drawable.speaker);
+            isSpeakerOn = false;
         }
 
     }

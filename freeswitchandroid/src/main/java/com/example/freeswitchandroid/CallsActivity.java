@@ -65,6 +65,7 @@ import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallDetail;
+import com.example.freeswitchandroid.rest.model.Receiver;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -427,23 +428,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                             ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
 
-
                             List<ChildItem> childList = new ArrayList<>();
-
-                            if(transferList != null) {
-                                transferList.clear();
-                            }
 
                             for (CallDetail callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                                transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum)));
                             }
-
-                            Set<TransferData> uniqueContacts = new HashSet<>(transferList);
-                            transferList.clear();
-                            transferList.addAll(uniqueContacts);
-
-                            transferRecyclerViewAdapter.notifyDataSetChanged();
 
 
                             Map<LocalDate, List<ChildItem>> result = childList.stream()
@@ -457,6 +446,8 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                             result.forEach((key, value) -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(key), value)));
 
                             parentItemAdapter.notifyDataSetChanged();
+
+                            getTransferList();
                         }
                 }
 
@@ -470,6 +461,46 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
 
     }
+
+    private void getTransferList(){
+
+        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        String token = shared.getString("token", "");
+
+        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
+            Call<List<Receiver>> call = retrofitAPI.getTransferList("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
+
+            call.enqueue(new Callback<List<Receiver>>() {
+                @Override
+                public void onResponse(Call<List<Receiver>> call, Response<List<Receiver>> response) {
+
+                    List<Receiver> transferListData = response.body();
+
+                    if (transferListData != null && transferListData.size() > 0) {
+
+                        if(transferList != null) {
+                            transferList.clear();
+                        }
+
+                        for (Receiver receiverData : transferListData) {
+                            transferList.add(new TransferData(receiverData.getPhoneNumber(), receiverData.getReceiverName()));
+                        }
+
+                        transferRecyclerViewAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Receiver>> call, Throwable t) {
+                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+        }
+
+    }
+
     private void initSipService(String number, boolean StopService) throws Exception {
         if(StopService) {
             SipServiceCommand.stop(this);
@@ -655,51 +686,158 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     }
 
     public void dtmf1Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "1");
+
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "1");
     }
 
     public void dtmf2Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "2");
+
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "2");
     }
 
     public void dtmf3Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "3");
+
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "3");
     }
 
     public void dtmf4Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "4");
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "4");
     }
 
     public void dtmf5Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "5");
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "5");
     }
 
     public void dtmf6Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "6");
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "6");
     }
 
     public void dtmf7Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "7");
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "7");
     }
 
     public void dtmf8Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "8");
+
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "8");
     }
 
     public void dtmf9Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "9");
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+
+        SipServiceCommand.sendDTMF(this, uri, callId, "9");
     }
 
     public void dtmf0Pressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "0");
+
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+        SipServiceCommand.sendDTMF(this, uri, callId, "0");
     }
 
     public void dtmfStarPressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "*");
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+        SipServiceCommand.sendDTMF(this, uri, callId, "*");
     }
 
     public void dtmfHashPressed(View v){
-        SipServiceCommand.sendDTMF(this, uri, callID1, "#");
+        int callId = 0;
+        if(isOutgoingCall){
+            callId = callID2;
+        }
+        else{
+            callId = callID1;
+        }
+        SipServiceCommand.sendDTMF(this, uri, callId, "#");
     }
 
     public void deleteBtnPressed(View v){

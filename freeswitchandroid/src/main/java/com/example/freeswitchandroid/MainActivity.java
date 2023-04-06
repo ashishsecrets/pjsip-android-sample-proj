@@ -19,7 +19,6 @@ import android.widget.ImageButton;
 
 import com.example.freeswitchandroid.Pojo.ChildItem;
 import com.example.freeswitchandroid.Pojo.ParentItem;
-import com.example.freeswitchandroid.Pojo.TransferData;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.CallDetail;
@@ -148,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
     private void ParentItemList()
     {
         ServiceCommunicator.itemList.clear();
-        ServiceCommunicator.transferList.clear();
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
         Intent intent = new Intent(MainActivity.this, CallsActivity.class);
@@ -169,17 +167,12 @@ public class MainActivity extends AppCompatActivity {
 
                             ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
 
-
                             List<ChildItem> childList = new ArrayList<>();
 
                             for (CallDetail callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                                ServiceCommunicator.transferList.add(new TransferData(callsEndDatum.getCallerId(), getCallerId(callsEndDatum)));
                             }
 
-                            Set<TransferData> uniqueContacts = new HashSet<TransferData>(ServiceCommunicator.transferList);
-                            ServiceCommunicator.transferList.clear();
-                            ServiceCommunicator.transferList.addAll(uniqueContacts);
 
                             Map<LocalDate, List<ChildItem>> result = childList.stream()
                                     .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))

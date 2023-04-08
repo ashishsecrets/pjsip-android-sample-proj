@@ -39,9 +39,6 @@ public class OtpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
 
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
         layout = findViewById(R.id.layout_otp);
         otpTextView = findViewById(R.id.otp_view);
         otpTextView.requestFocusOTP();

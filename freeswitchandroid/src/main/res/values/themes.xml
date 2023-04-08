@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Pjsipandroidmaster" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Pjsipandroidmaster" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -14,7 +14,13 @@
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="android:actionOverflowButtonStyle">@style/Theme.Pjsipandroidmaster.OverFlow</item>
     </style>
+
+    <style name="Theme.Pjsipandroidmaster.OverFlow">
+        <item name="android:src">@drawable/more_vert_white_24dp</item>
+    </style>
+
     <style name="Theme.Pjsipandroidmaster.Fullscreen" parent="Theme.Pjsipandroidmaster">
         <item name="android:actionBarStyle">
             @style/Widget.Theme.Pjsipandroidmaster.ActionBar.Fullscreen

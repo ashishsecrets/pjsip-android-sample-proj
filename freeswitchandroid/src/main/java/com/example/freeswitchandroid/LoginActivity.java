@@ -24,9 +24,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
 
         if(!permissionsDone) {
             AlertDialog dialog = new AlertDialog.Builder(this)

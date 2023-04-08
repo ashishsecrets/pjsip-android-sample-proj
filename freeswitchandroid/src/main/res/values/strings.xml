@@ -9,4 +9,6 @@
     <string name="rejected">Rejected</string>
     <string name="enter_verify_code">Please enter the verification code sent to</string>
     <string name="welcome_text_two">Separate business from pleasure, keep your personal number private by using a PressOne phone number</string>
+    <string name="call_log">Call Log</string>
+    <string name="logout">Logout</string>
 </resources>

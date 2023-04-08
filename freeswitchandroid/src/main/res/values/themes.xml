@@ -15,6 +15,9 @@
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="buttonStyle">@style/RobotoButtonStyle</item>
         <item name="android:actionOverflowButtonStyle">@style/Theme.Pjsipandroidmaster.OverFlow</item>
+        <item name="android:listPreferredItemHeightSmall">40dp</item>
+        <item name="android:listPreferredItemPaddingLeft">5dp</item>
+        <item name="android:listPreferredItemPaddingRight">5dp</item>
     </style>
 
     <style name="Theme.Pjsipandroidmaster.OverFlow">

@@ -13,6 +13,7 @@
         android:visibility="gone"
         layout="@layout/custom_action_bar" />
 
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"

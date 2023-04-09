@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import android.os.Vibrator;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -365,6 +367,38 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            LayoutInflater inflater = getLayoutInflater();
+            View dialoglayout = inflater.inflate(R.layout.custom_alert, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialoglayout);
+            ImageButton cancelButton = dialoglayout.findViewById(R.id.cancel_btn);
+            ImageButton yesButton = dialoglayout.findViewById(R.id.yes_btn);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+
+            yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+
+                    SharedPreferences.Editor editor = getSharedPreferences("USER_DATA", MODE_PRIVATE).edit();
+                    editor.putString("token", "");
+                    editor.putString("username", "");
+                    editor.apply();
+                    apiHasRetrievedNumbers = false;
+                    Intent intent = new Intent(CallsActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
             return true;
         }
 

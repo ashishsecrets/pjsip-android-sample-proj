@@ -304,8 +304,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="log_out" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/log-out.svg" />
+                            <entry key="outputName" value="cancel_btn" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/cancel_btn.svg" />
                           </map>
                         </option>
                       </PersistentState>

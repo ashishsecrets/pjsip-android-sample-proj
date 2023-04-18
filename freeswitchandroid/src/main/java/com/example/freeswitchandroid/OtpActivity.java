@@ -49,6 +49,9 @@ public class OtpActivity extends AppCompatActivity {
 
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String mobileNumber = shared.getString("username", "");
+
+        mobileNumber = mobileNumber.replaceFirst("^0+(?!$)", "");
+
         String countryCode = String.valueOf(shared.getInt("country", 234));
 
         TextView mobileText = findViewById(R.id.text_number);

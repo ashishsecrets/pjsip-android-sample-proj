@@ -394,6 +394,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     editor.putString("username", "");
                     editor.apply();
                     apiHasRetrievedNumbers = false;
+                    active = null;
+                    if(serviceCommunicator.foregroundServiceRunning(activityManager)) SipServiceCommand.stop(context);
+                    mReceiver.unregister(context);
                     Intent intent = new Intent(CallsActivity.this, MainActivity.class);
                     startActivity(intent);
                 }

@@ -5,6 +5,7 @@ import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
 import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID1;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID2;
+import static com.example.freeswitchandroid.ServiceCommunicator.callIsActive;
 import static com.example.freeswitchandroid.ServiceCommunicator.hostname;
 import static com.example.freeswitchandroid.ServiceCommunicator.itemList;
 import static com.example.freeswitchandroid.ServiceCommunicator.map;
@@ -175,8 +176,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
      Vibrator vibrator;
      ConnectivityManager conMgr;
      NetworkInfo activeNetwork;
-
-     Boolean callIsActive = false;
 
      Boolean isOutgoingCall = false;
 
@@ -677,21 +676,22 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     @Override
     protected void onResume() {
         super.onResume();
-        if(mReceiver.getReceiverContext() == null){
-            mReceiver.register(this);
-        }
-        mSensorManager.registerListener(CallsActivity.this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
-        if(!apiHasRetrievedNumbers){
-            getBusinessNumbers();
-        }
-        else if(apiHasRetrievedNumbers){
-            try {
-                initSipService(no, false);
-            } catch (Exception e) {
-                handleErrors();
+        if(!callIsActive) {
+            if (mReceiver.getReceiverContext() == null) {
+                mReceiver.register(this);
             }
+            mSensorManager.registerListener(CallsActivity.this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+            if (!apiHasRetrievedNumbers) {
+                getBusinessNumbers();
+            } else if (apiHasRetrievedNumbers) {
+                try {
+                    initSipService(no, false);
+                } catch (Exception e) {
+                    handleErrors();
+                }
+            }
+            ParentItemList();
         }
-        ParentItemList();
     }
 
     public static void callLogItemPressed(ChildItem item, int position){

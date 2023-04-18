@@ -29,6 +29,7 @@ import java.util.Map;
 public class ServiceCommunicator extends BroadcastEventReceiver {
 
     public static String number;
+    public static Boolean callIsActive = false;
     static String uri;
     static String username = "";
     static String password = "";

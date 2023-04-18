@@ -58,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        if(ServiceCommunicator.callIsActive){
+            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+            intent.putExtra("call", "none");
+            startActivity(intent);
+        }
+
         imageButton = findViewById(R.id.imageButton);
 
         final RxPermissions rxPermissions = new RxPermissions(this);
@@ -91,9 +97,6 @@ public class MainActivity extends AppCompatActivity {
             Retrofit retrofit = RetrofitData.getRetrofit();
             retrofitAPI = retrofit.create(PressOneAPI.class);
             getBusinessNumbers();
-//            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
-//            intent.putExtra("call", "none");
-//            startActivity(intent);
         }
 
     }

@@ -30,8 +30,7 @@
         android:theme="@style/Theme.Pjsipandroidmaster">
         <activity
             android:name=".CallsActivity"
-            android:exported="false"
-            android:noHistory="true"/>
+            android:exported="false"/>
         <activity
             android:name=".OtpActivity"
             android:exported="false" />

@@ -562,7 +562,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                         }
 
                         for (Receiver receiverData : transferListData) {
-                            transferList.add(new TransferData(receiverData.getPhoneNumber(), receiverData.getReceiverName()));
+                            transferList.add(new TransferData("*2" + receiverData.getLine().getUsername() /*+ '@' + receiverData.getLine().getDomain()*/, receiverData.getReceiverName()));
                         }
 
                         transferRecyclerViewAdapter.notifyDataSetChanged();

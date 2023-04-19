@@ -282,7 +282,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     initSipService(no, false);
                 }
             } catch (Exception e) {
-                Toast.makeText(this, "Service Crashed " + e, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "An Error Occurred " + e, Toast.LENGTH_LONG).show();
                 try {
                     handleErrors();
                 } catch (Exception ex) {
@@ -315,7 +315,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     }
                 }
             } catch (Exception e) {
-                Toast.makeText(this, "Service Crashed " + e, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "An Error Occured " + e, Toast.LENGTH_LONG).show();
                 try {
                     handleErrors();
                 } catch (Exception ex) {
@@ -415,7 +415,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 ParentItemList();
                 initSipService(parent.getItemAtPosition(position).toString(), true);
             } catch (Exception e) {
-                Toast.makeText(this, "Service Crashed " + e, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "An Error Occurred " + e, Toast.LENGTH_LONG).show();
                 try {
                     handleErrors();
                 } catch (Exception ex) {

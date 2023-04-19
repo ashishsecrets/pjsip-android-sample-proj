@@ -1123,7 +1123,7 @@ public class SipService extends BackgroundService implements SipServiceConstants
             try {
                 sipAccount.setRegistration(true);
             } catch (Exception e) {
-                Toast.makeText(getApplicationContext(),"Please wait... SIP Registration Object is busy", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Please wait... ", Toast.LENGTH_LONG).show();
             }
         }
 

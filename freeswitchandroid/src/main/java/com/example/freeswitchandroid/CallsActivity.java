@@ -72,7 +72,9 @@ import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.BusinessNumber;
 import com.example.freeswitchandroid.rest.model.CallDetail;
+import com.example.freeswitchandroid.rest.model.CallLogs;
 import com.example.freeswitchandroid.rest.model.Receiver;
+import com.example.freeswitchandroid.rest.model.Result;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -195,10 +197,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
         retrofitAPI = retrofit.create(PressOneAPI.class);
 
-//        assert actionBar != null;
-//        actionBar.setDisplayOptions(ActionBar. DISPLAY_SHOW_CUSTOM);
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        actionBar.setCustomView(R.layout.custom_action_bar);
         toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -211,13 +209,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         serviceCommunicator = ServiceCommunicator.getInstance();
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if(mSensorManager != null) mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
+        if(powerManager != null) lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag");
 
         conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        activeNetwork = conMgr.getActiveNetworkInfo();
+        if(conMgr != null) activeNetwork = conMgr.getActiveNetworkInfo();
 
         layout = findViewById(R.id.layout);
         myNumber = findViewById(R.id.my_number);
@@ -492,13 +490,13 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         String token = shared.getString("token", "");
 
         if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
-            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
+            Call<CallLogs> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
 
-            call.enqueue(new Callback<List<CallDetail>>() {
+            call.enqueue(new Callback<CallLogs>() {
                 @Override
-                public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
+                public void onResponse(Call<CallLogs> call, Response<CallLogs> response) {
 
-                    List<CallDetail> callsEndDatumList = response.body();
+                    List<Result> callsEndDatumList = response.body().getResults();
 
                         if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
 
@@ -508,7 +506,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
                             List<ChildItem> childList = new ArrayList<>();
 
-                            for (CallDetail callsEndDatum : callsEndDatumList) {
+                            for (Result callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
                             }
 
@@ -530,7 +528,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 }
 
                 @Override
-                public void onFailure(Call<List<CallDetail>> call, Throwable t) {
+                public void onFailure(Call<CallLogs> call, Throwable t) {
                     Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
 
                 }
@@ -591,7 +589,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         ServiceCommunicator.number = number;
         //TODO Remove logging
         SipServiceCommand.enableSipDebugLogging(true);
-        serviceCommunicator.startService(activityManager, this);
+        if(activityManager != null) serviceCommunicator.startService(activityManager, this);
     }
 
     private void initRecycler(){
@@ -624,7 +622,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
 
-    private String getCallerId(CallDetail callsEndDatum) {
+    private String getCallerId(Result callsEndDatum) {
         String callerId = null;
 
        if(callsEndDatum.getCallerName() != null)callerId = callsEndDatum.getCallerName().toString();
@@ -634,7 +632,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         }
         return callerId;
     }
-    private int getCallType(CallDetail datum){
+    private int getCallType(Result datum){
 
         int toReturn = 0;
 
@@ -644,9 +642,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             toReturn = 1; // missed
         } else if (!datum.getIsDialed()) {
             toReturn = 2; //incoming
-        } else if (!datum.getIsForwardedCall()) {
+        } else if (datum.getIsForwardedCall()) {
             toReturn = 3; //forwarded
-        } else if (!datum.getCallType().equals("REJECTED")) {
+        } else if (!datum.getIsDialed() && datum.getIsMissedCall()) {
             toReturn = 4; //rejected
         }
 
@@ -680,7 +678,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             if (mReceiver.getReceiverContext() == null) {
                 mReceiver.register(this);
             }
-            mSensorManager.registerListener(CallsActivity.this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+            if(mSensorManager != null) mSensorManager.registerListener(CallsActivity.this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
             if (!apiHasRetrievedNumbers) {
                 getBusinessNumbers();
             } else if (apiHasRetrievedNumbers) {
@@ -954,12 +952,12 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     public void speaker(View v) {
 
         if (!isSpeakerOn) {
-            audioManager.setSpeakerphoneOn(true);
+            if(audioManager != null) audioManager.setSpeakerphoneOn(true);
             speakerBtn.setImageResource(R.drawable.speaker_active);
             isSpeakerOn = true;
         }
         else{
-            audioManager.setSpeakerphoneOn(false);
+            if(audioManager != null) audioManager.setSpeakerphoneOn(false);
             speakerBtn.setImageResource(R.drawable.speaker);
             isSpeakerOn = false;
         }
@@ -1201,7 +1199,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                 hangup.setVisibility(View.GONE);
                 answer.setVisibility(View.VISIBLE);
                 overlayTransferLayout.setVisibility(View.GONE);
-                audioManager.setMode(AudioManager.MODE_NORMAL);
+                if(audioManager != null) audioManager.setMode(AudioManager.MODE_NORMAL);
                 hold.setImageResource(R.drawable.hold);
                 transfer.setImageResource(R.drawable.transfer);
                 muteBtn.setImageResource(R.drawable.mute);
@@ -1239,7 +1237,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             CallsActivity.this.displayName = displayName;
             CallsActivity.this.remoteUri = remoteUri;
             CallsActivity.this.isVideo = isVideo;
-            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            if(audioManager != null) audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
             stopRingTone();
         }
 
@@ -1364,7 +1362,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     @Override
     protected void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(CallsActivity.this);
+        if(mSensorManager != null) mSensorManager.unregisterListener(CallsActivity.this);
         active = null;
     }
 
@@ -1412,7 +1410,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         hangup.setVisibility(View.GONE);
         answer.setVisibility(View.VISIBLE);
         overlayTransferLayout.setVisibility(View.GONE);
-        audioManager.setMode(AudioManager.MODE_NORMAL);
+        if(audioManager != null) audioManager.setMode(AudioManager.MODE_NORMAL);
         hold.setImageResource(R.drawable.hold);
         transfer.setImageResource(R.drawable.transfer);
         muteBtn.setImageResource(R.drawable.mute);

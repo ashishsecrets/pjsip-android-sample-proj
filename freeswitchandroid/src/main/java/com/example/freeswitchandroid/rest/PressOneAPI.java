@@ -2,6 +2,7 @@ package com.example.freeswitchandroid.rest;
 
 
 import com.example.freeswitchandroid.rest.model.CallDetail;
+import com.example.freeswitchandroid.rest.model.CallLogs;
 import com.example.freeswitchandroid.rest.model.Mobile;
 import com.example.freeswitchandroid.rest.model.MobileData;
 import com.example.freeswitchandroid.rest.model.Receiver;
@@ -26,8 +27,8 @@ public interface PressOneAPI {
     @POST("/auth/token/")
     Call<Token> getAuthToken(@Body MobileData mobileData);
 
-    @GET("/api/calls/")
-    Call<List<CallDetail>> getCallsData(@Header("Authorization") String token, @Query("business_id") String business_id);
+    @GET("/api/telephony/calls/")
+    Call<CallLogs> getCallsData(@Header("Authorization") String token, @Query("number") String business_id);
 
     @GET("/api/receiver_numbers/")
     Call<List<Receiver>> getTransferList(@Header("Authorization") String token, @Query("business_number") String business_id);

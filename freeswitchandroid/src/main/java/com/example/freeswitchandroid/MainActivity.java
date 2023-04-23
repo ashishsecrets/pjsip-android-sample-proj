@@ -22,6 +22,8 @@ import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.rest.PressOneAPI;
 import com.example.freeswitchandroid.rest.RetrofitData;
 import com.example.freeswitchandroid.rest.model.CallDetail;
+import com.example.freeswitchandroid.rest.model.CallLogs;
+import com.example.freeswitchandroid.rest.model.Result;
 import com.example.freeswitchandroid.rest.model.UserDatum;
 import com.tbruyelle.rxpermissions3.RxPermissions;
 
@@ -158,13 +160,13 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("call", "none");
 
         if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
-            Call<List<CallDetail>> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
+            Call<CallLogs> call = retrofitAPI.getCallsData("Bearer " + token, ServiceCommunicator.map.values().iterator().next().getId().toString());
 
-            call.enqueue(new Callback<List<CallDetail>>() {
+            call.enqueue(new Callback<CallLogs>() {
                 @Override
-                public void onResponse(Call<List<CallDetail>> call, Response<List<CallDetail>> response) {
+                public void onResponse(Call<CallLogs> call, Response<CallLogs> response) {
 
-                    List<CallDetail> callsEndDatumList = response.body();
+                    List<Result> callsEndDatumList = response.body().getResults();
 
                         if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
 
@@ -174,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
                             List<ChildItem> childList = new ArrayList<>();
 
-                            for (CallDetail callsEndDatum : callsEndDatumList) {
+                            for (Result callsEndDatum : callsEndDatumList) {
                                 childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
                             }
 
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<List<CallDetail>> call, Throwable t) {
+                public void onFailure(Call<CallLogs> call, Throwable t) {
 
                 }
             });
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private String getCallerId(CallDetail callsEndDatum) {
+    private String getCallerId(Result callsEndDatum) {
         String callerId = null;
 
         callerId = callsEndDatum.getUser();
@@ -211,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return callerId;
     }
-    private int getCallType(CallDetail datum){
+    private int getCallType(Result datum){
 
         int toReturn = 0;
 
@@ -223,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
             toReturn = 2; //incoming
         } else if (!datum.getIsForwardedCall()) {
             toReturn = 3; //forwarded
-        } else if (!datum.getCallType().equals("REJECTED")) {
+        } else if (!datum.getIsDialed() && datum.getIsMissedCall()) {
             toReturn = 4; //rejected
         }
 

@@ -118,7 +118,11 @@ public class OtpActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<Token> call, Throwable t) {
-                    Toast.makeText(OtpActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+                    otpTextView.setOTP("");
+                    isOTPEntered = false;
+                    Toast.makeText(OtpActivity.this, "Incorrect OTP or Number", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(OtpActivity.this, LoginActivity.class);
+                    startActivity(intent);
 
                 }
             });

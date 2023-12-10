@@ -2,16 +2,13 @@ package com.example.freeswitchandroid;
 
 import static com.example.freeswitchandroid.ServiceCommunicator.apiHasRetrievedNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.arraySpinner;
-import static com.example.freeswitchandroid.ServiceCommunicator.businessNumbers;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID1;
 import static com.example.freeswitchandroid.ServiceCommunicator.callID2;
 import static com.example.freeswitchandroid.ServiceCommunicator.callIsActive;
 import static com.example.freeswitchandroid.ServiceCommunicator.hostname;
 import static com.example.freeswitchandroid.ServiceCommunicator.itemList;
-import static com.example.freeswitchandroid.ServiceCommunicator.map;
 import static com.example.freeswitchandroid.ServiceCommunicator.transferList;
 import static com.example.freeswitchandroid.ServiceCommunicator.uri;
-import static com.example.freeswitchandroid.ServiceCommunicator.userDatum;
 import static net.gotev.sipservice.SipServiceCommand.accountIsValid;
 import static net.gotev.sipservice.SipTlsUtils.TAG;
 
@@ -68,14 +65,7 @@ import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.Pojo.TransferData;
 import com.example.freeswitchandroid.adapters.ParentItemAdapter;
 import com.example.freeswitchandroid.adapters.TransferRecyclerViewAdapter;
-import com.example.freeswitchandroid.rest.PressOneAPI;
-import com.example.freeswitchandroid.rest.RetrofitData;
-import com.example.freeswitchandroid.rest.model.BusinessNumber;
-import com.example.freeswitchandroid.rest.model.CallDetail;
-import com.example.freeswitchandroid.rest.model.CallLogs;
-import com.example.freeswitchandroid.rest.model.Receiver;
-import com.example.freeswitchandroid.rest.model.Result;
-import com.example.freeswitchandroid.rest.model.UserDatum;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
@@ -101,16 +91,11 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class CallsActivity extends AppCompatActivity implements TransferRecyclerViewAdapter.ItemClickListener, AdapterView.OnItemSelectedListener,SensorEventListener {
 
     /////Combining Calls History Activity////
-
-    PressOneAPI retrofitAPI;
     CoordinatorLayout layout;
     LinearLayout recycler_list;
     LinearLayout phone_calls_view;
@@ -193,9 +178,9 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         ///From Calls History
 
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        Retrofit retrofit = RetrofitData.getRetrofit();
-
-        retrofitAPI = retrofit.create(PressOneAPI.class);
+//        Retrofit retrofit = RetrofitData.getRetrofit();
+//
+//        retrofitAPI = retrofit.create(PressOneAPI.class);
 
         toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -289,10 +274,10 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
             }
         }
         else{
-            ParentItemList();
+            //ParentItemList();
             try {
                 if(active != null && !active){
-                    no = Objects.requireNonNull(map.get(ServiceCommunicator.number)).getPhoneNumber();
+                    no = arraySpinner[0];//Objects.requireNonNull(map.get(ServiceCommunicator.number)).getPhoneNumber();
                     initSipService(no, false);
                     if (intent != null && intent.getStringExtra("call").equals("incoming")) {
                         String caller = intent.getStringExtra("caller");
@@ -410,7 +395,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(apiHasRetrievedNumbers) {
             try {
-                ParentItemList();
+                //ParentItemList();
                 initSipService(parent.getItemAtPosition(position).toString(), true);
             } catch (Exception e) {
                 Toast.makeText(this, "An Error Occurred " + e, Toast.LENGTH_LONG).show();
@@ -434,22 +419,24 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
         SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         String token = shared.getString("token", "");
 
-        Call<UserDatum> call = retrofitAPI.getBusinessNumbers("Bearer " + token);
-
-        call.enqueue(new Callback<UserDatum>() {
-            @Override
-            public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
-
-                userDatum = response.body();
-                if(userDatum != null) {
-                    businessNumbers = userDatum.getBusinessNumbers();
-                }
-                if(businessNumbers.size() != 0 && businessNumbers.get(0) != null && (businessNumbers.get(0).getPhoneNumber() != null && !businessNumbers.get(0).getPhoneNumber().isEmpty())) {
-                    arraySpinner = new String[businessNumbers.size()];
-                    for(int i = 0; i < businessNumbers.size(); i++){
-                        arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
-                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
-                    }
+//        Call<UserDatum> call = retrofitAPI.getBusinessNumbers("Bearer " + token);
+//
+//        call.enqueue(new Callback<UserDatum>() {
+//            @Override
+//            public void onResponse(Call<UserDatum> call, Response<UserDatum> response) {
+//
+//                userDatum = response.body();
+//                if(userDatum != null) {
+//                    businessNumbers = userDatum.getBusinessNumbers();
+//                }
+//                if(businessNumbers.size() != 0 && businessNumbers.get(0) != null && (businessNumbers.get(0).getPhoneNumber() != null && !businessNumbers.get(0).getPhoneNumber().isEmpty())) {
+//                    arraySpinner = new String[businessNumbers.size()];
+//                    for(int i = 0; i < businessNumbers.size(); i++){
+//                        arraySpinner[i] = businessNumbers.get(i).getPhoneNumber();
+//                        map.put(businessNumbers.get(i).getPhoneNumber(), businessNumbers.get(i));
+//                    }
+                    arraySpinner = new String[1];
+                    arraySpinner[0] = shared.getString("token", "");
                     apiHasRetrievedNumbers = true;
                     recycler_list.setVisibility(View.VISIBLE);
                     phone_calls_view.setVisibility(View.GONE);
@@ -460,7 +447,6 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     no = arraySpinner[0];
                     ServiceCommunicator.number = no;
                     myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
-                }
 
                 if(arraySpinner == null || arraySpinner.length == 0) {
                     arraySpinner = new String[]{"No Business Number Found"};
@@ -471,121 +457,120 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     no = arraySpinner[0];
                     ServiceCommunicator.number = no;
                     myNumber.setSelection(Arrays.asList(arraySpinner).indexOf(no), false);
-                    ParentItemList();
-                }
+                    //ParentItemList();
 
             }
 
-            @Override
-            public void onFailure(Call<UserDatum> call, Throwable t) {
-                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
+//            @Override
+//            public void onFailure(Call<UserDatum> call, Throwable t) {
+//                Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
     }
-    private void ParentItemList()
-    {
-        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String token = shared.getString("token", "");
+//    private void ParentItemList()
+//    {
+//        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+//        String token = shared.getString("token", "");
+//
+//        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
+//            Call<CallLogs> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
+//
+//            call.enqueue(new Callback<CallLogs>() {
+//                @Override
+//                public void onResponse(Call<CallLogs> call, Response<CallLogs> response) {
+//
+//                    List<Result> callsEndDatumList = response.body().getResults();
+//
+//                        if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
+//
+//                            final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
+//
+//                            ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
+//
+//                            List<ChildItem> childList = new ArrayList<>();
+//
+//                            for (Result callsEndDatum : callsEndDatumList) {
+//                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
+//                            }
+//
+//
+//                            Map<LocalDate, List<ChildItem>> result = childList.stream()
+//                                    .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+//                                            .with(ADJUSTERS.get("day"))));
+//
+//                            if(itemList != null) {
+//                                itemList.clear();
+//                            }
+//
+//                            result.forEach((key, value) -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(key), value)));
+//
+//                            parentItemAdapter.notifyDataSetChanged();
+//
+//                            getTransferList();
+//                        }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<CallLogs> call, Throwable t) {
+//                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            });
+//
+//        }
+//
+//    }
 
-        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
-            Call<CallLogs> call = retrofitAPI.getCallsData("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
-
-            call.enqueue(new Callback<CallLogs>() {
-                @Override
-                public void onResponse(Call<CallLogs> call, Response<CallLogs> response) {
-
-                    List<Result> callsEndDatumList = response.body().getResults();
-
-                        if (callsEndDatumList != null && callsEndDatumList.size() > 0) {
-
-                            final Map<String, TemporalAdjuster> ADJUSTERS = new HashMap<>();
-
-                            ADJUSTERS.put("day", TemporalAdjusters.ofDateAdjuster(d -> d));
-
-                            List<ChildItem> childList = new ArrayList<>();
-
-                            for (Result callsEndDatum : callsEndDatumList) {
-                                childList.add(new ChildItem(callsEndDatum.getCallerId(), getCallerId(callsEndDatum), getCallType(callsEndDatum), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(LocalDateTime.parse(callsEndDatum.getDateCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx")))));
-                            }
-
-
-                            Map<LocalDate, List<ChildItem>> result = childList.stream()
-                                    .collect(Collectors.groupingBy(item -> LocalDate.parse(item.getChildItemTxt(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                                            .with(ADJUSTERS.get("day"))));
-
-                            if(itemList != null) {
-                                itemList.clear();
-                            }
-
-                            result.forEach((key, value) -> itemList.add(new ParentItem(DateTimeFormatter.ofPattern("dd-MMM-yyyy").format(key), value)));
-
-                            parentItemAdapter.notifyDataSetChanged();
-
-                            getTransferList();
-                        }
-                }
-
-                @Override
-                public void onFailure(Call<CallLogs> call, Throwable t) {
-                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            });
-
-        }
-
-    }
-
-    private void getTransferList(){
-
-        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        String token = shared.getString("token", "");
-
-        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
-            Call<List<Receiver>> call = retrofitAPI.getTransferList("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
-
-            call.enqueue(new Callback<List<Receiver>>() {
-                @Override
-                public void onResponse(Call<List<Receiver>> call, Response<List<Receiver>> response) {
-
-                    List<Receiver> transferListData = response.body();
-
-                    if (transferListData != null && transferListData.size() > 0) {
-
-                        if(transferList != null) {
-                            transferList.clear();
-                        }
-
-                        for (Receiver receiverData : transferListData) {
-                            transferList.add(new TransferData("*2" + receiverData.getLine().getUsername() /*+ '@' + receiverData.getLine().getDomain()*/, receiverData.getReceiverName()));
-                        }
-
-                        transferRecyclerViewAdapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<Receiver>> call, Throwable t) {
-                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            });
-
-        }
-
-    }
+//    private void getTransferList(){
+//
+//        SharedPreferences shared = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+//        String token = shared.getString("token", "");
+//
+//        if(apiHasRetrievedNumbers && arraySpinner != null && arraySpinner.length > 0) {
+//            Call<List<Receiver>> call = retrofitAPI.getTransferList("Bearer " + token, map.get(myNumber.getSelectedItem().toString()).getId().toString());
+//
+//            call.enqueue(new Callback<List<Receiver>>() {
+//                @Override
+//                public void onResponse(Call<List<Receiver>> call, Response<List<Receiver>> response) {
+//
+//                    List<Receiver> transferListData = response.body();
+//
+//                    if (transferListData != null && transferListData.size() > 0) {
+//
+//                        if(transferList != null) {
+//                            transferList.clear();
+//                        }
+//
+//                        for (Receiver receiverData : transferListData) {
+//                            transferList.add(new TransferData("*2" + receiverData.getLine().getUsername() /*+ '@' + receiverData.getLine().getDomain()*/, receiverData.getReceiverName()));
+//                        }
+//
+//                        transferRecyclerViewAdapter.notifyDataSetChanged();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<List<Receiver>> call, Throwable t) {
+//                    Toast.makeText(CallsActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            });
+//
+//        }
+//
+//    }
 
     private void initSipService(String number, boolean StopService) throws Exception {
         if(StopService) {
             SipServiceCommand.stop(this);
         }
-        ServiceCommunicator.username = (map.get(number)).getReceivers().get(0).getLine().getUsername();
-        String password = (map.get(number)).getReceivers().get(0).getLine().getPassword();
-        String nonce = (map.get(number)).getReceivers().get(0).getLine().getNonce();
-        hostname = (map.get(number)).getReceivers().get(0).getLine().getDomain();
-        ServiceCommunicator.password = CryptoUtils.decyrpt(password, nonce);
+        ServiceCommunicator.username = arraySpinner[0];
+        String password = "";//(map.get(number)).getReceivers().get(0).getLine().getPassword(); // add password
+        String nonce = ""; //(map.get(number)).getReceivers().get(0).getLine().getNonce(); // ignore
+        hostname = ""; //(map.get(number)).getReceivers().get(0).getLine().getDomain(); // add hostname
+        ServiceCommunicator.password = password; //CryptoUtils.decyrpt(password, nonce);
         ServiceCommunicator.number = number;
         //TODO Remove logging
         SipServiceCommand.enableSipDebugLogging(true);
@@ -622,34 +607,34 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
 
-    private String getCallerId(Result callsEndDatum) {
-        String callerId = null;
-
-       if(callsEndDatum.getCallerName() != null)callerId = callsEndDatum.getCallerName().toString();
-
-       if(callerId == null || callerId.isEmpty()){
-            callerId = callsEndDatum.getCallerId();
-        }
-        return callerId;
-    }
-    private int getCallType(Result datum){
-
-        int toReturn = 0;
-
-        if(datum.getIsDialed()){
-            toReturn = 0; // outgoing
-        } else if (datum.getIsMissedCall()) {
-            toReturn = 1; // missed
-        } else if (!datum.getIsDialed()) {
-            toReturn = 2; //incoming
-        } else if (datum.getIsForwardedCall()) {
-            toReturn = 3; //forwarded
-        } else if (!datum.getIsDialed() && datum.getIsMissedCall()) {
-            toReturn = 4; //rejected
-        }
-
-        return toReturn;
-    }
+//    private String getCallerId(Result callsEndDatum) {
+//        String callerId = null;
+//
+//       if(callsEndDatum.getCallerName() != null)callerId = callsEndDatum.getCallerName().toString();
+//
+//       if(callerId == null || callerId.isEmpty()){
+//            callerId = callsEndDatum.getCallerId();
+//        }
+//        return callerId;
+//    }
+//    private int getCallType(Result datum){
+//
+//        int toReturn = 0;
+//
+//        if(datum.getIsDialed()){
+//            toReturn = 0; // outgoing
+//        } else if (datum.getIsMissedCall()) {
+//            toReturn = 1; // missed
+//        } else if (!datum.getIsDialed()) {
+//            toReturn = 2; //incoming
+//        } else if (datum.getIsForwardedCall()) {
+//            toReturn = 3; //forwarded
+//        } else if (!datum.getIsDialed() && datum.getIsMissedCall()) {
+//            toReturn = 4; //rejected
+//        }
+//
+//        return toReturn;
+//    }
 
     public void keypadPress(View v){
         callsActivity.setVisibility(View.VISIBLE);
@@ -688,7 +673,7 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
                     handleErrors();
                 }
             }
-            ParentItemList();
+            //ParentItemList();
         }
     }
 
@@ -1216,11 +1201,11 @@ public class CallsActivity extends AppCompatActivity implements TransferRecycler
 
 
         if(callStateCode == pjsip_inv_state.PJSIP_INV_STATE_CONNECTING){
-            for (Map.Entry<String, BusinessNumber> e : map.entrySet()) {
-                if (!e.getKey().endsWith(number.getText().toString())) {
+           // for (Map.Entry<String, BusinessNumber> e : map.entrySet()) {
+           //     if (!e.getKey().endsWith(number.getText().toString())) {
                     tvName.setText("");
-                }
-            }
+           //     }
+           // }
             if(isOutgoingCall){
                 tvNumber.setText(number.getText());
             }

@@ -32,13 +32,13 @@
 
 
 
-    <ImageView
+    <TextView
         android:id="@+id/enter_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Enter your voip username or number"
         android:layout_gravity="left"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/phone_number"/>
+        android:layout_marginTop="20dp"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:ccp_autoDetectCountry="true"
-            app:ccp_defaultPhoneCode="234"
+            app:ccp_defaultPhoneCode="91"
             app:ccpDialog_backgroundColor="@color/white"
             android:background="@color/white"
             app:ccp_showPhoneCode="false" />
@@ -69,12 +69,11 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:layout_marginTop="10dp"
-            android:hint="816 492 8900"
+            android:hint="xyz"
             android:textColor="@color/black"
             android:textColorHint="@color/cardview_shadow_start_color"
             android:ems="15"
-            android:fontFamily="@font/urbanistnormal"
-            android:inputType="phone" />
+            android:fontFamily="@font/urbanistnormal" />
 
 
     </LinearLayout>

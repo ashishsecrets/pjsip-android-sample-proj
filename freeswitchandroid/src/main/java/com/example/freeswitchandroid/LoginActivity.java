@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else{
-            Toast.makeText(LoginActivity.this, "Please enter your number first without + or 0.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Please enter your number or username", Toast.LENGTH_SHORT).show();
         }
     }
 }

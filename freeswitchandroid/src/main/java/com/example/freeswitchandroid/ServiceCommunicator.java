@@ -9,8 +9,6 @@ import android.content.Intent;
 
 import com.example.freeswitchandroid.Pojo.ParentItem;
 import com.example.freeswitchandroid.Pojo.TransferData;
-import com.example.freeswitchandroid.rest.model.BusinessNumber;
-import com.example.freeswitchandroid.rest.model.UserDatum;
 
 import net.gotev.sipservice.BroadcastEventReceiver;
 import net.gotev.sipservice.SipAccountData;
@@ -42,9 +40,9 @@ public class ServiceCommunicator extends BroadcastEventReceiver {
 
     static  List<TransferData> transferList = new ArrayList<>();
 
-    static UserDatum userDatum;
-    static List<BusinessNumber> businessNumbers = new ArrayList<>();
-    static Map<String, BusinessNumber> map = new HashMap<>();
+//    static UserDatum userDatum;
+//    static List<BusinessNumber> businessNumbers = new ArrayList<>();
+//    static Map<String, BusinessNumber> map = new HashMap<>();
     static boolean apiHasRetrievedNumbers = false;
     static boolean permissionsDone = false;
     static int callID1;

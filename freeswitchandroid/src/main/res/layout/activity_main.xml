@@ -9,25 +9,26 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <ImageView
+    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Sample Project"
+        android:textSize="25sp"
         android:paddingTop="30dp"
-        android:layout_weight="1"
-        app:srcCompat="@drawable/welcome_msg"/>
+        android:layout_weight="1"/>
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="90dp"
+        android:layout_height="50dp"
         android:layout_weight="1"
-        app:srcCompat="@drawable/layer_2" />
+        app:srcCompat="@drawable/android" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Keep personal and business"
+        android:text="Make calls using"
         android:fontFamily="@font/recoleta_bold"
         android:textColor="@color/purple_500"
         android:textSize="25sp"/>
@@ -35,7 +36,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="calls separate"
+        android:text="sip"
         android:fontFamily="@font/recoleta_bold"
         android:textColor="@color/purple_500"
         android:textSize="25sp"/>
@@ -43,7 +44,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_text_two"
+        android:text="This is a sample project."
         android:fontFamily="@font/urbanistnormal"
         android:gravity="center"
         android:padding="20dp"/>
